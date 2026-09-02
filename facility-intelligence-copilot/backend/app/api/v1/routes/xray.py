@@ -63,23 +63,7 @@ def create_xray_investigation(payload: dict, db: Session = Depends(get_db)) -> d
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Alert not found")
 
     result = service.create_investigation(asset_id=asset_id, alert_id=alert_id)
-    
-    response = {
-        "investigation_id": result.investigation_id,
-        "asset_id": asset_id,
-        "alert_id": alert_id,
-        "status": "PENDING",
-        "created_at": datetime.now(timezone.utc).isoformat(),
-    }
-
-    response["summary"] = result.summary
-    response["root_cause"] = result.root_cause
-    response["confidence"] = result.confidence
-    response["severity"] = result.severity
-    response["evidence"] = [item.model_dump(mode="json") for item in result.evidence]
-    response["affected_assets"] = result.affected_assets
-    response["recommended_actions"] = result.recommended_actions
-    return response
+    return result.model_dump(mode="json")
 
 
 @router.get("/xray/investigations/{investigation_id}")
@@ -89,17 +73,5 @@ def get_xray_investigation(investigation_id: str) -> dict:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Investigation not found")
     if record.result is None:
         return service.build_status(investigation_id, status="PENDING")
-    result = record.result
-    return {
-        "investigation_id": result.investigation_id,
-        "asset_id": result.asset_id,
-        "alert_id": result.alert_id,
-        "summary": result.summary,
-        "root_cause": result.root_cause,
-        "confidence": result.confidence,
-        "severity": result.severity,
-        "evidence": [item.model_dump(mode="json") for item in result.evidence],
-        "affected_assets": result.affected_assets,
-        "recommended_actions": result.recommended_actions,
-        "created_at": result.created_at.isoformat(),
-    }
+    
+    return record.result.model_dump(mode="json")

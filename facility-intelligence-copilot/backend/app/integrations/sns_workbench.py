@@ -1,42 +1,57 @@
 from __future__ import annotations
 
 import os
-from typing import Protocol
+import httpx
+from typing import Protocol, Dict, Any
 
 
 class InvestigationProvider(Protocol):
-    def create_investigation(self, *, context: dict, investigation_id: str):
+    def send_facility_event(self, event: Dict[str, Any]) -> Dict[str, Any]:
+        """Send facility event to the configured intelligence layer."""
         ...
 
 
 class SNSWorkbenchClient:
-    def __init__(self, *, base_url: str | None = None, api_key: str | None = None, agent_id: str | None = None):
-        self.base_url = base_url or os.getenv("SNS_WORKBENCH_URL", "https://sns-workbench.example.invalid")
-        self.api_key = api_key or os.getenv("SNS_API_KEY")
-        self.agent_id = agent_id or os.getenv("SNS_AGENT_ID", "facility-xray-demo")
+    def __init__(self, *, webhook_url: str | None = None):
+        self.webhook_url = webhook_url or os.getenv(
+            "SNS_WORKBENCH_WEBHOOK_URL",
+            "{{PASTE_THE_PRODUCTION_WEBHOOK_URL_HERE}}"
+        )
 
-    def create_investigation(self, *, context: dict, investigation_id: str):
-        return {
-            "investigation_id": investigation_id,
-            "status": "PENDING",
-            "provider": "sns_workbench",
-            "asset_id": context["asset"]["id"],
-            "alert_id": context["alert"]["id"],
-            "agent_id": self.agent_id,
-        }
+    def send_facility_event(self, event: Dict[str, Any]) -> Dict[str, Any]:
+        if not self.webhook_url or self.webhook_url == "{{PASTE_THE_PRODUCTION_WEBHOOK_URL_HERE}}":
+            print("WARNING: SNS_WORKBENCH_WEBHOOK_URL is not configured properly.")
+            # For development safety, return a mock or raise error based on preference
+            pass
 
-    def run_investigation(self, *, investigation_id: str):
+        try:
+            with httpx.Client(timeout=30.0) as client:
+                response = client.post(self.webhook_url, json=event)
+                response.raise_for_status()
+                result = response.json()
+                if not result:
+                    return self._fallback_malformed_response(event, "Empty response from SNS Workbench")
+                return result
+        except httpx.TimeoutException:
+            return self._fallback_error_response(event, "SNS Workbench timeout")
+        except httpx.HTTPStatusError as exc:
+            return self._fallback_error_response(event, f"HTTP error {exc.response.status_code}")
+        except Exception as exc:
+            return self._fallback_error_response(event, f"Unexpected error: {str(exc)}")
+            
+    def _fallback_error_response(self, event: Dict[str, Any], reason: str) -> Dict[str, Any]:
         return {
-            "investigation_id": investigation_id,
-            "status": "RUNNING",
-            "provider": "sns_workbench",
-            "agent_id": self.agent_id,
+            "investigation_id": event.get("investigation_id", "ERROR"),
+            "event_id": event.get("event_id", ""),
+            "status": "FAILED",
+            "event_class": "UNKNOWN",
+            "incident_assurance": {
+                "decision": "REQUIRES_REVIEW",
+                "confidence": 0.0,
+                "notification_allowed": False
+            },
+            "diagnostic_reasoning": {"error": reason}
         }
-
-    def get_investigation_result(self, *, investigation_id: str):
-        return {
-            "investigation_id": investigation_id,
-            "status": "COMPLETED",
-            "provider": "sns_workbench",
-            "agent_id": self.agent_id,
-        }
+        
+    def _fallback_malformed_response(self, event: Dict[str, Any], reason: str) -> Dict[str, Any]:
+        return self._fallback_error_response(event, reason)
