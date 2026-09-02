@@ -1,0 +1,47 @@
+{
+  "airflow_restriction": {
+    "root_cause": "airflow_restriction",
+    "evidence": [
+      "airflow below baseline",
+      "temperature above baseline",
+      "energy above baseline"
+    ],
+    "recommendation": "Inspect filter and damper; verify airflow path integrity and upstream support equipment."
+  },
+  "high_energy": {
+    "root_cause": "high_energy",
+    "evidence": [
+      "energy above baseline",
+      "airflow reduced or stable",
+      "temperature elevated or normal"
+    ],
+    "recommendation": "Review operating profile and check for inefficient loads or abnormal duty cycle."
+  },
+  "high_temperature": {
+    "root_cause": "high_temperature",
+    "evidence": [
+      "temperature above baseline",
+      "airflow not severely reduced",
+      "energy above baseline or normal"
+    ],
+    "recommendation": "Inspect cooling loop health and confirm the temperature sensor is valid."
+  },
+  "pressure_anomaly": {
+    "root_cause": "pressure_anomaly",
+    "evidence": [
+      "pressure above baseline",
+      "airflow reduced",
+      "temperature elevated or stable"
+    ],
+    "recommendation": "Check filter and damper restrictions and evaluate upstream pressure control."
+  },
+  "sensor_failure": {
+    "root_cause": "sensor_failure",
+    "evidence": [
+      "sensor value impossible or missing",
+      "temperature or airflow out of range",
+      "alert pattern inconsistent with safe operations"
+    ],
+    "recommendation": "Inspect and replace or recalibrate the failed sensor and validate telemetry integrity."
+  }
+}
