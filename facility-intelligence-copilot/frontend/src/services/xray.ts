@@ -5,13 +5,11 @@ const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL as string | undefined) ?
 export interface EvidenceItem {
     source: string;
     metric: string;
-    value?: number | string;
-    current_value?: number | string;
-    baseline?: number | string;
-    expected_range?: string;
-    timestamp?: string;
-    interpretation?: string;
-    importance?: number;
+    current_value: number;
+    baseline: number;
+    timestamp: string;
+    interpretation: string;
+    importance: number;
 }
 
 export interface InvestigationResult {
@@ -24,14 +22,10 @@ export interface InvestigationResult {
     confidence?: string;
     severity?: string;
     evidence?: EvidenceItem[];
-    observed?: string[];
-    inferred?: string[];
-    alternative_causes?: string[];
     affected_assets?: string[];
     recommended_actions?: string[];
     created_at: string;
 }
-
 
 export async function createInvestigation(assetId: number, alertId: number): Promise<InvestigationResult> {
     const url = `${API_BASE_URL}/api/v1/xray/investigations`;

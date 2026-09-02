@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom'
 import { Activity, AlertTriangle, Building2, Gauge, LayoutDashboard, ShieldCheck } from 'lucide-react'
 import Dashboard from './pages/Dashboard'
@@ -7,15 +6,6 @@ import AssetDetails from './pages/AssetDetails'
 import DigitalTwin from './pages/DigitalTwin'
 import Alerts from './pages/Alerts'
 import XRay from './pages/XRay'
-import { apiGet } from './services/api'
-
-interface SystemStatus {
-  backend: string
-  database: string
-  kafka: string
-  xray: string
-  simulator: string
-}
 
 const navigation = [
   { label: 'Dashboard', to: '/', icon: LayoutDashboard },
@@ -27,36 +17,6 @@ const navigation = [
 ]
 
 function App() {
-  const [status, setStatus] = useState<SystemStatus | null>(null)
-
-  useEffect(() => {
-    let isMounted = true
-    const checkStatus = async () => {
-      try {
-        const data = await apiGet<SystemStatus>('/api/v1/system/status')
-        if (isMounted) {
-          setStatus(data)
-        }
-      } catch {
-        if (isMounted) {
-          setStatus({
-            backend: 'offline',
-            database: 'unavailable',
-            kafka: 'unavailable',
-            xray: 'offline',
-            simulator: 'offline',
-          })
-        }
-      }
-    }
-    void checkStatus()
-    const interval = window.setInterval(checkStatus, 15000)
-    return () => {
-      isMounted = false
-      window.clearInterval(interval)
-    }
-  }, [])
-
   return (
     <BrowserRouter>
       <div className="min-h-screen bg-slate-950 text-slate-100">
@@ -64,30 +24,7 @@ function App() {
           <header className="mb-8 rounded-2xl border border-slate-800 bg-slate-900/80 p-5 shadow-lg shadow-slate-950/40">
             <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
               <div>
-                <div className="flex items-center gap-3">
-                  <p className="text-sm uppercase tracking-[0.22em] text-cyan-400">Facility Intelligence Copilot</p>
-                  <div className="flex items-center gap-2 rounded-full border border-slate-800 bg-slate-950/80 px-2.5 py-0.5 text-xs text-slate-300">
-                    <span className="flex items-center gap-1 font-mono">
-                      API <span className={status?.backend === 'healthy' ? 'text-emerald-400' : 'text-red-400'}>●</span>
-                    </span>
-                    <span className="text-slate-600">|</span>
-                    <span className="flex items-center gap-1 font-mono">
-                      Postgres <span className={status?.database === 'healthy' ? 'text-emerald-400' : 'text-slate-500'}>{status?.database === 'healthy' ? '●' : '○'}</span>
-                    </span>
-                    <span className="text-slate-600">|</span>
-                    <span className="flex items-center gap-1 font-mono">
-                      Kafka <span className={status?.kafka === 'healthy' ? 'text-emerald-400' : 'text-slate-500'}>{status?.kafka === 'healthy' ? '●' : '○'}</span>
-                    </span>
-                    <span className="text-slate-600">|</span>
-                    <span className="flex items-center gap-1 font-mono">
-                      Twin <span className="text-emerald-400">●</span>
-                    </span>
-                    <span className="text-slate-600">|</span>
-                    <span className="flex items-center gap-1 font-mono">
-                      X-Ray <span className={status?.xray === 'ready' ? 'text-cyan-400' : 'text-slate-500'}>●</span>
-                    </span>
-                  </div>
-                </div>
+                <p className="text-sm uppercase tracking-[0.22em] text-cyan-400">Facility Intelligence Copilot</p>
                 <h1 className="mt-2 text-3xl font-bold text-slate-100">Operations Intelligence</h1>
               </div>
 
@@ -110,7 +47,6 @@ function App() {
               </nav>
             </div>
           </header>
-
 
           <main className="space-y-6">
             <Routes>

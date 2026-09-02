@@ -165,65 +165,29 @@ function XRay() {
             <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
               <div className="flex items-center gap-2 text-cyan-300">
                 <Sparkles size={18} />
-                <p className="text-xs uppercase tracking-[0.2em]">Primary Root Cause</p>
+                <p className="text-xs uppercase tracking-[0.2em]">Root cause</p>
               </div>
               <h3 className="mt-4 text-2xl font-semibold text-slate-100">{investigation?.root_cause || 'Analyzing root cause...'}</h3>
-              {investigation?.inferred && investigation.inferred.length > 0 && (
-                <div className="mt-4 space-y-2 border-t border-slate-800 pt-4">
-                  <p className="text-xs uppercase tracking-wider text-slate-400">Inferred Physical Mechanism</p>
-                  {investigation.inferred.map((inf, i) => (
-                    <p key={i} className="text-sm text-cyan-200/90">{inf}</p>
-                  ))}
-                </div>
-              )}
             </div>
           </section>
-
-          {investigation?.observed && investigation.observed.length > 0 && (
-            <section className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
-              <div className="mb-3 flex items-center gap-2 text-cyan-400">
-                <Gauge size={18} />
-                <h3 className="text-lg font-semibold text-slate-100">OBSERVED TELEMETRY & PHYSICAL CONDITIONS</h3>
-              </div>
-              <div className="grid gap-2 md:grid-cols-2">
-                {investigation.observed.map((obs, idx) => (
-                  <div key={idx} className="rounded-xl border border-slate-800/80 bg-slate-950/60 p-3 text-sm text-slate-200">
-                    {obs}
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
 
           <section className="grid gap-6 xl:grid-cols-2">
             <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
               <div className="mb-4 flex items-center gap-2 text-emerald-300">
                 <ShieldCheck size={18} />
-                <h3 className="text-lg font-semibold text-slate-100">WHY WE THINK THIS (EVIDENCE)</h3>
+                <h3 className="text-lg font-semibold text-slate-100">WHY WE THINK THIS</h3>
               </div>
               <ul className="space-y-3 text-slate-200">
-                {investigation?.evidence?.map((item, index) => {
-                  const displayValue = item.current_value !== undefined
-                    ? (typeof item.current_value === 'number' ? item.current_value.toFixed(2) : String(item.current_value))
-                    : (item.value !== undefined ? String(item.value) : 'N/A');
-                  const displayBaseline = item.baseline !== undefined
-                    ? (typeof item.baseline === 'number' ? item.baseline.toFixed(2) : String(item.baseline))
-                    : null;
-                  return (
-                    <li key={index} className="flex items-start gap-3 rounded-xl border border-slate-800 bg-slate-950/40 p-3">
-                      <CheckCircle2 className="mt-0.5 text-emerald-400 shrink-0" size={16} />
-                      <div>
-                        <span className="font-semibold text-slate-100">{item.metric}: </span>
-                        <span className="text-slate-300">{item.interpretation}</span>
-                        <div className="text-xs text-slate-400 mt-1">
-                          Value: {displayValue}
-                          {displayBaseline !== null ? ` | Baseline: ${displayBaseline}` : ''}
-                          {item.expected_range ? ` | Expected: ${item.expected_range}` : ''}
-                        </div>
-                      </div>
-                    </li>
-                  );
-                })}
+                {investigation?.evidence?.map((item, index) => (
+                  <li key={index} className="flex items-start gap-3 rounded-xl border border-slate-800 bg-slate-950/40 p-3">
+                    <CheckCircle2 className="mt-0.5 text-emerald-400" size={16} />
+                    <div>
+                      <span className="font-semibold">{item.metric}: </span>
+                      <span>{item.interpretation}</span>
+                      <div className="text-xs text-slate-400 mt-1">Observed: {item.current_value.toFixed(2)} (Baseline: {item.baseline.toFixed(2)})</div>
+                    </div>
+                  </li>
+                ))}
                 {!investigation?.evidence?.length && (
                   <li className="text-slate-400 italic">No structured evidence available.</li>
                 )}
@@ -245,19 +209,6 @@ function XRay() {
               </ol>
             </div>
           </section>
-
-          {investigation?.alternative_causes && investigation.alternative_causes.length > 0 && (
-            <section className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
-              <h3 className="text-lg font-semibold text-slate-100 mb-3">ALTERNATIVE HYPOTHESES EVALUATED</h3>
-              <div className="space-y-2">
-                {investigation.alternative_causes.map((hyp, i) => (
-                  <div key={i} className="rounded-xl border border-slate-800/80 bg-slate-950/40 p-3 text-sm text-slate-300">
-                    {hyp}
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
 
           <section className="grid gap-6 lg:grid-cols-2 mt-6">
             <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
@@ -289,6 +240,5 @@ function XRay() {
     </div>
   );
 }
-
 
 export default XRay;
