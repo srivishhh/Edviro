@@ -1,0 +1,47 @@
+{
+  "airflow_restriction": {
+    "expected_root_cause_category": "airflow_restriction",
+    "required_evidence": [
+      "airflow below baseline",
+      "temperature above baseline",
+      "energy above baseline"
+    ],
+    "reasonable_recommendation": "Inspect filter, damper, and upstream airflow path before escalating to chiller equipment."
+  },
+  "high_energy": {
+    "expected_root_cause_category": "high_energy",
+    "required_evidence": [
+      "energy above baseline",
+      "airflow stable or reduced",
+      "temperature elevated or normal"
+    ],
+    "reasonable_recommendation": "Review load profile and equipment duty cycle for abnormal energy draw."
+  },
+  "high_temperature": {
+    "expected_root_cause_category": "high_temperature",
+    "required_evidence": [
+      "temperature above baseline",
+      "airflow not severely reduced",
+      "energy above baseline or normal"
+    ],
+    "reasonable_recommendation": "Inspect cooling loop and validate sensor accuracy before repair actions."
+  },
+  "pressure_anomaly": {
+    "expected_root_cause_category": "pressure_anomaly",
+    "required_evidence": [
+      "pressure above baseline",
+      "airflow reduced",
+      "temperature elevated or stable"
+    ],
+    "reasonable_recommendation": "Check for damper restriction, filter blockage, and pressure control instability."
+  },
+  "sensor_failure": {
+    "expected_root_cause_category": "sensor_failure",
+    "required_evidence": [
+      "sensor value loss or impossible range",
+      "airflow or temperature outside expected envelope",
+      "alert pattern inconsistent with normal operations"
+    ],
+    "reasonable_recommendation": "Validate sensor health, calibration, and connection integrity before acting on downstream asset conditions."
+  }
+}

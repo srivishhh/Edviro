@@ -1,0 +1,106 @@
+{
+  "timestamp": "2026-09-02T05:49:22.622493+00:00",
+  "test_run_id": "eval-1788328162",
+  "summary": {
+    "total_scenarios": 5,
+    "passed_scenarios": 5,
+    "overall_pass_rate": 100.0,
+    "average_xray_latency_sec": 0.0001,
+    "average_evidence_coverage_percent": 100.0,
+    "average_root_cause_accuracy_percent": 100.0,
+    "average_recommendation_quality": 1.0
+  },
+  "scenarios": {
+    "airflow_restriction": {
+      "scenario": "airflow_restriction",
+      "passed": true,
+      "xray_latency_sec": 0.0002,
+      "root_cause_accuracy": true,
+      "root_cause_predicted": "Airflow restriction due to clogged filter or restricted damper actuator in HVAC supply duct.",
+      "confidence": "High",
+      "evidence_count": 7,
+      "evidence_coverage_percent": 100.0,
+      "observed_count": 4,
+      "inferred_count": 2,
+      "alternative_hypotheses_count": 3,
+      "recommendation_quality": 1.0,
+      "recommended_actions": [
+        "Inspect and replace primary intake air filter on HVAC-007.",
+        "Check motorized damper actuator positioning and mechanical linkages.",
+        "Verify upstream chilled water supply temperature and flow from CHILLER-002."
+      ]
+    },
+    "high_energy": {
+      "scenario": "high_energy",
+      "passed": true,
+      "xray_latency_sec": 0.0001,
+      "root_cause_accuracy": true,
+      "root_cause_predicted": "High electrical load caused by compressor mechanical resistance or continuous full-duty operation.",
+      "confidence": "High",
+      "evidence_count": 7,
+      "evidence_coverage_percent": 100.0,
+      "observed_count": 2,
+      "inferred_count": 1,
+      "alternative_hypotheses_count": 2,
+      "recommendation_quality": 1.0,
+      "recommended_actions": [
+        "Inspect motor electrical current draw across all phases.",
+        "Check compressor oil level and suction/discharge pressure differentials."
+      ]
+    },
+    "high_temperature": {
+      "scenario": "high_temperature",
+      "passed": true,
+      "xray_latency_sec": 0.0001,
+      "root_cause_accuracy": true,
+      "root_cause_predicted": "High temperature condition caused by thermal exchange deficiency or reduced coolant flow.",
+      "confidence": "High",
+      "evidence_count": 7,
+      "evidence_coverage_percent": 100.0,
+      "observed_count": 1,
+      "inferred_count": 1,
+      "alternative_hypotheses_count": 2,
+      "recommendation_quality": 1.0,
+      "recommended_actions": [
+        "Inspect coolant control valve actuator position and chilled water supply temp.",
+        "Clean heat exchanger coils and check for bio-fouling."
+      ]
+    },
+    "pressure_anomaly": {
+      "scenario": "pressure_anomaly",
+      "passed": true,
+      "xray_latency_sec": 0.0001,
+      "root_cause_accuracy": true,
+      "root_cause_predicted": "Pressure anomaly from refrigerant or hydronic line throttling restriction.",
+      "confidence": "Medium",
+      "evidence_count": 7,
+      "evidence_coverage_percent": 100.0,
+      "observed_count": 1,
+      "inferred_count": 1,
+      "alternative_hypotheses_count": 2,
+      "recommendation_quality": 1.0,
+      "recommended_actions": [
+        "Check pressure regulating valves and pressure sensor calibration.",
+        "Inspect line filters and expansion valves for debris accumulation."
+      ]
+    },
+    "sensor_failure": {
+      "scenario": "sensor_failure",
+      "passed": true,
+      "xray_latency_sec": 0.0001,
+      "root_cause_accuracy": true,
+      "root_cause_predicted": "Telemetry sensor electrical disconnect or transducer hardware fault.",
+      "confidence": "High",
+      "evidence_count": 7,
+      "evidence_coverage_percent": 100.0,
+      "observed_count": 1,
+      "inferred_count": 1,
+      "alternative_hypotheses_count": 2,
+      "recommendation_quality": 1.0,
+      "recommended_actions": [
+        "Perform physical loop check and verify sensor terminal connections.",
+        "Test sensor transducer with reference multimeter / calibrator."
+      ]
+    }
+  }
+}
