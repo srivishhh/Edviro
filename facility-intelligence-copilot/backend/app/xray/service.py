@@ -90,6 +90,32 @@ class XRayService:
                 "Inspect coolant control valve actuator position and chilled water supply temp.",
                 "Clean heat exchanger coils and check for bio-fouling.",
             ]
+        elif alert_type == "CONDENSER_FOULING":
+            discharge_p = state.get("pressure", 24.5)
+            power_kw = state.get("energy_kw", 14.2)
+            supply_t = state.get("temperature", 22.0)
+            observed = [
+                f"OBSERVED: Compressor discharge head pressure elevated at {discharge_p:.1f} bar (baseline: 12.0-16.0 bar).",
+                f"OBSERVED: Electrical power demand surged to {power_kw:.1f} kW (expected baseline: 6.0-8.5 kW).",
+                f"OBSERVED: Heat rejection efficiency degraded with supply temperature operating at {supply_t:.1f}°C.",
+            ]
+            inferred = [
+                "INFERRED: Severe thermodynamic heat transfer resistance across exterior condenser coil fins.",
+                "INFERRED: Compressor forced to operate against high compression ratio and back-pressure, driving motor power over-consumption.",
+            ]
+            root_cause = "Condenser coil fouling with particulate accumulation on exterior heat exchanger fins inhibiting ambient heat rejection."
+            confidence = "High"
+            alternative_causes = [
+                "Hypothesis 1 (Primary - 86% confidence): Condenser coil fin fouling or debris accumulation causing elevated condensing pressure.",
+                "Hypothesis 2 (Secondary - 24% confidence): Non-condensable air contamination in refrigerant circuit.",
+                "Hypothesis 3 (Alternative - 14% confidence): Condenser fan motor speed reduction or blade damage.",
+            ]
+            recommended_actions = [
+                "Dispatch technician to physically inspect and wash condenser coils with non-acidic coil cleaner.",
+                "Verify condenser fan air velocity and fan motor current draw across all phases.",
+                "Measure liquid line refrigerant subcooling and discharge superheat post coil cleaning.",
+            ]
+
         elif alert_type == "PRESSURE_ANOMALY":
             observed = [
                 f"OBSERVED: System pressure measured at {state.get('pressure', 5.2)} bar (expected: 3.0-4.0 bar).",
@@ -107,6 +133,7 @@ class XRayService:
                 "Check pressure regulating valves and pressure sensor calibration.",
                 "Inspect line filters and expansion valves for debris accumulation.",
             ]
+
 
         elif alert_type == "SENSOR_FAILURE":
             observed = [

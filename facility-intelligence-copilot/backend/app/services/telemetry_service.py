@@ -67,7 +67,20 @@ class TelemetryService:
                 "anomaly_score": 0.71,
             })
 
-        if event.pressure > 4.2:
+        # Condenser Fouling detection (Real LBNL RTU pattern: high refrigerant discharge pressure + elevated power)
+        condenser_temp = event.raw_data.get("condenser_temp_c") if event.raw_data else None
+        if (event.pressure >= 18.0 and event.energy_kw >= 8.0) or (condenser_temp and condenser_temp >= 30.0 and event.pressure >= 16.0):
+            excess_p_ratio = max(0.0, (event.pressure - 16.0) / 15.0)
+            excess_energy_ratio = max(0.0, (event.energy_kw - 8.0) / 40.0)
+            calculated_score = round(min(0.96, 0.72 + (0.15 * excess_p_ratio) + (0.10 * excess_energy_ratio)), 2)
+            alerts.append({
+                "alert_type": "CONDENSER_FOULING",
+                "severity": "HIGH" if calculated_score >= 0.85 else "WARNING",
+                "message": f"Condenser fouling pattern detected: Elevated discharge head pressure ({event.pressure:.1f} bar) with high compressor power demand ({event.energy_kw:.1f} kW).",
+                "anomaly_score": calculated_score,
+            })
+
+        if event.pressure > 4.2 and event.pressure < 18.0:
             alerts.append({
                 "alert_type": "PRESSURE_ANOMALY",
                 "severity": "WARNING",
@@ -84,6 +97,7 @@ class TelemetryService:
             })
 
         return alerts
+
 
     def _update_asset_state(self, asset: Asset, event: TelemetryEvent) -> dict[str, Any]:
         latest = [event]

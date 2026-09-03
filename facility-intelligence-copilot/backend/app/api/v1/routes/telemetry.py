@@ -1,10 +1,13 @@
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy.orm import Session
 
 from app.core.auth import AuthenticatedUser, require_role
+from app.db.session import get_db
 from app.schemas.telemetry import TelemetryEvent
 from app.services.digital_twin import DigitalTwinService
+from app.services.telemetry_service import TelemetryService
 
 router = APIRouter()
 
@@ -141,9 +144,59 @@ def _readings_for_asset(asset_id: int) -> list[TelemetryEvent]:
 @router.post("/telemetry")
 def ingest_telemetry(
     payload: TelemetryEvent,
+    db: Session = Depends(get_db),
     user: AuthenticatedUser = Depends(require_role(["OPERATOR", "ADMIN"])),
 ):
-    return {"status": "accepted", "message": "Telemetry event validated and accepted for processing."}
+    # 1. Update in-memory TELEMETRY_LIBRARY for instant dashboard chart updates
+    if payload.asset_id not in TELEMETRY_LIBRARY:
+        TELEMETRY_LIBRARY[payload.asset_id] = []
+
+    event_dict = {
+        "event_id": payload.event_id,
+        "event_type": payload.event_type,
+        "asset_id": payload.asset_id,
+        "timestamp": payload.timestamp.isoformat().replace("+00:00", "Z") if hasattr(payload.timestamp, "isoformat") else str(payload.timestamp),
+        "temperature": payload.temperature,
+        "pressure": payload.pressure,
+        "airflow": payload.airflow,
+        "energy_kw": payload.energy_kw,
+    }
+    TELEMETRY_LIBRARY[payload.asset_id].append(event_dict)
+    if len(TELEMETRY_LIBRARY[payload.asset_id]) > 100:
+        TELEMETRY_LIBRARY[payload.asset_id] = TELEMETRY_LIBRARY[payload.asset_id][-100:]
+
+    # 2. Update in-memory TWIN_LIBRARY snapshot
+    if payload.asset_id in TWIN_LIBRARY:
+        TWIN_LIBRARY[payload.asset_id]["current_state"] = {
+            "temperature": payload.temperature,
+            "energy_kw": payload.energy_kw,
+            "pressure": payload.pressure,
+            "airflow": payload.airflow,
+        }
+        TWIN_LIBRARY[payload.asset_id]["last_updated"] = event_dict["timestamp"]
+
+    # 3. Process via TelemetryService for anomaly detection & alert generation
+    try:
+        service = TelemetryService(db)
+        result = service.process_event(payload)
+        return {
+            "status": "accepted",
+            "message": "Telemetry event validated and processed.",
+            "event_id": payload.event_id,
+            "asset_id": payload.asset_id,
+            "asset_status": result.get("status"),
+            "health_score": result.get("health_score"),
+            "alerts": result.get("alerts", []),
+        }
+    except Exception:
+        detected_anomalies = TelemetryService._detect_anomalies(payload)
+        return {
+            "status": "accepted",
+            "message": "Telemetry event validated and accepted for processing.",
+            "event_id": payload.event_id,
+            "asset_id": payload.asset_id,
+            "anomalies": detected_anomalies,
+        }
 
 
 @router.get("/assets/{asset_id}/telemetry")
@@ -154,7 +207,7 @@ def get_asset_telemetry(
     to: datetime | None = None,
     user: AuthenticatedUser = Depends(require_role(["VIEWER"])),
 ):
-    if asset_id not in ASSET_LIBRARY:
+    if asset_id not in ASSET_LIBRARY and asset_id not in TELEMETRY_LIBRARY:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Asset not found")
 
     readings = _readings_for_asset(asset_id)
@@ -163,7 +216,9 @@ def get_asset_telemetry(
     if to is not None:
         readings = [item for item in readings if item.timestamp <= to.astimezone(timezone.utc)]
 
-    ordered = sorted(readings, key=lambda item: item.timestamp)[:limit]
+    # Sort chronological and take the latest `limit` points
+    sorted_all = sorted(readings, key=lambda item: item.timestamp)
+    ordered = sorted_all[-limit:] if len(sorted_all) > limit else sorted_all
     return [
         {
             "timestamp": item.timestamp.isoformat().replace("+00:00", "Z"),
@@ -195,4 +250,3 @@ def get_twin_asset(
     if asset_id not in TWIN_LIBRARY:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Digital twin asset not found")
     return TWIN_LIBRARY[asset_id]
-

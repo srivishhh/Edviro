@@ -1,112 +1,186 @@
 import { useEffect, useState } from 'react';
-import { AlertTriangle, Gauge, Search, ShieldCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { getAlerts } from '../services/alerts';
-import type { Alert } from '../types/alert';
+import {
+  AlertCircle,
+  ArrowUpRight,
+  Clock,
+  Sparkles,
+} from 'lucide-react';
+import { getAlerts, updateAlertStatus } from '../services/alerts';
+import type { Alert } from '../types';
+import { SeverityBadge } from '../components/ui/SeverityBadge';
+import { LoadingState, EmptyState } from '../components/ui/States';
+import { useToast } from '../context/ToastContext';
 
-function Alerts() {
-    const [alerts, setAlerts] = useState<Alert[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
+export default function Alerts() {
+  const [alerts, setAlerts] = useState<Alert[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [severityFilter, setSeverityFilter] = useState<string>('ALL');
+  const [statusFilter, setStatusFilter] = useState<string>('ALL');
+  const { showToast } = useToast();
 
-    useEffect(() => {
-        let isActive = true;
-
-        const loadAlerts = async () => {
-            try {
-                const data = await getAlerts();
-                if (isActive) {
-                    setAlerts(data);
-                    setError('');
-                }
-            } catch (err) {
-                if (isActive) {
-                    setError(err instanceof Error ? err.message : 'Failed to load alerts.');
-                }
-            } finally {
-                if (isActive) {
-                    setLoading(false);
-                }
-            }
-        };
-
-        void loadAlerts();
-        return () => {
-            isActive = false;
-        };
-    }, []);
-
-    if (loading) {
-        return <div className="rounded-2xl border border-slate-800 bg-slate-900 p-8 text-slate-300">Loading alerts...</div>;
+  const loadAlerts = async (silent = false) => {
+    try {
+      if (!silent) setLoading(true);
+      const data = await getAlerts();
+      if (data && data.length > 0) {
+        setAlerts(data);
+      }
+    } catch {
+      // Fallback
+    } finally {
+      if (!silent) setLoading(false);
     }
+  };
 
-    if (error) {
-        return (
-            <div className="rounded-2xl border border-red-500/40 bg-red-500/10 p-8 text-red-200">
-                <p className="font-semibold">Unable to load alerts.</p>
-                <p className="mt-2 text-sm text-red-100/80">{error}</p>
-            </div>
-        );
+  useEffect(() => {
+    void loadAlerts(false);
+    const interval = setInterval(() => void loadAlerts(true), 2500);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
+  const handleStatusChange = async (alertId: number, newStatus: string) => {
+    try {
+      await updateAlertStatus(alertId, newStatus);
+      setAlerts((prev) =>
+        prev.map((a) => (a.id === alertId ? { ...a, status: newStatus } : a))
+      );
+      showToast('success', 'Incident Status Updated', `Alert #${alertId} marked as ${newStatus}.`);
+    } catch {
+      showToast('error', 'Update Failed', 'Could not update alert status.');
     }
+  };
 
-    return (
-        <div className="space-y-6">
-            <header className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
-                <div className="flex items-center gap-3">
-                    <AlertTriangle className="text-amber-500" size={24} />
-                    <h2 className="text-2xl font-semibold text-slate-100">Facility Alerts</h2>
-                </div>
-                <p className="mt-2 text-slate-400">Manage and investigate active facility anomalies.</p>
-            </header>
+  const filteredAlerts = alerts.filter((a) => {
+    const matchesSev = severityFilter === 'ALL' || a.severity.toUpperCase() === severityFilter;
+    const matchesStat = statusFilter === 'ALL' || a.status.toUpperCase() === statusFilter;
+    return matchesSev && matchesStat;
+  });
 
-            {alerts.length === 0 ? (
-                <div className="rounded-2xl border border-slate-800 bg-slate-900 p-8 text-center text-slate-400">
-                    <ShieldCheck className="mx-auto mb-3 text-emerald-500" size={32} />
-                    <p>No active alerts. Facility is operating normally.</p>
-                </div>
-            ) : (
-                <div className="grid gap-4">
-                    {alerts.map((alert) => (
-                        <div key={alert.id} className="flex flex-col gap-4 rounded-2xl border border-slate-800 bg-slate-900 p-5 md:flex-row md:items-center md:justify-between">
-                            <div className="space-y-2">
-                                <div className="flex items-center gap-3">
-                                    <span
-                                        className={`rounded-full px-2 py-1 text-xs font-semibold tracking-wide ${alert.severity === 'CRITICAL' ? 'bg-red-500/20 text-red-300 border border-red-500/30' :
-                                            alert.severity === 'WARNING' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' :
-                                                'bg-slate-700/50 text-slate-300 border border-slate-700'
-                                            }`}
-                                    >
-                                        {alert.severity}
-                                    </span>
-                                    <span className="text-lg font-semibold text-slate-200">{alert.alert_type.replace(/_/g, ' ')}</span>
-                                    <span className="rounded-full bg-slate-800 px-2 py-0.5 text-xs text-slate-400 uppercase">
-                                        Asset ID: {alert.asset_id}
-                                    </span>
-                                </div>
-                                <p className="text-slate-300">{alert.message}</p>
-                                <div className="flex items-center gap-4 text-xs text-slate-400">
-                                    <span className="flex items-center gap-1">
-                                        <Gauge size={14} /> Anomaly Score: {alert.anomaly_score.toFixed(2)}
-                                    </span>
-                                    <span>Detected: {new Date(alert.detected_at).toLocaleString()}</span>
-                                    <span>Status: {alert.status}</span>
-                                </div>
-                            </div>
-                            <div className="shrink-0 pt-2 md:pt-0">
-                                <Link
-                                    to={`/x-ray?asset_id=${alert.asset_id}&alert_id=${alert.id}`}
-                                    className="inline-flex items-center gap-2 rounded-xl bg-cyan-700/20 px-4 py-2 font-medium text-cyan-300 transition-colors hover:bg-cyan-600/30 border border-cyan-500/30"
-                                >
-                                    <Search size={16} />
-                                    INVESTIGATE WITH X-RAY
-                                </Link>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            )}
+  return (
+    <div className="space-y-8 animate-fadeIn">
+      {/* Header Banner */}
+      <div className="saas-card p-6 md:p-8 space-y-3 bg-white">
+        <div className="flex items-center gap-2 text-zinc-500">
+          <AlertCircle size={16} />
+          <span className="text-[10px] uppercase tracking-[0.2em] font-bold">Incident Stream</span>
         </div>
-    );
-}
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-zinc-950 editorial-title tracking-tight">
+          Facility Alerts & Anomaly Feed
+        </h1>
+        <p className="text-zinc-600 text-xs sm:text-sm max-w-2xl leading-relaxed">
+          Chronological event feed of real-time thermodynamic, physical airflow, and electrical anomalies detected across monitored facility infrastructure.
+        </p>
+      </div>
 
-export default Alerts;
+      {/* Filter Bar */}
+      <div className="saas-card p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        {/* Severity Filter Pills */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-zinc-400 text-xs font-mono">Severity:</span>
+          {['ALL', 'CRITICAL', 'HIGH', 'WARNING', 'INFO'].map((sev) => (
+            <button
+              key={sev}
+              onClick={() => setSeverityFilter(sev)}
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer ${
+                severityFilter === sev
+                  ? 'bg-zinc-900 text-white font-semibold'
+                  : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
+              }`}
+            >
+              {sev}
+            </button>
+          ))}
+        </div>
+
+        {/* Status Filter Pills */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-zinc-400 text-xs font-mono">Status:</span>
+          {['ALL', 'OPEN', 'ACKNOWLEDGED', 'RESOLVED'].map((stat) => (
+            <button
+              key={stat}
+              onClick={() => setStatusFilter(stat)}
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer ${
+                statusFilter === stat
+                  ? 'bg-zinc-900 text-white font-semibold'
+                  : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
+              }`}
+            >
+              {stat}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Alerts Feed List */}
+      <div className="space-y-4">
+        {loading ? (
+          <LoadingState message="Fetching live incident alert feed..." />
+        ) : filteredAlerts.length === 0 ? (
+          <EmptyState message="No incident alerts matching selected criteria." />
+        ) : (
+          filteredAlerts.map((alert) => (
+            <div
+              key={alert.id}
+              className="saas-card p-6 space-y-4 bg-white hover:border-zinc-300 transition-all"
+            >
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-100 pb-3">
+                <div className="flex items-center gap-2.5">
+                  <span className="font-mono text-xs font-bold text-zinc-900 bg-zinc-100 px-2 py-0.5 rounded border border-zinc-200">
+                    HVAC-{String(alert.asset_id).padStart(3, '0')}
+                  </span>
+                  <SeverityBadge severity={alert.severity} />
+                  <span className="text-zinc-400">&bull;</span>
+                  <span className="text-xs font-mono text-zinc-500">
+                    Anomaly Score: {(alert.anomaly_score * 100).toFixed(0)}%
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2 font-mono text-[11px] text-zinc-400">
+                  <Clock size={12} />
+                  <span>{alert.detected_at}</span>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-sm font-bold text-zinc-900 tracking-tight">
+                  {alert.alert_type.replace(/_/g, ' ')}
+                </h3>
+                <p className="text-xs text-zinc-600 mt-1 leading-relaxed">{alert.message}</p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
+                {/* State selector */}
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] text-zinc-400 font-mono">Status:</span>
+                  <select
+                    value={alert.status}
+                    onChange={(e) => void handleStatusChange(alert.id, e.target.value)}
+                    className="bg-zinc-50 border border-zinc-200 rounded-lg px-2.5 py-1 text-xs text-zinc-800 font-mono focus:outline-none focus:border-zinc-400 cursor-pointer"
+                  >
+                    <option value="OPEN">OPEN</option>
+                    <option value="ACKNOWLEDGED">ACKNOWLEDGED</option>
+                    <option value="RESOLVED">RESOLVED</option>
+                    <option value="DISMISSED">DISMISSED</option>
+                  </select>
+                </div>
+
+                <Link
+                  to={`/x-ray?asset_id=${alert.asset_id}&alert_id=${alert.id}`}
+                  className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-semibold transition-colors cursor-pointer self-start sm:self-auto"
+                >
+                  <Sparkles size={12} />
+                  <span>Causal X-Ray</span>
+                  <ArrowUpRight size={12} />
+                </Link>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}

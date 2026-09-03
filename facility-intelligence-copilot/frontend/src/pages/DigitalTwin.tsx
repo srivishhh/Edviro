@@ -1,163 +1,358 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Building2, ChevronRight, Activity, Gauge, Thermometer, Power, Wind } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import {
+  ArrowRight,
+  Boxes,
+  Layers,
+} from 'lucide-react';
 import { getTwinAssets } from '../services/twin';
-import type { TwinAsset } from '../types/twin';
+import { HealthBadge } from '../components/ui/SeverityBadge';
+import { LoadingState } from '../components/ui/States';
 
-function DigitalTwin() {
-  const [assets, setAssets] = useState<TwinAsset[]>([]);
-  const [selectedId, setSelectedId] = useState<number | null>(null);
+interface TopologyNode {
+  id: string;
+  name: string;
+  type: 'BUILDING' | 'FLOOR' | 'HVAC' | 'CHILLER' | 'HEAT_PUMP' | 'SENSOR' | 'ZONE';
+  health: number;
+  status: 'HEALTHY' | 'WARNING' | 'CRITICAL';
+  level: string;
+  connectedTo: string[];
+  metrics?: {
+    temp?: number;
+    power?: number;
+    flow?: number;
+    pressure?: number;
+  };
+}
+
+const INITIAL_TOPOLOGY_NODES: TopologyNode[] = [
+  {
+    id: 'FAC-001',
+    name: 'LBNL Facility Digital Twin',
+    type: 'BUILDING',
+    health: 91,
+    status: 'HEALTHY',
+    level: 'Campus Root',
+    connectedTo: ['FL-01', 'FL-02', 'FL-03'],
+  },
+  {
+    id: 'FL-01',
+    name: 'Floor 1 — Auditorium & Labs',
+    type: 'FLOOR',
+    health: 98,
+    status: 'HEALTHY',
+    level: 'Level 1',
+    connectedTo: ['HVAC-001', 'ZONE-101'],
+  },
+  {
+    id: 'FL-02',
+    name: 'Floor 2 — Mechanical & Zone Deck',
+    type: 'FLOOR',
+    health: 72,
+    status: 'WARNING',
+    level: 'Level 2',
+    connectedTo: ['HVAC-007', 'SENSOR-T02', 'ZONE-204'],
+  },
+  {
+    id: 'FL-03',
+    name: 'Floor 3 — Library & Server Room',
+    type: 'FLOOR',
+    health: 95,
+    status: 'HEALTHY',
+    level: 'Level 3',
+    connectedTo: ['HVAC-003', 'ZONE-301'],
+  },
+  {
+    id: 'HVAC-007',
+    name: 'LBNL RTU Rooftop Unit #7',
+    type: 'HVAC',
+    health: 68,
+    status: 'WARNING',
+    level: 'Mechanical Deck (L2)',
+    connectedTo: ['CHILLER-001', 'SENSOR-T02', 'ZONE-204'],
+    metrics: { temp: 16.1, power: 140.6, flow: 97.6, pressure: 31.5 },
+  },
+  {
+    id: 'HVAC-001',
+    name: 'Auditorium Ventilation Unit',
+    type: 'HVAC',
+    health: 97,
+    status: 'HEALTHY',
+    level: 'Mechanical Deck (L1)',
+    connectedTo: ['CHILLER-001', 'ZONE-101'],
+    metrics: { temp: 21.5, power: 4.8, flow: 96, pressure: 3.8 },
+  },
+  {
+    id: 'CHILLER-001',
+    name: 'Primary Water Chiller',
+    type: 'CHILLER',
+    health: 94,
+    status: 'HEALTHY',
+    level: 'Basement Central Plant',
+    connectedTo: ['HP-001', 'HVAC-007', 'HVAC-001'],
+    metrics: { temp: 7.2, power: 34.5, flow: 98, pressure: 6.2 },
+  },
+  {
+    id: 'HP-001',
+    name: 'Geothermal Heat Pump',
+    type: 'HEAT_PUMP',
+    health: 96,
+    status: 'HEALTHY',
+    level: 'Basement Central Plant',
+    connectedTo: ['CHILLER-001'],
+    metrics: { temp: 18.0, power: 18.2, flow: 92, pressure: 4.5 },
+  },
+  {
+    id: 'SENSOR-T02',
+    name: 'LBNL RTU Refrigerant & Head Transducer',
+    type: 'SENSOR',
+    health: 99,
+    status: 'HEALTHY',
+    level: 'RTU Circuit 1',
+    connectedTo: ['HVAC-007'],
+    metrics: { temp: 41.3, power: 0.1, flow: 97.6, pressure: 31.5 },
+  },
+  {
+    id: 'ZONE-204',
+    name: 'Conditioned Zone Block 204–210',
+    type: 'ZONE',
+    health: 82,
+    status: 'WARNING',
+    level: 'Floor 2 East Wing',
+    connectedTo: ['HVAC-007'],
+  },
+];
+
+export default function DigitalTwin() {
+  const [nodes, setNodes] = useState<TopologyNode[]>(INITIAL_TOPOLOGY_NODES);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [selectedNodeId, setSelectedNodeId] = useState<string>('HVAC-007');
+  const [filterType, setFilterType] = useState<string>('ALL');
 
   useEffect(() => {
-    let isMounted = true;
+    let isActive = true;
 
-    const load = async () => {
+    const loadTwin = async (silent = false) => {
       try {
-        const data = await getTwinAssets();
-        if (isMounted) {
-          setAssets(data);
-          setSelectedId((current) => current ?? data[0]?.asset_id ?? null);
-          setError('');
+        const twinAssets = await getTwinAssets();
+        if (isActive && twinAssets && twinAssets.length > 0) {
+          setNodes((prevNodes) =>
+            prevNodes.map((node) => {
+              if (node.id === 'HVAC-007') {
+                const asset7 = twinAssets.find((a) => a.asset_id === 7);
+                if (asset7 && asset7.current_state) {
+                  return {
+                    ...node,
+                    health: Math.round(asset7.health_score || node.health),
+                    status: (asset7.status?.toUpperCase() as any) || node.status,
+                    metrics: {
+                      temp: asset7.current_state.temperature,
+                      power: asset7.current_state.energy_kw,
+                      flow: asset7.current_state.airflow,
+                      pressure: asset7.current_state.pressure,
+                    },
+                  };
+                }
+              }
+              return node;
+            })
+          );
         }
-      } catch (err) {
-        if (isMounted) {
-          setError(err instanceof Error ? err.message : 'Unable to load digital twin state.');
-        }
+      } catch {
+        // Fallback gracefully
       } finally {
-        if (isMounted) {
+        if (isActive && !silent) {
           setLoading(false);
         }
       }
     };
 
-    void load();
+    void loadTwin(false);
+    const interval = setInterval(() => void loadTwin(true), 3000);
+
     return () => {
-      isMounted = false;
+      isActive = false;
+      clearInterval(interval);
     };
   }, []);
 
-  const selectedAsset = useMemo(
-    () => assets.find((asset) => asset.asset_id === selectedId) ?? assets[0] ?? null,
-    [assets, selectedId],
-  );
+  const selectedNode = nodes.find((n) => n.id === selectedNodeId) || nodes[4];
 
   if (loading) {
-    return <div className="rounded-2xl border border-slate-800 bg-slate-900 p-8 text-slate-300">Loading digital twin...</div>;
+    return <LoadingState message="Constructing Digital Twin Graph Topology..." />;
   }
 
-  if (error) {
-    return (
-      <div className="rounded-2xl border border-red-500/40 bg-red-500/10 p-8 text-red-200">
-        <p className="font-semibold">Unable to load digital twin state.</p>
-        <p className="mt-2 text-sm text-red-100/80">Check that the FastAPI backend is running.</p>
-      </div>
-    );
-  }
+  const filteredNodes = nodes.filter(
+    (n) => filterType === 'ALL' || n.type === filterType
+  );
 
   return (
-    <div className="space-y-6">
-      <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
-        <div className="flex items-center gap-3 text-cyan-300">
-          <Building2 size={18} />
-          <p className="text-sm uppercase tracking-[0.2em]">BUILDING A</p>
+    <div className="space-y-8 animate-fadeIn">
+      {/* Header Banner */}
+      <div className="saas-card p-6 md:p-8 space-y-3 bg-white">
+        <div className="flex items-center gap-2 text-zinc-500">
+          <Boxes size={16} />
+          <span className="text-[10px] uppercase tracking-[0.2em] font-bold">Thermodynamic Spatial Graph</span>
         </div>
-        <div className="mt-4 grid gap-4 md:grid-cols-3">
-          {[
-            { title: 'Floor 1', items: assets.filter((asset) => asset.asset_id === 1) },
-            { title: 'Floor 2', items: assets.filter((asset) => asset.asset_id === 7 || asset.asset_id === 9) },
-            { title: 'Floor 3', items: assets.filter((asset) => asset.asset_id === 8) },
-          ].map((floor) => (
-            <div key={floor.title} className="rounded-xl border border-slate-800 bg-slate-950/40 p-4">
-              <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-300">{floor.title}</p>
-              <div className="space-y-2">
-                {floor.items.length === 0 ? (
-                  <p className="text-sm text-slate-500">No assets</p>
-                ) : (
-                  floor.items.map((asset) => (
-                    <button
-                      key={asset.asset_id}
-                      type="button"
-                      onClick={() => setSelectedId(asset.asset_id)}
-                      className={`flex w-full items-center justify-between rounded-lg border px-3 py-2 text-left text-sm transition ${
-                        selectedAsset?.asset_id === asset.asset_id
-                          ? 'border-cyan-500/60 bg-cyan-500/10 text-cyan-100'
-                          : 'border-slate-700 bg-slate-900 text-slate-200 hover:border-slate-600'
-                      }`}
-                    >
-                      <span>{`HVAC-${asset.asset_id}`}</span>
-                      <ChevronRight size={14} />
-                    </button>
-                  ))
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-zinc-950 editorial-title tracking-tight">
+          Digital Twin Topology
+        </h1>
+        <p className="text-zinc-600 text-xs sm:text-sm max-w-2xl leading-relaxed">
+          Interactive dependency network connecting building zones, HVAC equipment, central chillers, and telemetry sensor nodes with live cross-stream validation.
+        </p>
       </div>
 
-      {selectedAsset ? (
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
-          <div className="mb-5 flex items-center justify-between">
-            <div>
-              <p className="text-sm uppercase tracking-[0.2em] text-cyan-400">Digital Twin</p>
-              <h3 className="mt-2 text-3xl font-semibold text-slate-100">HVAC-{selectedAsset.asset_id}</h3>
-            </div>
-            <span className="rounded-full border border-slate-700 px-3 py-1 text-xs uppercase tracking-wide text-slate-200">
-              {selectedAsset.status}
-            </span>
-          </div>
+      {/* Filter Category Pills */}
+      <div className="flex items-center gap-2 flex-wrap">
+        {['ALL', 'BUILDING', 'FLOOR', 'HVAC', 'CHILLER', 'HEAT_PUMP', 'SENSOR', 'ZONE'].map((type) => (
+          <button
+            key={type}
+            onClick={() => setFilterType(type)}
+            className={`px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer ${
+              filterType === type
+                ? 'bg-zinc-900 text-white font-semibold'
+                : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
+            }`}
+          >
+            {type.replace('_', ' ')}
+          </button>
+        ))}
+      </div>
 
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {[
-              { label: 'Health', value: `${selectedAsset.health_score}`, icon: Activity },
-              { label: 'Temperature', value: `${selectedAsset.current_state.temperature.toFixed(1)}°C`, icon: Thermometer },
-              { label: 'Energy', value: `${selectedAsset.current_state.energy_kw.toFixed(1)} kW`, icon: Power },
-              { label: 'Pressure', value: `${selectedAsset.current_state.pressure.toFixed(1)} bar`, icon: Gauge },
-            ].map(({ label, value, icon: Icon }) => (
-              <div key={label} className="rounded-xl border border-slate-800 bg-slate-950/40 p-4">
-                <div className="flex items-center justify-between text-slate-400">
-                  <span className="text-xs uppercase tracking-wide">{label}</span>
-                  <Icon size={16} className="text-cyan-300" />
+      {/* Main Split Layout: Left Node Grid / Right Live Inspector */}
+      <div className="grid gap-6 lg:grid-cols-3">
+        {/* Left: Interactive Topology Nodes */}
+        <div className="lg:col-span-2 grid gap-4 sm:grid-cols-2">
+          {filteredNodes.map((node) => {
+            const isSelected = selectedNode.id === node.id;
+            return (
+              <div
+                key={node.id}
+                onClick={() => setSelectedNodeId(node.id)}
+                className={`saas-card p-5 cursor-pointer transition-all space-y-3 ${
+                  isSelected
+                    ? 'border-zinc-900 ring-2 ring-zinc-900/10 shadow-md bg-white'
+                    : 'hover:border-zinc-300 bg-zinc-50/50'
+                }`}
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="space-y-0.5">
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-xs font-bold text-zinc-900 bg-zinc-100 px-2 py-0.5 rounded border border-zinc-200">
+                        {node.id}
+                      </span>
+                      <span className="text-[10px] uppercase font-bold text-zinc-400">{node.type}</span>
+                    </div>
+                    <h3 className="text-sm font-bold text-zinc-900">{node.name}</h3>
+                  </div>
+
+                  <HealthBadge score={node.health} />
                 </div>
-                <p className="mt-4 text-2xl font-semibold text-slate-100">{value}</p>
-              </div>
-            ))}
-          </div>
 
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
-            <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-4">
-              <div className="mb-3 flex items-center gap-2 text-cyan-300">
-                <Wind size={16} />
-                <span className="text-sm uppercase tracking-wide">Airflow</span>
-              </div>
-              <p className="text-2xl font-semibold text-slate-100">{selectedAsset.current_state.airflow.toFixed(0)}%</p>
-            </div>
-            <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-4">
-              <div className="mb-3 flex items-center gap-2 text-cyan-300">
-                <Gauge size={16} />
-                <span className="text-sm uppercase tracking-wide">Last Updated</span>
-              </div>
-              <p className="text-base font-medium text-slate-100">{new Date(selectedAsset.last_updated).toLocaleString()}</p>
-            </div>
-          </div>
+                <div className="text-xs text-zinc-500 font-mono">{node.level}</div>
 
-          <div className="mt-6 rounded-xl border border-slate-800 bg-slate-950/40 p-4">
-            <h4 className="text-lg font-semibold text-slate-100">RELATIONSHIPS</h4>
-            <div className="mt-4 space-y-3">
-              {selectedAsset.relationships.map((relationship) => (
-                <div key={`${relationship.type}-${relationship.target}`} className="flex items-center gap-3 rounded-lg border border-slate-800 bg-slate-900 px-3 py-2 text-sm text-slate-200">
-                  <span className="min-w-28 text-xs uppercase tracking-wide text-slate-400">{relationship.type}</span>
-                  <ChevronRight size={14} className="text-slate-500" />
-                  <span>{relationship.target}</span>
+                {node.metrics && (
+                  <div className="grid grid-cols-3 gap-2 pt-2 border-t border-zinc-100 text-center font-mono">
+                    <div className="bg-zinc-50 rounded-lg p-1.5 border border-zinc-100">
+                      <span className="text-[10px] text-zinc-400 block">Temp</span>
+                      <span className="text-xs font-bold text-zinc-800">{node.metrics.temp}°C</span>
+                    </div>
+                    <div className="bg-zinc-50 rounded-lg p-1.5 border border-zinc-100">
+                      <span className="text-[10px] text-zinc-400 block">Power</span>
+                      <span className="text-xs font-bold text-zinc-800">{node.metrics.power}kW</span>
+                    </div>
+                    <div className="bg-zinc-50 rounded-lg p-1.5 border border-zinc-100">
+                      <span className="text-[10px] text-zinc-400 block">Flow</span>
+                      <span className="text-xs font-bold text-zinc-800">{node.metrics.flow}%</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Right: Live Selected Node Graph Inspector */}
+        <div className="lg:col-span-1 space-y-6">
+          <div className="saas-card p-6 space-y-5 bg-white sticky top-6">
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-4">
+              <div className="space-y-1">
+                <span className="text-[10px] uppercase font-mono font-bold text-zinc-400">Node Inspector</span>
+                <h3 className="text-lg font-bold text-zinc-900">{selectedNode.name}</h3>
+              </div>
+              <HealthBadge score={selectedNode.health} />
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <div className="flex items-center justify-between py-1.5 border-b border-zinc-100">
+                <span className="text-zinc-500 font-mono">Identifier:</span>
+                <span className="font-mono font-bold text-zinc-900">{selectedNode.id}</span>
+              </div>
+              <div className="flex items-center justify-between py-1.5 border-b border-zinc-100">
+                <span className="text-zinc-500 font-mono">Classification:</span>
+                <span className="font-semibold text-zinc-800">{selectedNode.type}</span>
+              </div>
+              <div className="flex items-center justify-between py-1.5 border-b border-zinc-100">
+                <span className="text-zinc-500 font-mono">Location Deck:</span>
+                <span className="text-zinc-800 font-mono">{selectedNode.level}</span>
+              </div>
+              <div className="flex items-center justify-between py-1.5 border-b border-zinc-100">
+                <span className="text-zinc-500 font-mono">Operating Status:</span>
+                <span className={`font-mono font-bold ${
+                  selectedNode.status === 'HEALTHY' ? 'text-emerald-700' : 'text-amber-700'
+                }`}>
+                  {selectedNode.status}
+                </span>
+              </div>
+            </div>
+
+            {selectedNode.metrics && (
+              <div className="space-y-2 pt-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block">
+                  Live Sensor Stream
+                </span>
+                <div className="grid grid-cols-2 gap-2 font-mono">
+                  <div className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-200">
+                    <span className="text-[10px] text-zinc-500 block">Temperature</span>
+                    <span className="text-sm font-bold text-zinc-900">{selectedNode.metrics.temp}°C</span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-200">
+                    <span className="text-[10px] text-zinc-500 block">Power Demand</span>
+                    <span className="text-sm font-bold text-zinc-900">{selectedNode.metrics.power} kW</span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-200">
+                    <span className="text-[10px] text-zinc-500 block">Airflow Velocity</span>
+                    <span className="text-sm font-bold text-zinc-900">{selectedNode.metrics.flow}%</span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-200">
+                    <span className="text-[10px] text-zinc-500 block">Head Pressure</span>
+                    <span className="text-sm font-bold text-zinc-900">{selectedNode.metrics.pressure || 3.8} bar</span>
+                  </div>
                 </div>
-              ))}
+              </div>
+            )}
+
+            <div className="space-y-2.5 pt-2">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block">
+                Topological Dependencies
+              </span>
+              <div className="space-y-1.5">
+                {selectedNode.connectedTo.map((target) => (
+                  <div
+                    key={target}
+                    className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-200/80 flex items-center justify-between text-xs font-mono text-zinc-700"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Layers size={13} className="text-zinc-400" />
+                      <span>{target}</span>
+                    </div>
+                    <ArrowRight size={12} className="text-zinc-400" />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
-      ) : null}
+      </div>
     </div>
   );
 }
-
-export default DigitalTwin;
