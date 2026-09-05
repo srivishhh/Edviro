@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   ArrowRight,
   Boxes,
   Layers,
+  Network,
+  SlidersHorizontal,
 } from 'lucide-react';
 import { getTwinAssets } from '../services/twin';
 import { HealthBadge } from '../components/ui/SeverityBadge';
@@ -349,6 +352,24 @@ export default function DigitalTwin() {
                   </div>
                 ))}
               </div>
+            </div>
+
+            <div className="pt-2 space-y-2">
+              <Link
+                to={`/incident-graph?incident_id=101`}
+                className="w-full py-2.5 px-4 rounded-xl bg-cyan-950 hover:bg-cyan-900 border border-cyan-700/80 text-cyan-200 text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer transition-colors shadow-2xs"
+              >
+                <Network size={14} />
+                <span>View Incident Relationships</span>
+              </Link>
+
+              <Link
+                to={`/what-if?assetId=${selectedNode.id}`}
+                className="w-full py-2.5 px-4 rounded-xl bg-zinc-950 hover:bg-zinc-800 text-white text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer transition-colors shadow-2xs"
+              >
+                <SlidersHorizontal size={14} />
+                <span>Simulate Operational Changes</span>
+              </Link>
             </div>
           </div>
         </div>

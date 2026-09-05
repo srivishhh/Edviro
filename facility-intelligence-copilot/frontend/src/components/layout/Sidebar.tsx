@@ -7,6 +7,8 @@ import {
   ChevronDown,
   Gauge,
   LayoutDashboard,
+  Network,
+  SlidersHorizontal,
   Sparkles,
   Workflow,
 } from 'lucide-react';
@@ -23,9 +25,11 @@ const NAV_ITEMS = [
   { label: 'Assets', to: '/assets', icon: Building2 },
   { label: 'Digital Twin', to: '/digital-twin', icon: Boxes },
   { label: 'Alerts', to: '/alerts', icon: AlertCircle, hasBadge: true },
+  { label: 'Incident Graph', to: '/incident-graph', icon: Network },
   { label: 'Facility X-Ray', to: '/x-ray', icon: Gauge },
   { label: 'Facility Memory', to: '/facility-memory', icon: Brain },
   { label: 'AI Workbench', to: '/sns-workbench', icon: Workflow },
+  { label: 'What-If Simulator', to: '/what-if', icon: SlidersHorizontal },
 ];
 
 export function Sidebar({ status, alertCount = 2 }: SidebarProps) {

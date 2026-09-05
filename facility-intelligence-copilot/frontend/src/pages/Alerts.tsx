@@ -4,6 +4,7 @@ import {
   AlertCircle,
   ArrowUpRight,
   Clock,
+  Network,
   Sparkles,
 } from 'lucide-react';
 import { getAlerts, updateAlertStatus } from '../services/alerts';
@@ -168,14 +169,24 @@ export default function Alerts() {
                   </select>
                 </div>
 
-                <Link
-                  to={`/x-ray?asset_id=${alert.asset_id}&alert_id=${alert.id}`}
-                  className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-semibold transition-colors cursor-pointer self-start sm:self-auto"
-                >
-                  <Sparkles size={12} />
-                  <span>Causal X-Ray</span>
-                  <ArrowUpRight size={12} />
-                </Link>
+                <div className="flex items-center gap-2 self-start sm:self-auto">
+                  <Link
+                    to={`/incident-graph?incident_id=${alert.id}`}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-cyan-50 hover:bg-cyan-100 border border-cyan-300 text-cyan-950 text-xs font-semibold transition-colors cursor-pointer"
+                  >
+                    <Network size={12} className="text-cyan-700" />
+                    <span>Relationship Graph</span>
+                  </Link>
+
+                  <Link
+                    to={`/x-ray?asset_id=${alert.asset_id}&alert_id=${alert.id}`}
+                    className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-semibold transition-colors cursor-pointer"
+                  >
+                    <Sparkles size={12} />
+                    <span>Causal X-Ray</span>
+                    <ArrowUpRight size={12} />
+                  </Link>
+                </div>
               </div>
             </div>
           ))

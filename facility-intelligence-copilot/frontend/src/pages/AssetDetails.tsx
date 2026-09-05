@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, SlidersHorizontal } from 'lucide-react';
 import { getAsset } from '../services/assets';
 import { getAssetTelemetry } from '../services/telemetry';
 import type { Asset, TelemetryPoint } from '../types';
@@ -93,6 +93,13 @@ export default function AssetDetails() {
           </div>
 
           <div className="flex items-center gap-3">
+            <Link
+              to={`/what-if?assetId=${asset.asset_code}`}
+              className="px-3.5 py-1.5 rounded-full bg-zinc-950 hover:bg-zinc-800 text-white text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-colors shadow-2xs"
+            >
+              <SlidersHorizontal size={13} />
+              <span>Simulate</span>
+            </Link>
             <HealthBadge score={asset.health_score} />
             <StatusIndicator status={asset.status} />
           </div>

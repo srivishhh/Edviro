@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import {
   Gauge,
   Loader2,
+  Network,
   Radio,
   Sparkles,
 } from 'lucide-react';
@@ -126,11 +127,19 @@ export default function XRay() {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
+          <Link
+            to={`/incident-graph?incident_id=${investigation?.alert_id || 101}`}
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-cyan-950 hover:bg-cyan-900 border border-cyan-700/80 text-cyan-200 font-semibold transition-all text-xs cursor-pointer shadow-2xs"
+          >
+            <Network size={13} />
+            <span>Incident Graph</span>
+          </Link>
+
           <button
             onClick={runInvestigation}
             disabled={loading}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-zinc-950 text-white font-semibold hover:bg-zinc-800 transition-all text-xs cursor-pointer shadow-sm disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-zinc-950 text-white font-semibold hover:bg-zinc-800 transition-all text-xs cursor-pointer shadow-sm disabled:opacity-50"
           >
             {loading ? <Loader2 size={13} className="animate-spin" /> : <Sparkles size={13} />}
             <span>Re-Run Investigation</span>
@@ -139,7 +148,7 @@ export default function XRay() {
           <button
             onClick={handleDispatchToSNS}
             disabled={dispatching}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 text-zinc-800 font-semibold transition-all text-xs cursor-pointer disabled:opacity-50 shadow-2xs"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 text-zinc-800 font-semibold transition-all text-xs cursor-pointer disabled:opacity-50 shadow-2xs"
           >
             {dispatching ? <Loader2 size={13} className="animate-spin" /> : <Radio size={13} />}
             <span>Dispatch to SNS</span>

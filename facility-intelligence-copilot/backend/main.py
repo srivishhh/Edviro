@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
 
-from app.api.v1.routes import alerts, assets, integrations, sensors, telemetry, xray
+from app.api.v1.routes import alerts, assets, incident_graph, integrations, sensors, telemetry, whatif, xray
 from app.core.config import settings
 from app.core.middleware import CorrelationIdMiddleware, SecurityHeadersMiddleware
 from app.db.database import SessionLocal
@@ -94,6 +94,10 @@ app.include_router(telemetry.router, prefix="/api/v1", tags=["telemetry"])
 app.include_router(alerts.router, prefix="/api/v1", tags=["alerts"])
 app.include_router(xray.router, prefix="/api/v1", tags=["xray"])
 app.include_router(integrations.router, prefix="/api/v1", tags=["integrations"])
+app.include_router(whatif.router, prefix="/api/v1", tags=["whatif"])
+app.include_router(whatif.router, prefix="/api", tags=["whatif"])
+app.include_router(incident_graph.router, prefix="/api/v1", tags=["incident-graph"])
+app.include_router(incident_graph.router, prefix="/api", tags=["incident-graph"])
 
 
 # 5. Public Health & System Status Endpoints

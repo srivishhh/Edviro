@@ -47,3 +47,24 @@
 .animate-fadeIn {
   animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+@keyframes airflow {
+  from {
+    stroke-dashoffset: 24;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-flow {
+  animation: airflow 1.4s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-flow,
+  .animate-pulse,
+  .animate-bounce {
+    animation: none !important;
+  }
+}

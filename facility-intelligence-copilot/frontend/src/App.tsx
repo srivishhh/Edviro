@@ -10,6 +10,8 @@ import Alerts from './pages/Alerts';
 import XRay from './pages/XRay';
 import FacilityMemory from './pages/FacilityMemory';
 import SNSWorkbench from './pages/SNSWorkbench';
+import WhatIf from './pages/WhatIf';
+import IncidentGraph from './pages/IncidentGraph';
 
 export default function App() {
   const systemStatus = {
@@ -39,9 +41,11 @@ export default function App() {
                 <Route path="/assets/:assetId" element={<AssetDetails />} />
                 <Route path="/digital-twin" element={<DigitalTwin />} />
                 <Route path="/alerts" element={<Alerts />} />
+                <Route path="/incident-graph" element={<IncidentGraph />} />
                 <Route path="/facility-memory" element={<FacilityMemory />} />
                 <Route path="/x-ray" element={<XRay />} />
                 <Route path="/sns-workbench" element={<SNSWorkbench />} />
+                <Route path="/what-if" element={<WhatIf />} />
               </Routes>
             </main>
           </div>
