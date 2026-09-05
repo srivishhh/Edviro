@@ -185,7 +185,7 @@ export default function WhatIf() {
         scenario_preset: 'Scenario B (High Flow Target)',
       });
       setScenarioBResult(res);
-    } catch (err) {
+    } catch {
       // Ignore
     } finally {
       setSimulatingB(false);
