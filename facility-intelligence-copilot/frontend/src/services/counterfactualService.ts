@@ -7,6 +7,17 @@ export interface ConstraintViolation {
   severity: string;
 }
 
+export interface SafetyResult {
+  status: 'PASS' | 'FAIL';
+  violations: ConstraintViolation[];
+}
+
+
+export interface ResolutionResult {
+  status: 'RESOLVES_ISSUE' | 'DOES_NOT_RESOLVE' | 'UNSAFE' | 'NEEDS_REVIEW';
+  evidence: string[];
+}
+
 export interface CounterfactualCandidate {
   candidate_id: string;
   title: string;
@@ -21,6 +32,8 @@ export interface CounterfactualCandidate {
     delta_sa_cfm?: number;
     [key: string]: number | undefined;
   };
+  safety?: SafetyResult;
+  resolution?: ResolutionResult;
   violations: ConstraintViolation[];
   energy_saved_kw: number;
   energy_saved_pct: number;
@@ -50,9 +63,12 @@ export interface ActiveIncidentResponse {
     candidates_evaluated: number;
     winning_candidate: CounterfactualCandidate | null;
     all_candidates: CounterfactualCandidate[];
+    status?: string;
+    reason?: string;
   };
   last_updated: string;
 }
+
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? import.meta.env.VITE_API_URL ?? '';
 

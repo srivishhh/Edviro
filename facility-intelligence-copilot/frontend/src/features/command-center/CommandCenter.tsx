@@ -10,7 +10,6 @@ import { ActiveAlertTile } from './tiles/ActiveAlertTile';
 import { AIInvestigationTile } from './tiles/AIInvestigationTile';
 import { CounterfactualSimulationTile } from './tiles/CounterfactualSimulationTile';
 import { FacilityXRayTile } from './tiles/FacilityXRayTile';
-import { TechnicianTile } from './tiles/TechnicianTile';
 import { RagAssistantTile } from './tiles/RagAssistantTile';
 import { RagAssistant } from '../rag/RagAssistant';
 import { SNSResultModal } from './SNSResultModal';
@@ -46,17 +45,13 @@ const CommandCenter: React.FC = () => {
           {/* Row 3: GSENSE 3.0 Counterfactual Intelligence & Solution Verification (4 cols) */}
           <CounterfactualSimulationTile />
 
-          {/* Row 4: AI Investigation (1 col), Facility X-Ray Diagnosis (2 cols), RAG Assistant (1 col) */}
+          {/* Row 4: AI Investigation (1 col), Facility X-Ray Diagnosis (2 cols), Knowledge RAG (1 col) */}
           <AIInvestigationTile onOpenResult={() => handleOpenSNSResult('sns')} />
           <FacilityXRayTile onOpenResult={() => handleOpenSNSResult('combined')} />
           <RagAssistantTile onOpen={() => setIsRagOpen(true)} />
-
-          {/* Row 5: Technician Performance & Wallet Overview (spanning 4 cols) */}
-          <div className="col-span-1 md:col-span-2 lg:col-span-4">
-            <TechnicianTile />
-          </div>
         </BentoGrid>
       </main>
+
 
       <RagAssistant isOpen={isRagOpen} onClose={() => setIsRagOpen(false)} />
       <SNSResultModal

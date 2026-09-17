@@ -113,6 +113,91 @@ def apply_actuation(
     }
 
 
+@router.post("/{incident_id}/investigate")
+def investigate_incident(
+    incident_id: str,
+    payload: Optional[Dict[str, Any]] = Body(default=None)
+) -> Dict[str, Any]:
+    """
+    Executes complete GSENSE 3.0 workflow:
+    Incident -> SNS Workbench (3.0 GSense) -> Candidate Actions -> Digital Twin Virtual Simulations -> Safety & Resolution Verification -> Validated Technician Output
+    """
+    from app.integrations.sns_workbench import SNSWorkbenchClient
+
+    payload = payload or {}
+    asset_id = payload.get("asset_id", "AHU-007")
+    twin_service = DigitalTwinService.get_instance()
+    state = twin_service.get_state(asset_id)
+    
+    if not state:
+        raw = {
+            "oa_temp": 32.5, "ra_temp": 24.2, "ma_temp": 29.8, "sa_temp": 21.0,
+            "zone_temp": 25.8, "oa_dmpr": 85.0, "chwc_vlv": 95.0, "sf_spd": 80.0,
+            "sa_cfm": 2450.0, "sa_sp": 1.6, "power": 14.2
+        }
+        state = twin_service.process_telemetry_frame(asset_id, raw)
+
+    detected_fault = payload.get("detected_fault", state.fault_diagnosis)
+    current_telemetry = payload.get("current_telemetry", state.current_telemetry)
+
+    # 1. Execute SNS 3.0 Workbench workflow
+    sns_client = SNSWorkbenchClient()
+    sns_result = sns_client.generate_fault_candidates(
+        incident_id=incident_id,
+        asset_id=asset_id,
+        detected_fault=detected_fault,
+        current_state=current_telemetry,
+        actuators={
+            "oa_dmpr": current_telemetry.get("oa_dmpr", 25.0),
+            "chwc_vlv": current_telemetry.get("chwc_vlv", 35.0),
+            "sf_spd": current_telemetry.get("sf_spd", 70.0),
+            "hw_vlv": current_telemetry.get("hw_vlv", 0.0),
+        },
+    )
+
+    # 2. Package SNS candidate into simulation engine
+    cf_engine = CounterfactualEngine.get_instance()
+    candidate_actions_list = sns_result.get("candidate_actions", [])
+    primary_candidate_action = candidate_actions_list[0] if candidate_actions_list else {}
+    sns_proposed = {
+        "title": f"SNS 3.0 Proposed Action ({primary_candidate_action.get('target', 'Actuator')})",
+        "description": primary_candidate_action.get("reason", "SNS 3.0 AI Candidate"),
+        "interventions": {
+            a["target"]: a["proposed_value"]
+            for a in candidate_actions_list
+            if "target" in a and "proposed_value" in a
+        },
+        "rationale": primary_candidate_action.get("reason", "Cognitive candidate from 3.0 GSense workflow"),
+    }
+
+    # 3. Simulate and Validate in Digital Twin
+    evaluation_res = cf_engine.evaluate_facility_state(
+        asset_id=asset_id,
+        current_telemetry=current_telemetry,
+        fault_diagnosis=detected_fault,
+        incident_id=incident_id,
+        sns_proposed_plan=sns_proposed,
+    )
+
+    return {
+        "incident_id": incident_id,
+        "detected_fault": detected_fault,
+        "sns": {
+            "workflow_name": sns_result.get("workflow_name", "3.0 GSense"),
+            "workflow_id": sns_result.get("workflow_id"),
+            "execution_id": sns_result.get("execution_id"),
+            "status": sns_result.get("status", "COMPLETED"),
+            "candidate_count": len(candidate_actions_list),
+            "candidate_actions": candidate_actions_list,
+        },
+        "simulations": [c.model_dump() for c in evaluation_res.all_candidates],
+        "validated_intervention": evaluation_res.winning_candidate.model_dump() if evaluation_res.winning_candidate else None,
+        "status": evaluation_res.status,
+        "reason": evaluation_res.reason,
+    }
+
+
 @router.get("/actuation/history")
 def get_actuation_history() -> List[Dict[str, Any]]:
     return _actuation_history
+

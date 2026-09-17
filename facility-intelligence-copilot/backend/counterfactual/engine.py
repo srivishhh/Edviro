@@ -59,20 +59,46 @@ class CounterfactualEngine:
         # 2. Simulate & Evaluate each candidate
         for cand in candidates:
             try:
+                branch_state = canonical_telemetry.copy()
                 sim_out = self.simulator.simulate_candidate(
-                    current_state=canonical_telemetry,
+                    current_state=branch_state,
                     candidate=cand,
                 )
                 eval_res = CounterfactualEvaluator.evaluate(
-                    current_state=canonical_telemetry,
+                    current_state=canonical_telemetry.copy(),
                     candidate=cand,
                     sim_output=sim_out,
+                    detected_fault=fault_diagnosis,
                 )
                 evaluated_results.append(eval_res)
             except Exception as e:
                 logger.error(f"Failed to evaluate candidate {cand.candidate_id}: {e}")
 
-        # 3. Sort candidates: VALIDATED (highest score) -> NEEDS_REVIEW -> REJECTED
+        # 3. Filter and rank candidates
+        validated_candidates = [r for r in evaluated_results if r.status == ValidationStatus.VALIDATED]
+
+        if validated_candidates:
+            # Deterministic tie-breaker:
+            # 1. Score (descending)
+            # 2. Energy saved kW (descending)
+            # 3. Minimal actuator disturbance
+            def tie_breaker(c: CounterfactualSimulationResult):
+                movement = sum(
+                    abs(c.proposed_interventions.get(act, canonical_telemetry.get(act, 0.0)) - canonical_telemetry.get(act, 0.0))
+                    for act in c.proposed_interventions
+                )
+                return (c.score, c.energy_saved_kw, -movement)
+
+            validated_candidates.sort(key=tie_breaker, reverse=True)
+            winning_candidate = validated_candidates[0]
+            overall_status = "VALIDATED"
+            status_reason = f"Candidate {winning_candidate.candidate_id} verified safe and resolves {fault_diagnosis}."
+        else:
+            winning_candidate = None
+            overall_status = "NO_VALIDATED_INTERVENTION"
+            status_reason = "No simulated candidate satisfied the required safety and resolution criteria."
+
+        # Maintain evaluated results ordering: VALIDATED first, then NEEDS_REVIEW, then REJECTED
         def sort_key(item: CounterfactualSimulationResult):
             status_priority = {
                 ValidationStatus.VALIDATED: 3,
@@ -83,12 +109,6 @@ class CounterfactualEngine:
 
         evaluated_results.sort(key=sort_key, reverse=True)
 
-        # 4. Pick winning candidate (top VALIDATED result)
-        winning_candidate = next(
-            (r for r in evaluated_results if r.status == ValidationStatus.VALIDATED),
-            evaluated_results[0] if evaluated_results else None,
-        )
-
         return CounterfactualEvaluationResponse(
             incident_id=incident_id,
             timestamp=datetime.now(timezone.utc).isoformat(),
@@ -98,4 +118,7 @@ class CounterfactualEngine:
             candidates_evaluated=len(evaluated_results),
             winning_candidate=winning_candidate,
             all_candidates=evaluated_results,
+            status=overall_status,
+            reason=status_reason,
         )
+
