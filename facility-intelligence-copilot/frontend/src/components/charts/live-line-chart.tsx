@@ -76,8 +76,8 @@ export interface LiveLineChartProps {
 
 const LERP_SPEED = 0.08;
 const DEFAULT_MARGIN: Margin = { top: 24, right: 16, bottom: 32, left: 16 };
-/** React commit interval for the live animation loop (~30fps). */
-const LIVE_FRAME_COMMIT_MS = 32;
+/** React commit interval for the live animation loop (optimized 50ms for low CPU). */
+const LIVE_FRAME_COMMIT_MS = 50;
 
 interface AnimFrame {
   now: number;

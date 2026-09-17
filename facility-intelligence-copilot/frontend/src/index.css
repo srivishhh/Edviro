@@ -100,11 +100,9 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Universal Smooth Dark/Light Mode Theme Transition */
-  *, *::before, *::after {
-    transition-property: background-color, border-color, color, fill, stroke, box-shadow;
-    transition-duration: 350ms;
-    transition-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+  /* Targeted Smooth Theme Transitions for top containers without lag */
+  body, header, nav, main, footer {
+    transition: background-color 250ms ease, border-color 250ms ease, color 250ms ease;
   }
 
   code, pre, .font-mono {

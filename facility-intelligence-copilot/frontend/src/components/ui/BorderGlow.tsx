@@ -45,39 +45,6 @@ function isLightColor(color: string) {
   return red * 0.2126 + green * 0.7152 + blue * 0.0722 > 180;
 }
 
-function easeOutCubic(x: number) { return 1 - Math.pow(1 - x, 3); }
-function easeInCubic(x: number) { return x * x * x; }
-
-interface AnimateValueOptions {
-  start?: number;
-  end?: number;
-  duration?: number;
-  delay?: number;
-  ease?: (x: number) => number;
-  onUpdate: (v: number) => void;
-  onEnd?: () => void;
-}
-
-function animateValue({
-  start = 0,
-  end = 100,
-  duration = 1000,
-  delay = 0,
-  ease = easeOutCubic,
-  onUpdate,
-  onEnd,
-}: AnimateValueOptions) {
-  const t0 = performance.now() + delay;
-  function tick() {
-    const elapsed = performance.now() - t0;
-    const t = Math.min(Math.max(elapsed / duration, 0), 1);
-    onUpdate(start + (end - start) * ease(t));
-    if (t < 1) requestAnimationFrame(tick);
-    else if (onEnd) onEnd();
-  }
-  setTimeout(() => requestAnimationFrame(tick), delay);
-}
-
 export interface BorderGlowProps {
   children: ReactNode;
   className?: string;
@@ -98,113 +65,95 @@ export interface BorderGlowProps {
 export const BorderGlow: React.FC<BorderGlowProps> = ({
   children,
   className = '',
-  edgeSensitivity = 30,
+  edgeSensitivity = 25,
   glowColor,
   backgroundColor = 'var(--bg-card-default)',
   borderRadius = 24,
-  glowRadius = 36,
+  glowRadius = 32,
   glowIntensity = 1.0,
   coneSpread = 25,
-  animated = false,
   colors,
-  fillOpacity = 0.4,
+  fillOpacity = 0.3,
   onClick,
   style,
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
+  const rectRef = useRef<{ left: number; top: number; width: number; height: number } | null>(null);
+  const rafRef = useRef<number | null>(null);
+  const latestPos = useRef<{ x: number; y: number } | null>(null);
   const { theme } = useTheme();
 
-  // Pick adaptive glow and gradient colors according to Theme if not explicitly passed
+  // Adaptive glow and gradient colors according to Theme if not explicitly passed
   const effectiveGlowColor = glowColor || (theme === 'dark' ? '0 0 95' : '255 80 40');
   const effectiveColors = colors || (theme === 'dark'
     ? ['#ffffff', '#e2e8f0', '#94a3b8']
     : ['#1e1b4b', '#3b0764', '#5C3E94']);
 
-  const getCenterOfElement = useCallback((el: HTMLElement) => {
-    const { width, height } = el.getBoundingClientRect();
-    return [width / 2, height / 2];
-  }, []);
+  const updateGlow = useCallback(() => {
+    if (!cardRef.current || !latestPos.current || !rectRef.current) return;
+    const card = cardRef.current;
+    const rect = rectRef.current;
+    const x = latestPos.current.x - rect.left;
+    const y = latestPos.current.y - rect.top;
 
-  const getEdgeProximity = useCallback((el: HTMLElement, x: number, y: number) => {
-    const [cx, cy] = getCenterOfElement(el);
+    const cx = rect.width / 2;
+    const cy = rect.height / 2;
     const dx = x - cx;
     const dy = y - cy;
+
     let kx = Infinity;
     let ky = Infinity;
     if (dx !== 0) kx = cx / Math.abs(dx);
     if (dy !== 0) ky = cy / Math.abs(dy);
-    return Math.min(Math.max(1 / Math.min(kx, ky), 0), 1);
-  }, [getCenterOfElement]);
+    const edge = Math.min(Math.max(1 / Math.min(kx, ky), 0), 1);
 
-  const getCursorAngle = useCallback((el: HTMLElement, x: number, y: number) => {
-    const [cx, cy] = getCenterOfElement(el);
-    const dx = x - cx;
-    const dy = y - cy;
-    if (dx === 0 && dy === 0) return 0;
-    const radians = Math.atan2(dy, dx);
-    let degrees = radians * (180 / Math.PI) + 90;
-    if (degrees < 0) degrees += 360;
-    return degrees;
-  }, [getCenterOfElement]);
+    let degrees = 0;
+    if (dx !== 0 || dy !== 0) {
+      degrees = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
+      if (degrees < 0) degrees += 360;
+    }
+
+    card.style.setProperty('--edge-proximity', (edge * 100).toFixed(1));
+    card.style.setProperty('--cursor-angle', `${degrees.toFixed(1)}deg`);
+    rafRef.current = null;
+  }, []);
+
+  const handlePointerEnter = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (cardRef.current) {
+      rectRef.current = cardRef.current.getBoundingClientRect();
+    }
+    latestPos.current = { x: e.clientX, y: e.clientY };
+    if (!rafRef.current) {
+      rafRef.current = requestAnimationFrame(updateGlow);
+    }
+  }, [updateGlow]);
 
   const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    const card = cardRef.current;
-    if (!card) return;
-
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    const edge = getEdgeProximity(card, x, y);
-    const angle = getCursorAngle(card, x, y);
-
-    card.style.setProperty('--edge-proximity', `${(edge * 100).toFixed(3)}`);
-    card.style.setProperty('--cursor-angle', `${angle.toFixed(3)}deg`);
-  }, [getEdgeProximity, getCursorAngle]);
+    latestPos.current = { x: e.clientX, y: e.clientY };
+    if (!rafRef.current) {
+      rafRef.current = requestAnimationFrame(updateGlow);
+    }
+  }, [updateGlow]);
 
   const handlePointerLeave = useCallback(() => {
-    const card = cardRef.current;
-    if (!card) return;
-    card.style.setProperty('--edge-proximity', '0');
+    if (rafRef.current) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+    latestPos.current = null;
+    rectRef.current = null;
+    if (cardRef.current) {
+      cardRef.current.style.setProperty('--edge-proximity', '0');
+    }
   }, []);
 
   useEffect(() => {
-    if (!animated || !cardRef.current) return;
-    const card = cardRef.current;
-    const angleStart = 110;
-    const angleEnd = 465;
-    card.classList.add('sweep-active');
-    card.style.setProperty('--cursor-angle', `${angleStart}deg`);
-
-    animateValue({ duration: 500, onUpdate: v => card.style.setProperty('--edge-proximity', v.toString()) });
-    animateValue({
-      ease: easeInCubic,
-      duration: 1500,
-      end: 50,
-      onUpdate: v => {
-        card.style.setProperty('--cursor-angle', `${(angleEnd - angleStart) * (v / 100) + angleStart}deg`);
-      },
-    });
-    animateValue({
-      ease: easeOutCubic,
-      delay: 1500,
-      duration: 2250,
-      start: 50,
-      end: 100,
-      onUpdate: v => {
-        card.style.setProperty('--cursor-angle', `${(angleEnd - angleStart) * (v / 100) + angleStart}deg`);
-      },
-    });
-    animateValue({
-      ease: easeInCubic,
-      delay: 2500,
-      duration: 1500,
-      start: 100,
-      end: 0,
-      onUpdate: v => card.style.setProperty('--edge-proximity', v.toString()),
-      onEnd: () => card.classList.remove('sweep-active'),
-    });
-  }, [animated]);
+    return () => {
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
+    };
+  }, []);
 
   const glowVars = buildGlowVars(effectiveGlowColor, glowIntensity);
   const lightSurface = theme === 'light' || isLightColor(backgroundColor);
@@ -212,6 +161,7 @@ export const BorderGlow: React.FC<BorderGlowProps> = ({
   return (
     <div
       ref={cardRef}
+      onPointerEnter={handlePointerEnter}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
       onClick={onClick}

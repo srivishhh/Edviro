@@ -1,24 +1,23 @@
-/* BorderGlow CSS — Ultra-clean border-only glow with 30% opacity */
+/* BorderGlow CSS — Ultra-clean border-only glow with 30% opacity & Hardware Acceleration */
 .border-glow-card {
   --edge-proximity: 0;
   --cursor-angle: 45deg;
   --edge-sensitivity: 25;
   --color-sensitivity: calc(var(--edge-sensitivity) + 15);
   --border-radius: 24px;
-  --glow-padding: 30px;
+  --glow-padding: 28px;
   --cone-spread: 25;
 
   position: relative;
   border-radius: var(--border-radius);
   isolation: isolate;
-  transform: translate3d(0, 0, 0.01px);
+  transform: translate3d(0, 0, 0);
   display: flex;
   flex-direction: column;
   border: 1px solid var(--border-card, rgba(255, 255, 255, 0.1));
   background: var(--card-bg, #120F17);
   overflow: visible;
   box-shadow: var(--card-shadow, rgba(0, 0, 0, 0.08) 0px 4px 16px);
-  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.25s ease, background 0.3s ease;
   will-change: auto;
 }
 
@@ -38,15 +37,16 @@
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  transition: opacity 0.2s ease-out;
+  transition: opacity 0.15s ease-out;
   z-index: 0;
   pointer-events: none;
+  transform: translate3d(0, 0, 0);
 }
 
 .border-glow-card:not(:hover):not(.sweep-active)::before,
 .border-glow-card:not(:hover):not(.sweep-active) > .edge-light {
   opacity: 0;
-  transition: opacity 0.5s ease-in-out;
+  transition: opacity 0.35s ease-in-out;
 }
 
 /* Colored mesh-gradient border alone (no interior card fill) */
@@ -83,7 +83,7 @@
     );
 }
 
-/* Disable interior background fill to keep card clear and fast */
+/* Disable interior background fill */
 .border-glow-card::after {
   display: none;
 }
@@ -103,7 +103,6 @@
       from var(--cursor-angle) at center, black 2.5%, transparent 10%, transparent 90%, black 97.5%
     );
 
-  /* Capped at 30% opacity */
   opacity: calc(0.30 * (var(--edge-proximity) - var(--edge-sensitivity)) / (100 - var(--edge-sensitivity)));
   mix-blend-mode: plus-lighter;
 }
@@ -118,11 +117,9 @@
     inset 0 0 1px 0 var(--glow-color-60, hsl(40deg 80% 80% / 60%)),
     inset 0 0 3px 0 var(--glow-color-50, hsl(40deg 80% 80% / 50%)),
     inset 0 0 6px 0 var(--glow-color-40, hsl(40deg 80% 80% / 40%)),
-    inset 0 0 12px 0 var(--glow-color-30, hsl(40deg 80% 80% / 30%)),
     0 0 1px 0 var(--glow-color-60, hsl(40deg 80% 80% / 60%)),
     0 0 3px 0 var(--glow-color-50, hsl(40deg 80% 80% / 50%)),
-    0 0 6px 0 var(--glow-color-40, hsl(40deg 80% 80% / 40%)),
-    0 0 12px 0 var(--glow-color-30, hsl(40deg 80% 80% / 30%));
+    0 0 6px 0 var(--glow-color-40, hsl(40deg 80% 80% / 40%));
 }
 
 .border-glow-inner {
