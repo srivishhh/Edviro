@@ -72,7 +72,8 @@ export const CounterfactualSimulationTile: React.FC<Props> = () => {
   const candidates = solution?.all_candidates || [];
 
   return (
-    <GlassCard className="col-span-1 md:col-span-2 lg:col-span-4 p-6 relative overflow-hidden bg-black/40 border border-white/10 rounded-2xl">
+    <div id="counterfactual-tile" className="col-span-1 md:col-span-2 lg:col-span-4">
+      <GlassCard className="w-full p-6 relative overflow-hidden bg-black/40 border border-white/10 rounded-2xl">
       {/* Background ambient lighting */}
       <div className="absolute -right-20 -top-20 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -left-20 -bottom-20 w-80 h-80 bg-[#F25912]/10 rounded-full blur-3xl pointer-events-none" />
@@ -100,7 +101,7 @@ export const CounterfactualSimulationTile: React.FC<Props> = () => {
 
         <div className="flex items-center gap-3 text-xs">
           <div className="flex items-center gap-1.5 px-3 py-1 bg-white/5 rounded-lg border border-white/10 font-mono text-white/80">
-            <span>Root Cause:</span>
+            <span>Diagnosed Fault:</span>
             <span className="text-[#F25912] font-semibold uppercase">
               {data?.fault_diagnosis?.replace(/_/g, ' ') || 'NOMINAL'}
             </span>
@@ -109,11 +110,55 @@ export const CounterfactualSimulationTile: React.FC<Props> = () => {
 
           <button
             onClick={() => fetchIncidentData()}
-            className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white/70 hover:text-white transition-colors border border-white/10"
-            title="Refresh Evaluation"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 transition-colors border border-emerald-500/30 font-semibold"
+            title="Re-run Simulation across all hypotheses"
           >
             <RefreshCw className="h-3.5 w-3.5" />
+            <span>Simulate All</span>
           </button>
+        </div>
+      </div>
+
+      {/* 4-Stage Decision Flow Stepper */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 mb-5 p-3 rounded-xl bg-white/[0.02] border border-white/10 text-xs">
+        <div className="flex items-center gap-2.5 p-2 rounded-lg bg-white/5 border border-white/5">
+          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#F25912]/20 text-[#F25912] font-mono font-bold text-xs border border-[#F25912]/30">
+            1
+          </div>
+          <div>
+            <span className="font-semibold text-white/90 block text-[11px]">Real-Time Ingestion</span>
+            <span className="text-[10px] text-white/50">LBNL Telemetry & Anomaly</span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2.5 p-2 rounded-lg bg-white/5 border border-white/5">
+          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-purple-500/20 text-purple-300 font-mono font-bold text-xs border border-purple-500/30">
+            2
+          </div>
+          <div>
+            <span className="font-semibold text-white/90 block text-[11px]">SNS Action Suggestions</span>
+            <span className="text-[10px] text-white/50">10-Agent Copilot Proposals</span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2.5 p-2 rounded-lg bg-white/5 border border-white/5">
+          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-sky-500/20 text-sky-300 font-mono font-bold text-xs border border-sky-500/30">
+            3
+          </div>
+          <div>
+            <span className="font-semibold text-white/90 block text-[11px]">Digital Twin Simulation</span>
+            <span className="text-[10px] text-white/50">ML Regressor State Testing</span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2.5 p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30 shadow-sm shadow-emerald-500/10">
+          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-emerald-500/20 text-emerald-400 font-mono font-bold text-xs border border-emerald-500/40">
+            4
+          </div>
+          <div>
+            <span className="font-semibold text-emerald-300 block text-[11px]">Technician Recommendation</span>
+            <span className="text-[10px] text-emerald-400/80">Best Validated Plan</span>
+          </div>
         </div>
       </div>
 
@@ -246,5 +291,6 @@ export const CounterfactualSimulationTile: React.FC<Props> = () => {
         })}
       </div>
     </GlassCard>
+    </div>
   );
 };

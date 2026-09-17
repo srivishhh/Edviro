@@ -65,15 +65,42 @@ class CandidateGenerator:
                     expected_rationale="High torque stroke test.",
                 ),
             ])
-        elif fault_class == FaultClass.COIL_FOULING_OR_LEAKAGE.value:
+        elif fault_class in [FaultClass.COI_STUCK.value]:
             candidates.extend([
                 CandidatePlan(
-                    candidate_id="cand_coil_modulation_01",
-                    title="Optimized Heat Exchange Modulation + 15% Fan Speed Boost",
-                    description="Modulate cooling valve to 65% optimum heat transfer point and increase airflow to 82% to restore sensible heat exchange.",
+                    candidate_id="cand_coi_reset_01",
+                    title="Recalibrate Cooling Valve Stroke & VFD Modulation (78%)",
+                    description="Reset cooling coil valve stroke calibration to 45% and modulate supply fan to 78% to restore target supply air temperature.",
                     proposed_by="GSENSE_ANALYTICAL_ENGINE",
-                    interventions={"chwc_vlv": 65.0, "sf_spd": 82.0, "oa_dmpr": 18.0},
-                    expected_rationale="Prevents laminar coil bypass and restores required thermal heat flux.",
+                    interventions={"chwc_vlv": 45.0, "sf_spd": 78.0, "oa_dmpr": 20.0},
+                    expected_rationale="Restores heat flux balance and prevents coil thermal saturation.",
+                ),
+                CandidatePlan(
+                    candidate_id="cand_coi_overdrive_02",
+                    title="Continuous High-Demand Valve Saturation (100%)",
+                    description="Force valve actuator to 100% open with max fan speed.",
+                    proposed_by="GSENSE_ANALYTICAL_ENGINE",
+                    interventions={"chwc_vlv": 100.0, "sf_spd": 90.0, "oa_dmpr": 25.0},
+                    expected_rationale="Attempt to overcome stuck valve state by maximum signal call.",
+                ),
+                CandidatePlan(
+                    candidate_id="cand_coi_limit_fail",
+                    title="Coil Actuator Overvoltage Stroke (125%)",
+                    description="Exceed maximum 10V DC actuator drive signal to unseat valve plug.",
+                    proposed_by="OPERATOR_OVERRIDE",
+                    interventions={"chwc_vlv": 125.0, "sf_spd": 80.0, "oa_dmpr": 20.0},
+                    expected_rationale="High torque unbinding pulse.",
+                ),
+            ])
+        elif fault_class in [FaultClass.COI_LEAKAGE.value, FaultClass.COIL_FOULING_OR_LEAKAGE.value]:
+            candidates.extend([
+                CandidatePlan(
+                    candidate_id="cand_coil_leak_trim_01",
+                    title="Hydronic Bypass Trim + Economizer Optimization",
+                    description="Trim chilled water valve to 35% seated position and trim supply fan speed to 75% to eliminate parasitic subcooling.",
+                    proposed_by="GSENSE_ANALYTICAL_ENGINE",
+                    interventions={"chwc_vlv": 35.0, "sf_spd": 75.0, "oa_dmpr": 18.0},
+                    expected_rationale="Prevents parasitic overcooling while holding zone thermal setpoints.",
                 ),
                 CandidatePlan(
                     candidate_id="cand_coil_saturation_02",
@@ -82,6 +109,44 @@ class CandidateGenerator:
                     proposed_by="GSENSE_ANALYTICAL_ENGINE",
                     interventions={"chwc_vlv": 100.0, "sf_spd": 50.0, "oa_dmpr": 20.0},
                     expected_rationale="Test coil heat saturation at lower mass flow.",
+                ),
+            ])
+        elif fault_class in [FaultClass.COI_BIAS.value]:
+            candidates.extend([
+                CandidatePlan(
+                    candidate_id="cand_coi_bias_comp_01",
+                    title="Discharge Sensor Offset Bias Compensation (40% Valve)",
+                    description="Apply virtual -3.0°F calibration offset to supply air sensor and modulate chilled water valve to 40%.",
+                    proposed_by="GSENSE_ANALYTICAL_ENGINE",
+                    interventions={"chwc_vlv": 40.0, "sf_spd": 72.0, "oa_dmpr": 20.0},
+                    expected_rationale="Eliminates false cooling demand caused by drifted coil discharge temperature probe.",
+                ),
+                CandidatePlan(
+                    candidate_id="cand_coi_bias_heavy_02",
+                    title="Aggressive Cooling Valve Override (85%)",
+                    description="Increase cooling valve to 85% to compensate for measured warm sensor reading.",
+                    proposed_by="OPERATOR_OVERRIDE",
+                    interventions={"chwc_vlv": 85.0, "sf_spd": 85.0, "oa_dmpr": 25.0},
+                    expected_rationale="Emergency cooling override.",
+                ),
+            ])
+        elif fault_class in [FaultClass.OA_BIAS.value]:
+            candidates.extend([
+                CandidatePlan(
+                    candidate_id="cand_oa_bias_comp_01",
+                    title="Fixed Minimum Outdoor Damper (20%) + Enthalpy Reset",
+                    description="Switch from temperature-based economizer to fixed 20% minimum ventilation to bypass drifted outdoor temperature probe.",
+                    proposed_by="GSENSE_ANALYTICAL_ENGINE",
+                    interventions={"oa_dmpr": 20.0, "chwc_vlv": 38.0, "sf_spd": 70.0},
+                    expected_rationale="Prevents unconditioned outdoor air intake caused by drifted outdoor air temperature sensor.",
+                ),
+                CandidatePlan(
+                    candidate_id="cand_oa_bias_open_02",
+                    title="Full Economizer Free Cooling (100% Damper)",
+                    description="Force outdoor air damper 100% open based on uncompensated sensor reading.",
+                    proposed_by="OPERATOR_OVERRIDE",
+                    interventions={"oa_dmpr": 100.0, "chwc_vlv": 20.0, "sf_spd": 80.0},
+                    expected_rationale="Free cooling mode.",
                 ),
             ])
         elif fault_class == FaultClass.STATIC_PRESSURE_SURGE.value:
