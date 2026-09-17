@@ -46,6 +46,12 @@ async def event_generator():
             "cooling_valve_pct": reading.get("cooling_valve_pct", 45.0),
             "facility_status": reading.get("facility_status", "NORMAL"),
             "health_score": reading.get("health_score", 92),
+            "alert_id": reading.get("alert_id"),
+            "alert_type": reading.get("alert_type"),
+            "alert_title": reading.get("alert_title"),
+            "severity": reading.get("severity"),
+            "diagnosis": reading.get("diagnosis"),
+            "prescription": reading.get("prescription"),
             "is_paused": not is_playing,
             "replay_status": REPLAY_STATE.get("status", "PLAYING"),
         }

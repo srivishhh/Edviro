@@ -69,7 +69,10 @@ interface RealtimeContextType {
   healthScore: number;
   replayState: ReplayState;
   snsState: SNSState;
-  controlReplay: (action: 'play' | 'pause' | 'rewind' | 'restart') => Promise<void>;
+  controlReplay: (
+    action: 'play' | 'pause' | 'rewind' | 'forward' | 'fast_forward' | 'restart' | 'seek' | 'speed',
+    options?: { target_row?: number; step_size?: number; speed?: number }
+  ) => Promise<void>;
   dispatchSNS: (assetId?: string, alertId?: string) => Promise<void>;
   refreshState: () => Promise<void>;
 }
@@ -172,10 +175,36 @@ export const RealtimeProvider: React.FC<{ children: ReactNode }> = ({ children }
       eventSource = new EventSource('http://127.0.0.1:8000/api/v1/realtime/stream');
       eventSource.onmessage = (event) => {
         try {
-          const data: TelemetryData = JSON.parse(event.data);
+          const data: TelemetryData & {
+            alert_type?: string;
+            alert_title?: string;
+            severity?: string;
+            diagnosis?: string;
+            prescription?: string;
+          } = JSON.parse(event.data);
+
           setCurrentTelemetry(data);
           setFacilityStatus(data.facility_status);
           setHealthScore(data.health_score);
+
+          if (data.diagnosis && data.alert_type) {
+            setSnsState((prev) => ({
+              ...prev,
+              alert_type: data.alert_type || prev.alert_type,
+              diagnosis: data.diagnosis || prev.diagnosis,
+              prescription: data.prescription || prev.prescription,
+              condition: data.alert_title ? `${data.alert_title} telemetry signature active.` : prev.condition,
+            }));
+          }
+
+          if (data.row_index) {
+            setReplayState((prev) => ({
+              ...prev,
+              current_row: data.row_index || prev.current_row,
+              source_time: data.dataset_time || prev.source_time,
+              status: data.is_paused ? 'PAUSED' : 'PLAYING',
+            }));
+          }
 
           // Only append new curve points when streaming/playing
           if (!data.is_paused) {
@@ -197,22 +226,44 @@ export const RealtimeProvider: React.FC<{ children: ReactNode }> = ({ children }
     };
   }, []);
 
-  const controlReplay = async (action: 'play' | 'pause' | 'rewind' | 'restart') => {
+  const controlReplay = async (
+    action: 'play' | 'pause' | 'rewind' | 'forward' | 'fast_forward' | 'restart' | 'seek' | 'speed',
+    options?: { target_row?: number; step_size?: number; speed?: number }
+  ) => {
     try {
       const res = await fetch('http://127.0.0.1:8000/api/v1/replay/control', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action }),
+        body: JSON.stringify({
+          action,
+          target_row: options?.target_row,
+          step_size: options?.step_size || 500,
+          speed: options?.speed,
+        }),
       });
       if (res.ok) {
         const result = await res.json();
         setReplayState(result.state);
+        if (result.state.active_anomaly?.diagnosis) {
+          setSnsState((prev) => ({
+            ...prev,
+            alert_type: result.state.active_anomaly.alert_type || prev.alert_type,
+            diagnosis: result.state.active_anomaly.diagnosis || prev.diagnosis,
+            prescription: result.state.active_anomaly.prescription || prev.prescription,
+          }));
+          setFacilityStatus(result.state.active_anomaly.facility_status || 'NORMAL');
+          setHealthScore(result.state.active_anomaly.health_score || 94);
+        }
       }
     } catch {
       if (action === 'play') setReplayState((p) => ({ ...p, status: 'PLAYING' }));
       if (action === 'pause') setReplayState((p) => ({ ...p, status: 'PAUSED' }));
-      if (action === 'rewind') setReplayState((p) => ({ ...p, current_row: Math.max(1, p.current_row - 100) }));
+      if (action === 'rewind') setReplayState((p) => ({ ...p, current_row: Math.max(1, p.current_row - 500) }));
+      if (action === 'forward' || action === 'fast_forward')
+        setReplayState((p) => ({ ...p, current_row: Math.min(p.total_rows, p.current_row + 500) }));
       if (action === 'restart') setReplayState((p) => ({ ...p, current_row: 1, status: 'PLAYING' }));
+      if (action === 'seek' && options?.target_row)
+        setReplayState((p) => ({ ...p, current_row: Math.max(1, Math.min(p.total_rows, options.target_row!)) }));
     }
   };
 
