@@ -1,0 +1,45 @@
+{
+  "model_type": "HistGradientBoostingRegressor_MultiTarget",
+  "input_features": [
+    "oa_temp",
+    "ra_temp",
+    "ma_temp",
+    "sa_temp",
+    "zone_temp",
+    "sa_cfm",
+    "sa_sp",
+    "power",
+    "oa_dmpr",
+    "chwc_vlv",
+    "hw_vlv",
+    "sf_spd"
+  ],
+  "target_channels": [
+    "zone_temp",
+    "sa_temp",
+    "sa_cfm",
+    "power"
+  ],
+  "metrics": {
+    "zone_temp": {
+      "rmse": 0.08292959327827211,
+      "mae": 0.06355744413570077,
+      "r2": 0.9973420462744685
+    },
+    "sa_temp": {
+      "rmse": 0.31071833972153035,
+      "mae": 0.206444173448273,
+      "r2": 0.9970705812291489
+    },
+    "sa_cfm": {
+      "rmse": 2.418315803239166,
+      "mae": 2.076717143843253,
+      "r2": 0.999983961875705
+    },
+    "power": {
+      "rmse": 0.06634998251563727,
+      "mae": 0.04976417427102599,
+      "r2": 0.9993076688248291
+    }
+  }
+}

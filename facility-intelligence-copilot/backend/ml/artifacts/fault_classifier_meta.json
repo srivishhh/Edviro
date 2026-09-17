@@ -1,0 +1,80 @@
+{
+  "model_type": "HistGradientBoostingClassifier",
+  "feature_names": [
+    "oa_temp",
+    "ra_temp",
+    "ma_temp",
+    "sa_temp",
+    "zone_temp",
+    "oa_dmpr",
+    "ra_dmpr",
+    "chwc_vlv",
+    "hw_vlv",
+    "sf_spd",
+    "sa_cfm",
+    "sa_sp",
+    "power",
+    "delta_t_coil",
+    "delta_t_mixed",
+    "mixed_air_ratio",
+    "thermal_load_proxy",
+    "airflow_per_speed",
+    "sp_per_speed",
+    "power_per_airflow",
+    "damper_cooling_fight"
+  ],
+  "class_mapping": {
+    "nominal": 0,
+    "damper_stuck": 1,
+    "coil_fouling_or_leakage": 2,
+    "fan_belt_slip": 3,
+    "static_pressure_surge": 4
+  },
+  "accuracy": 0.9998,
+  "macro_f1": 0.9998153002055297,
+  "classification_report": {
+    "nominal": {
+      "precision": 0.9994981179422836,
+      "recall": 1.0,
+      "f1-score": 0.9997489959839357,
+      "support": 3983.0
+    },
+    "damper_stuck": {
+      "precision": 1.0,
+      "recall": 0.9986559139784946,
+      "f1-score": 0.9993275050437121,
+      "support": 1488.0
+    },
+    "coil_fouling_or_leakage": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 1510.0
+    },
+    "fan_belt_slip": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 1514.0
+    },
+    "static_pressure_surge": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 1505.0
+    },
+    "accuracy": 0.9998,
+    "macro avg": {
+      "precision": 0.9998996235884567,
+      "recall": 0.9997311827956988,
+      "f1-score": 0.9998153002055297,
+      "support": 10000.0
+    },
+    "weighted avg": {
+      "precision": 0.9998001003764115,
+      "recall": 0.9998,
+      "f1-score": 0.9997999578509059,
+      "support": 10000.0
+    }
+  }
+}

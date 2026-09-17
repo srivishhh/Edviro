@@ -8,6 +8,7 @@ import { ReplayPlayerTile } from './tiles/ReplayPlayerTile';
 import { FacilityHealthTile } from './tiles/FacilityHealthTile';
 import { ActiveAlertTile } from './tiles/ActiveAlertTile';
 import { AIInvestigationTile } from './tiles/AIInvestigationTile';
+import { CounterfactualSimulationTile } from './tiles/CounterfactualSimulationTile';
 import { FacilityXRayTile } from './tiles/FacilityXRayTile';
 import { TechnicianTile } from './tiles/TechnicianTile';
 import { RagAssistantTile } from './tiles/RagAssistantTile';
@@ -42,12 +43,15 @@ const CommandCenter: React.FC = () => {
           <ReplayPlayerTile />
           <ActiveAlertTile />
 
-          {/* Row 3: AI Investigation (1 col), Facility X-Ray Diagnosis (2 cols), RAG Assistant (1 col) */}
+          {/* Row 3: GSENSE 3.0 Counterfactual Intelligence & Solution Verification (4 cols) */}
+          <CounterfactualSimulationTile />
+
+          {/* Row 4: AI Investigation (1 col), Facility X-Ray Diagnosis (2 cols), RAG Assistant (1 col) */}
           <AIInvestigationTile onOpenResult={() => handleOpenSNSResult('sns')} />
           <FacilityXRayTile onOpenResult={() => handleOpenSNSResult('combined')} />
           <RagAssistantTile onOpen={() => setIsRagOpen(true)} />
 
-          {/* Row 4: Technician Performance & Wallet Overview (spanning 4 cols) */}
+          {/* Row 5: Technician Performance & Wallet Overview (spanning 4 cols) */}
           <div className="col-span-1 md:col-span-2 lg:col-span-4">
             <TechnicianTile />
           </div>
