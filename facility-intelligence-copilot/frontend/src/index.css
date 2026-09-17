@@ -29,6 +29,21 @@
     --text-dim: #988fa7;
     --glass-glare: rgba(255, 255, 255, 0.08);
     --card-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.55);
+    --chart-background: #211832;
+    --chart-foreground: #ffffff;
+    --chart-foreground-muted: #c9c3d4;
+    --chart-label: #a79ebb;
+    --chart-line-primary: #8b5cf6;
+    --chart-line-secondary: #F25912;
+    --chart-crosshair: rgba(255, 255, 255, 0.4);
+    --chart-grid: rgba(92, 62, 148, 0.25);
+    --chart-1: #8b5cf6;
+    --chart-2: #F25912;
+    --chart-3: #06b6d4;
+    --chart-4: #10b981;
+    --chart-5: #ef4444;
+    --popover: #2c1f44;
+    --popover-foreground: #ffffff;
     color-scheme: dark;
   }
 
@@ -55,6 +70,21 @@
     --text-dim: #685f78;
     --glass-glare: rgba(255, 255, 255, 0.6);
     --card-shadow: 0 4px 20px -4px rgba(92, 62, 148, 0.07);
+    --chart-background: #ffffff;
+    --chart-foreground: #0f0a1a;
+    --chart-foreground-muted: #3d354b;
+    --chart-label: #5a506b;
+    --chart-line-primary: #5C3E94;
+    --chart-line-secondary: #F25912;
+    --chart-crosshair: rgba(92, 62, 148, 0.4);
+    --chart-grid: rgba(92, 62, 148, 0.12);
+    --chart-1: #5C3E94;
+    --chart-2: #F25912;
+    --chart-3: #0284c7;
+    --chart-4: #059669;
+    --chart-5: #dc2626;
+    --popover: #ffffff;
+    --popover-foreground: #0f0a1a;
     color-scheme: light;
   }
 

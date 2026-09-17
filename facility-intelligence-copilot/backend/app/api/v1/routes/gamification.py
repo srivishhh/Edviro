@@ -146,6 +146,20 @@ class ResolutionReportRequest(BaseModel):
     evidence: Optional[str] = "Telemetry differential pressure baseline verified"
 
 
+class QuickReportCreateRequest(BaseModel):
+    title: str
+    asset_id: str
+    category: str = "Incident"
+    urgency: str = "MEDIUM"
+    observed_problem: str
+    action_performed: Optional[str] = "Inspection and diagnostic notes logged"
+    root_cause_observed: Optional[str] = "Identified during facility walkthrough"
+    resolution_status: Optional[str] = "RESOLVED"
+    additional_notes: Optional[str] = ""
+    evidence: Optional[str] = ""
+    technician_name: Optional[str] = None
+
+
 class AdminApproveReportRequest(BaseModel):
     approved_credits: Optional[int] = None
     credits: Optional[int] = None
@@ -265,6 +279,62 @@ def submit_resolution_report(incident_id: str, payload: ResolutionReportRequest)
     return {
         "status": "SUBMITTED",
         "message": "Report submitted successfully. Awaiting Admin Review & Credit Approval.",
+        "report": report_record,
+    }
+
+
+@router.post("/technicians/reports")
+@router.post("/reports")
+def submit_quick_report(payload: QuickReportCreateRequest):
+    tech = TECHNICIAN_DB["tech-1"]
+    incident_id = f"inc-{uuid4().hex[:6]}"
+    now_str = datetime.now(timezone.utc).isoformat()
+
+    base_credits = 100
+    if payload.urgency == "CRITICAL":
+        base_credits += 75
+    elif payload.urgency == "HIGH":
+        base_credits += 50
+    elif payload.urgency == "MEDIUM":
+        base_credits += 25
+
+    report_record = {
+        "report_id": f"rep-{uuid4().hex[:8]}",
+        "incident_id": incident_id,
+        "title": payload.title,
+        "category": payload.category,
+        "urgency": payload.urgency,
+        "asset_id": payload.asset_id,
+        "technician_id": tech["id"],
+        "technician_name": payload.technician_name or tech["name"],
+        "observed_problem": f"[{payload.category.upper()} - {payload.urgency}] {payload.title}: {payload.observed_problem}",
+        "action_performed": payload.action_performed or "Visual inspection and logged telemetry review",
+        "root_cause_observed": payload.root_cause_observed or f"Reported via Quick Report ({payload.category})",
+        "parts_inspected": payload.asset_id,
+        "resolution_status": payload.resolution_status or "RESOLVED",
+        "review_status": "UNDER_REVIEW",
+        "additional_notes": payload.additional_notes or "",
+        "evidence": payload.evidence or "Field inspection submission",
+        "submitted_at": now_str,
+        "suggested_credits": base_credits,
+        "awarded_credits": 0,
+        "admin_notes": "",
+    }
+    REPORTS_DB[incident_id] = report_record
+
+    NOTIFICATIONS_DB.append({
+        "id": f"notif-{uuid4().hex[:6]}",
+        "recipient_role": "admin",
+        "type": "QUICK_REPORT_SUBMITTED",
+        "title": f"Report: {payload.title} ({payload.asset_id})",
+        "message": f"{payload.technician_name or tech['name']} submitted a {payload.urgency} urgency {payload.category} report for {payload.asset_id}.",
+        "timestamp": now_str,
+        "read": False,
+    })
+
+    return {
+        "status": "SUBMITTED",
+        "message": "Report successfully dispatched to Admin Review queue.",
         "report": report_record,
     }
 

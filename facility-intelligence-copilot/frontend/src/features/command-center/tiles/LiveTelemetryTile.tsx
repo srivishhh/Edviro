@@ -1,56 +1,113 @@
-import React, { useState } from 'react';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { Gauge } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Gauge, Activity } from 'lucide-react';
 import { BentoTile } from '../../../components/BentoTile';
-import { useRealtime } from '../../../hooks/useRealtime';
+import { useRealtime, type TelemetryData } from '../../../hooks/useRealtime';
 import { useTheme } from '../../../app/ThemeProvider';
+import {
+  LiveLineChart,
+  LiveLine,
+  LiveXAxis,
+  LiveYAxis,
+  type LiveLinePoint,
+} from '../../../components/charts';
 
 type MetricType = 'TEMPERATURE' | 'AIRFLOW' | 'PRESSURE' | 'POWER';
 
 export const LiveTelemetryTile: React.FC = () => {
-  const { telemetryHistory, currentTelemetry } = useRealtime();
+  const { telemetryHistory, currentTelemetry, replayState } = useRealtime();
   const { theme } = useTheme();
   const [activeMetric, setActiveMetric] = useState<MetricType>('AIRFLOW');
 
   const metricConfig = {
-    TEMPERATURE: { key: 'temperature', label: 'Temperature', unit: '°C', color: '#F25912' },
-    AIRFLOW: { key: 'airflow', label: 'Airflow', unit: '%', color: '#5C3E94' },
-    PRESSURE: { key: 'pressure', label: 'Static Pressure', unit: 'in.wg', color: '#8b5cf6' },
-    POWER: { key: 'power', label: 'Energy Load', unit: 'kW', color: '#10b981' },
+    TEMPERATURE: { key: 'temperature', label: 'Temperature', unit: '°C', color: '#F25912', yMin: 18, yMax: 32 },
+    AIRFLOW: {
+      key: 'airflow',
+      label: 'Airflow',
+      unit: '%',
+      color: theme === 'dark' ? '#a78bfa' : '#5C3E94',
+      yMin: 40,
+      yMax: 100,
+    },
+    PRESSURE: { key: 'pressure', label: 'Static Pressure', unit: 'in.wg', color: '#06b6d4', yMin: 2.5, yMax: 5.0 },
+    POWER: { key: 'power', label: 'Energy Load', unit: 'kW', color: '#10b981', yMin: 5, yMax: 20 },
   };
 
   const currentConfig = metricConfig[activeMetric];
 
-  const chartData = telemetryHistory.length > 0 ? telemetryHistory : [
-    { timestamp: '09:40', temperature: 23.5, airflow: 78.5, pressure: 3.8, power: 11.2 },
-    { timestamp: '09:41', temperature: 23.8, airflow: 77.0, pressure: 3.85, power: 11.4 },
-    { timestamp: '09:42', temperature: 24.1, airflow: 75.2, pressure: 3.9, power: 11.6 },
-    { timestamp: '09:43', temperature: 24.5, airflow: 72.0, pressure: 3.95, power: 11.9 },
-  ];
+  // Map LBNL telemetry data into streaming time-series points
+  const chartData: LiveLinePoint[] = useMemo(() => {
+    const nowSec = Math.floor(Date.now() / 1000);
+    if (!telemetryHistory || telemetryHistory.length === 0) {
+      const defaultVal =
+        activeMetric === 'TEMPERATURE'
+          ? 23.5
+          : activeMetric === 'AIRFLOW'
+          ? 78.5
+          : activeMetric === 'PRESSURE'
+          ? 3.8
+          : 11.2;
+      return Array.from({ length: 15 }, (_, i) => ({
+        time: nowSec - (15 - i) * 2,
+        value: defaultVal + Math.sin(i * 0.8) * 0.4,
+      }));
+    }
 
-  const currentValue = currentTelemetry
-    ? currentTelemetry[currentConfig.key as keyof typeof currentTelemetry]
-    : chartData[chartData.length - 1][currentConfig.key as keyof typeof chartData[0]];
+    const count = telemetryHistory.length;
+    return telemetryHistory.map((item, idx) => {
+      const timeOffset = (count - 1 - idx) * 2;
+      const rawVal = Number(item[currentConfig.key as keyof TelemetryData]);
+      const value = isNaN(rawVal) ? 0 : rawVal;
+      return {
+        time: nowSec - timeOffset,
+        value,
+      };
+    });
+  }, [telemetryHistory, activeMetric, currentConfig.key]);
+
+  // Current value for real-time smooth interpolation
+  const currentValue = useMemo(() => {
+    if (currentTelemetry && currentTelemetry[currentConfig.key as keyof TelemetryData] !== undefined) {
+      const raw = Number(currentTelemetry[currentConfig.key as keyof TelemetryData]);
+      if (!isNaN(raw)) return raw;
+    }
+    if (chartData.length > 0) {
+      return chartData[chartData.length - 1].value;
+    }
+    return 0;
+  }, [currentTelemetry, currentConfig.key, chartData]);
 
   return (
     <BentoTile span="col-span-1 md:col-span-2" variant="translucent" className="flex flex-col justify-between">
+      {/* Header Bar */}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <Gauge size={16} className="text-[#5C3E94] dark:text-purple-300" />
-          <span className="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">LIVE TELEMETRY STREAM</span>
-          <span className="rounded-lg bg-[#5C3E94]/15 px-2 py-0.5 text-[11px] text-[#5C3E94] dark:text-purple-300 font-mono font-medium border border-[#5C3E94]/30">
-            AHU-007 • LBNL
-          </span>
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#5C3E94]/15 border border-[#5C3E94]/30 text-[#5C3E94] dark:text-purple-300">
+            <Gauge size={15} />
+          </div>
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">
+                LIVE TELEMETRY STREAM
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-md bg-[#5C3E94]/15 px-2 py-0.5 text-[10px] text-[#5C3E94] dark:text-purple-300 font-mono font-semibold border border-[#5C3E94]/30">
+                <Activity size={10} className="animate-pulse" />
+                AHU-007 • LBNL
+              </span>
+            </div>
+            <span className="text-[10px] text-[var(--text-dim)] font-mono">
+              Dataset Row: #{replayState.current_row.toLocaleString()} • Time: {replayState.source_time}
+            </span>
+          </div>
         </div>
 
-        {/* Metric Selector Buttons */}
-        <div className="flex items-center gap-1 rounded-xl bg-[var(--bg-surface)] p-1 border border-[var(--border-subtle)]">
+        {/* Metric Selector Tabs */}
+        <div className="flex items-center gap-1 rounded-xl bg-[var(--bg-surface)] p-1 border border-[var(--border-subtle)] shadow-xs">
           {(['TEMPERATURE', 'AIRFLOW', 'PRESSURE', 'POWER'] as MetricType[]).map((m) => (
             <button
               key={m}
               type="button"
               onClick={() => setActiveMetric(m)}
-              className={`rounded-lg px-2.5 py-1 text-[11px] font-semibold tracking-tight transition-all ${
+              className={`rounded-lg px-2.5 py-1 text-[11px] font-bold tracking-tight transition-all duration-200 cursor-pointer ${
                 activeMetric === m
                   ? 'bg-[#5C3E94] text-white shadow-sm'
                   : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-primary)]/50'
@@ -62,44 +119,52 @@ export const LiveTelemetryTile: React.FC = () => {
         </div>
       </div>
 
-      {/* Primary Value Readout */}
+      {/* Primary Telemetry Value Display */}
       <div className="my-2 flex items-baseline gap-2">
-        <span className="text-3xl font-extrabold tracking-tight text-[var(--text-main)] font-mono">{currentValue}</span>
-        <span className="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">{currentConfig.unit}</span>
+        <span className="text-3xl sm:text-4xl font-black tracking-tight text-[var(--text-main)] font-mono">
+          {typeof currentValue === 'number' ? currentValue.toFixed(1) : currentValue}
+        </span>
+        <span className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">
+          {currentConfig.unit}
+        </span>
+        <span className="ml-2 text-xs font-semibold text-[var(--text-dim)]">
+          ({currentConfig.label})
+        </span>
       </div>
 
-      {/* Chart */}
-      <div className="h-32 w-full mt-2">
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={chartData} margin={{ top: 5, right: 5, left: -25, bottom: 0 }}>
-            <defs>
-              <linearGradient id={`color-${activeMetric}`} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor={currentConfig.color} stopOpacity={theme === 'dark' ? 0.4 : 0.25} />
-                <stop offset="95%" stopColor={currentConfig.color} stopOpacity={0.0} />
-              </linearGradient>
-            </defs>
-            <XAxis dataKey="timestamp" stroke={theme === 'dark' ? '#94a3b8' : '#7f7c8d'} fontSize={10} tickLine={false} />
-            <YAxis stroke={theme === 'dark' ? '#94a3b8' : '#7f7c8d'} fontSize={10} tickLine={false} domain={['dataMin - 2', 'dataMax + 2']} />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: theme === 'dark' ? '#211832' : '#ffffff',
-                borderColor: theme === 'dark' ? 'rgba(92, 62, 148, 0.4)' : 'rgba(92, 62, 148, 0.2)',
-                color: theme === 'dark' ? '#f8fafc' : '#181126',
-                borderRadius: '12px',
-                fontSize: '12px',
-                boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
-              }}
-            />
-            <Area
-              type="monotone"
-              dataKey={currentConfig.key}
-              stroke={currentConfig.color}
-              strokeWidth={2.5}
-              fillOpacity={1}
-              fill={`url(#color-${activeMetric})`}
-            />
-          </AreaChart>
-        </ResponsiveContainer>
+      {/* Bklit / Shadcn Live Line Chart */}
+      <div className="w-full relative h-[180px] mt-1 rounded-xl overflow-hidden bg-[var(--bg-surface)]/40 border border-[var(--border-subtle)] p-1">
+        <LiveLineChart
+          data={chartData}
+          value={currentValue}
+          dataKey="value"
+          window={30}
+          numXTicks={5}
+          lerpSpeed={0.12}
+          paused={replayState.status === 'PAUSED'}
+          margin={{ top: 16, right: 24, bottom: 24, left: 42 }}
+          style={{ height: 172 }}
+          className="w-full"
+        >
+          <LiveLine
+            dataKey="value"
+            stroke={currentConfig.color}
+            strokeWidth={2.5}
+            fill={true}
+            pulse={true}
+            dotSize={4.5}
+            badge={true}
+            formatValue={(v) => `${v.toFixed(1)} ${currentConfig.unit}`}
+          />
+          <LiveXAxis
+            numTicks={5}
+            formatTime={(t) => {
+              const d = new Date(t);
+              return `${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`;
+            }}
+          />
+          <LiveYAxis minGap={28} formatValue={(v) => v.toFixed(1)} />
+        </LiveLineChart>
       </div>
     </BentoTile>
   );
