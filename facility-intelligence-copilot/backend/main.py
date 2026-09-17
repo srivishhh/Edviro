@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.v1.routes import alerts, assets, sensors, telemetry, xray
+from app.api.v1.routes import alerts, assets, sensors, telemetry, xray, gamification, replay, sns_dispatch, realtime, rag
 from app.core.config import settings
 from sqlalchemy.exc import SQLAlchemyError
 from app.db.database import SessionLocal
@@ -12,6 +12,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:5173",
         "http://127.0.0.1:5173",
+        "*",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -23,6 +24,13 @@ app.include_router(sensors.router, prefix="/api/v1", tags=["sensors"])
 app.include_router(telemetry.router, prefix="/api/v1", tags=["telemetry"])
 app.include_router(alerts.router, prefix="/api/v1", tags=["alerts"])
 app.include_router(xray.router, prefix="/api/v1", tags=["xray"])
+app.include_router(gamification.router, prefix="/api/v1", tags=["gamification"])
+app.include_router(replay.router, prefix="/api/v1", tags=["replay"])
+app.include_router(sns_dispatch.router, prefix="/api/v1", tags=["sns"])
+app.include_router(realtime.router, prefix="/api/v1", tags=["realtime"])
+app.include_router(rag.router, prefix="/api/v1", tags=["rag"])
+
+
 
 
 @app.get("/health")

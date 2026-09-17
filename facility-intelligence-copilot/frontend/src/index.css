@@ -1,29 +1,121 @@
 @import 'tailwindcss';
 
-:root {
-  color: #e2e8f0;
-  background: #0f172a;
-  font-family: Inter, system-ui, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  color-scheme: dark;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root, html.dark, [data-theme="dark"] {
+    --font-sans: 'Satoshi', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+    /* Authoritative Palette (Dark Mode) */
+    --bg-primary: #211832;
+    --bg-surface: #2c1f44;
+    --bg-card: rgba(44, 31, 68, 0.85);
+    --bg-card-hover: rgba(65, 43, 107, 0.95);
+    --bg-card-hero: linear-gradient(135deg, #2a1d3f 0%, #362252 50%, #211832 100%);
+    --bg-card-translucent: rgba(44, 31, 68, 0.75);
+    --bg-card-gradient: linear-gradient(135deg, rgba(65, 43, 107, 0.9) 0%, rgba(45, 27, 70, 0.95) 50%, rgba(33, 24, 50, 0.9) 100%);
+    --bg-card-alert: linear-gradient(135deg, rgba(61, 26, 24, 0.92) 0%, rgba(42, 23, 37, 0.92) 50%, rgba(33, 24, 50, 0.95) 100%);
+    --bg-card-default: rgba(44, 31, 68, 0.85);
+    --border-subtle: rgba(92, 62, 148, 0.45);
+    --border-card: rgba(92, 62, 148, 0.5);
+    --border-card-alert: rgba(242, 89, 18, 0.55);
+    --border-active: #F25912;
+    --accent-purple: #5C3E94;
+    --accent-purple-dark: #412B6B;
+    --accent-orange: #F25912;
+    --text-main: #ffffff;
+    --text-muted: #c9c3d4;
+    --text-dim: #988fa7;
+    --glass-glare: rgba(255, 255, 255, 0.08);
+    --card-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.55);
+    color-scheme: dark;
+  }
+
+  html.light, [data-theme="light"] {
+    /* Authoritative Palette (Light Mode - High Contrast Pure Whites & Off-Whites, No Grays) */
+    --bg-primary: #f8f7fc;
+    --bg-surface: #ffffff;
+    --bg-card: #ffffff;
+    --bg-card-hover: #fcfbfe;
+    --bg-card-hero: #ffffff;
+    --bg-card-translucent: #fcfbfe;
+    --bg-card-gradient: linear-gradient(135deg, #ffffff 0%, #fdfcff 50%, #fbfaff 100%);
+    --bg-card-alert: linear-gradient(135deg, #ffffff 0%, #fffdfc 50%, #fffaf7 100%);
+    --bg-card-default: #faf9fe;
+    --border-subtle: #ede8f5;
+    --border-card: #ede8f5;
+    --border-card-alert: #fee8dc;
+    --border-active: #F25912;
+    --accent-purple: #5C3E94;
+    --accent-purple-dark: #412B6B;
+    --accent-orange: #F25912;
+    --text-main: #0f0a1a;
+    --text-muted: #3d354b;
+    --text-dim: #685f78;
+    --glass-glare: rgba(255, 255, 255, 0.6);
+    --card-shadow: 0 4px 20px -4px rgba(92, 62, 148, 0.07);
+    color-scheme: light;
+  }
+
+  html, body, #root {
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-primary);
+    color: var(--text-main);
+    font-family: var(--font-sans);
+    letter-spacing: -0.015em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Universal Smooth Dark/Light Mode Theme Transition */
+  *, *::before, *::after {
+    transition-property: background-color, border-color, color, fill, stroke, box-shadow;
+    transition-duration: 350ms;
+    transition-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  code, pre, .font-mono {
+    font-family: var(--font-mono);
+  }
 }
 
-html, body, #root {
-  min-height: 100%;
-  min-height: 100vh;
-  margin: 0;
-  background: #020817;
+/* Lenis Recommended Smooth Scroll CSS */
+html.lenis, html.lenis body {
+  height: auto;
 }
 
-body {
-  min-height: 100vh;
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
 }
 
-* {
-  box-sizing: border-box;
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* Custom GSENSE glassmorphism scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--accent-purple);
+  border-radius: 9999px;
+  opacity: 0.6;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-orange);
 }

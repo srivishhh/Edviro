@@ -13,19 +13,8 @@ class InvestigationProvider:
         raise NotImplementedError
 
 
-class SNSWorkbenchClient(InvestigationProvider):
-    def __init__(self, *, base_url: str | None = None, api_key: str | None = None):
-        self.base_url = base_url or "https://sns-workbench.example.invalid"
-        self.api_key = api_key or "demo-api-key"
-
-    def create_investigation(self, *, context: dict, investigation_id: str):
-        return {
-            "investigation_id": investigation_id,
-            "status": "PENDING",
-            "provider": "sns-workbench",
-            "asset_id": context["asset"]["id"],
-            "alert_id": context["alert"]["id"],
-        }
+from app.integrations.sns_workbench import SNSWorkbenchClient
+# The SNSWorkbenchClient implementation is imported from app.integrations.sns_workbench
 
 
 @dataclass
