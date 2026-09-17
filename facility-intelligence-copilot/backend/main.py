@@ -1,5 +1,16 @@
+import sys
+from pathlib import Path
+
+# Ensure both backend dir and project root dir are on sys.path
+backend_dir = Path(__file__).resolve().parent
+project_root = backend_dir.parent
+for p in [str(backend_dir), str(project_root)]:
+    if p not in sys.path:
+        sys.path.insert(0, p)
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
 from app.api.v1.routes import (
     alerts,
     assets,

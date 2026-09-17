@@ -133,6 +133,8 @@ const defaultSNSState: SNSState = {
 
 const RealtimeContext = createContext<RealtimeContextType | undefined>(undefined);
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? import.meta.env.VITE_API_URL ?? '';
+
 export const RealtimeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [telemetryHistory, setTelemetryHistory] = useState<TelemetryData[]>([]);
   const [currentTelemetry, setCurrentTelemetry] = useState<TelemetryData | null>(null);
@@ -143,7 +145,7 @@ export const RealtimeProvider: React.FC<{ children: ReactNode }> = ({ children }
 
   const fetchReplayState = async () => {
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/v1/replay/state');
+      const res = await fetch(`${API_BASE}/api/v1/replay/state`);
       if (res.ok) {
         const data = await res.json();
         setReplayState(data);
@@ -155,7 +157,7 @@ export const RealtimeProvider: React.FC<{ children: ReactNode }> = ({ children }
 
   const fetchSNSState = async () => {
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/v1/sns/status');
+      const res = await fetch(`${API_BASE}/api/v1/sns/status`);
       if (res.ok) {
         const data = await res.json();
         setSnsState(data);
@@ -172,8 +174,9 @@ export const RealtimeProvider: React.FC<{ children: ReactNode }> = ({ children }
     // SSE Realtime stream connection
     let eventSource: EventSource | null = null;
     try {
-      eventSource = new EventSource('http://127.0.0.1:8000/api/v1/realtime/stream');
+      eventSource = new EventSource(`${API_BASE}/api/v1/realtime/stream`);
       eventSource.onmessage = (event) => {
+
         try {
           const data: TelemetryData & {
             alert_type?: string;
@@ -231,7 +234,7 @@ export const RealtimeProvider: React.FC<{ children: ReactNode }> = ({ children }
     options?: { target_row?: number; step_size?: number; speed?: number }
   ) => {
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/v1/replay/control', {
+      const res = await fetch(`${API_BASE}/api/v1/replay/control`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -270,7 +273,7 @@ export const RealtimeProvider: React.FC<{ children: ReactNode }> = ({ children }
   const dispatchSNS = async (assetId: string = 'AHU-007', alertId: string = '101') => {
     setSnsState((prev) => ({ ...prev, status: 'DISPATCHING' }));
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/v1/sns/dispatch', {
+      const res = await fetch(`${API_BASE}/api/v1/sns/dispatch`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ asset_id: assetId, alert_id: alertId }),
