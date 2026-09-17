@@ -1,5 +1,7 @@
 {
+  "model_name": "state_regressors",
   "model_type": "HistGradientBoostingRegressor_MultiTarget",
+  "training_timestamp": "2026-09-17T15:42:28.960349+00:00",
   "input_features": [
     "oa_temp",
     "ra_temp",
@@ -14,32 +16,87 @@
     "hw_vlv",
     "sf_spd"
   ],
+  "input_feature_count": 12,
   "target_channels": [
     "zone_temp",
     "sa_temp",
     "sa_cfm",
     "power"
   ],
-  "metrics": {
+  "split_strategy": "chronological_70_15_15",
+  "train_rows": 1514634,
+  "validation_rows": 324563,
+  "test_rows": 324584,
+  "test_metrics": {
     "zone_temp": {
-      "rmse": 0.08292959327827211,
-      "mae": 0.06355744413570077,
-      "r2": 0.9973420462744685
+      "rmse": 0.0863,
+      "mae": 0.027,
+      "r2": 0.9988
     },
     "sa_temp": {
-      "rmse": 0.31071833972153035,
-      "mae": 0.206444173448273,
-      "r2": 0.9970705812291489
+      "rmse": 0.2703,
+      "mae": 0.0647,
+      "r2": 0.9986
     },
     "sa_cfm": {
-      "rmse": 2.418315803239166,
-      "mae": 2.076717143843253,
-      "r2": 0.999983961875705
+      "rmse": 2054.8479,
+      "mae": 507.3818,
+      "r2": 0.9999
     },
     "power": {
-      "rmse": 0.06634998251563727,
-      "mae": 0.04976417427102599,
-      "r2": 0.9993076688248291
+      "rmse": 0.0035,
+      "mae": 0.001,
+      "r2": 0.9999
     }
-  }
+  },
+  "validation_metrics": {
+    "zone_temp": {
+      "rmse": 0.1127,
+      "mae": 0.0213,
+      "r2": 0.9986
+    },
+    "sa_temp": {
+      "rmse": 0.1417,
+      "mae": 0.0463,
+      "r2": 0.9996
+    },
+    "sa_cfm": {
+      "rmse": 2739.5165,
+      "mae": 588.7184,
+      "r2": 0.9999
+    },
+    "power": {
+      "rmse": 0.0056,
+      "mae": 0.0014,
+      "r2": 0.9998
+    }
+  },
+  "aggregate_metrics": {
+    "mean_test_r2": 0.9993,
+    "mean_test_mae": 126.8686,
+    "mean_test_rmse": 513.802
+  },
+  "dataset_files": [
+    "AHU_annual.csv",
+    "coi_bias_-2_annual.csv",
+    "coi_bias_-4_annual.csv",
+    "coi_bias_2_annual.csv",
+    "coi_bias_4_annual.csv",
+    "coi_leakage_010_annual.csv",
+    "coi_leakage_025_annual.csv",
+    "coi_leakage_040_annual.csv",
+    "coi_leakage_050_annual.csv",
+    "coi_stuck_010_annual.csv",
+    "coi_stuck_025_annual.csv",
+    "coi_stuck_050_annual.csv",
+    "coi_stuck_075_annual.csv",
+    "damper_stuck_010_annual.csv",
+    "damper_stuck_025_annual.csv",
+    "damper_stuck_075_annual.csv",
+    "damper_stuck_100_annual_short.csv",
+    "oa_bias_-2_annual.csv",
+    "oa_bias_-4_annual.csv",
+    "oa_bias_2_annual.csv",
+    "oa_bias_4_annual.csv"
+  ]
 }

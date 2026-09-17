@@ -43,27 +43,33 @@ class ConstraintChecker:
 
         # 2. Zone Comfort Band Check (ASHRAE 55)
         pred_zone_temp = predicted_state.get("zone_temp", 22.8)
-        min_temp, max_temp = OPERATING_CONSTRAINTS["zone_temp"]
+        cur_zone_temp = current_state.get("zone_temp", pred_zone_temp)
+        is_f = pred_zone_temp > 45.0
+        min_temp, max_temp = (66.0, 80.6) if is_f else (19.0, 27.0)
+        unit = "°F" if is_f else "°C"
+
         if pred_zone_temp > max_temp:
+            is_improving = pred_zone_temp < cur_zone_temp
             violations.append(
                 ConstraintViolation(
                     constraint_name="ASHRAE_THERMAL_COMFORT_CEILING",
-                    description=f"Predicted zone temperature {pred_zone_temp:.2f}°C violates upper comfort limit {max_temp:.1f}°C.",
+                    description=f"Predicted zone temperature {pred_zone_temp:.2f}{unit} violates upper comfort limit {max_temp:.1f}{unit}.",
                     metric="zone_temp",
                     actual_value=pred_zone_temp,
-                    allowed_limit=f"<= {max_temp}°C",
-                    severity="CRITICAL",
+                    allowed_limit=f"<= {max_temp}{unit}",
+                    severity="HIGH" if is_improving else "CRITICAL",
                 )
             )
         elif pred_zone_temp < min_temp:
+            is_improving = pred_zone_temp > cur_zone_temp
             violations.append(
                 ConstraintViolation(
                     constraint_name="ASHRAE_THERMAL_COMFORT_FLOOR",
-                    description=f"Predicted zone temperature {pred_zone_temp:.2f}°C violates lower comfort limit {min_temp:.1f}°C.",
+                    description=f"Predicted zone temperature {pred_zone_temp:.2f}{unit} violates lower comfort limit {min_temp:.1f}{unit}.",
                     metric="zone_temp",
                     actual_value=pred_zone_temp,
-                    allowed_limit=f">= {min_temp}°C",
-                    severity="HIGH",
+                    allowed_limit=f">= {min_temp}{unit}",
+                    severity="HIGH" if is_improving else "CRITICAL",
                 )
             )
 
@@ -85,14 +91,18 @@ class ConstraintChecker:
         # 4. Anti-Freeze Coil Protection Check
         oa_t = predicted_state.get("oa_temp", 24.0)
         oa_dmpr = interventions.get("oa_dmpr", predicted_state.get("oa_dmpr", 25.0))
-        if oa_t < 4.0 and oa_dmpr > 40.0:
+        oa_is_f = oa_t > 45.0
+        freeze_thresh = 39.2 if oa_is_f else 4.0
+        oa_unit = "°F" if oa_is_f else "°C"
+
+        if oa_t < freeze_thresh and oa_dmpr > 40.0:
             violations.append(
                 ConstraintViolation(
                     constraint_name="COIL_FREEZE_PROTECTION",
-                    description=f"Outdoor air damper {oa_dmpr:.1f}% at ambient {oa_t:.1f}°C risks freezing cooling coil water tubes.",
+                    description=f"Outdoor air damper {oa_dmpr:.1f}% at ambient {oa_t:.1f}{oa_unit} risks freezing cooling coil water tubes.",
                     metric="oa_dmpr",
                     actual_value=oa_dmpr,
-                    allowed_limit="<= 40% when OAT < 4°C",
+                    allowed_limit=f"<= 40% when OAT < {freeze_thresh:.1f}{oa_unit}",
                     severity="CRITICAL",
                 )
             )

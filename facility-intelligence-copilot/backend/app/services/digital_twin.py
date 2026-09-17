@@ -138,11 +138,16 @@ class DigitalTwinService:
         if fault_class != "nominal":
             health -= fault_prob * 35.0
 
-        zone_t = canonical.get("zone_temp", 22.8)
-        if zone_t > 25.5:
-            health -= min(25.0, (zone_t - 25.5) * 8.0)
-        elif zone_t < 20.0:
-            health -= min(20.0, (20.0 - zone_t) * 6.0)
+        zone_t = canonical.get("zone_temp", 72.0)
+        # Adaptive unit detection (°F vs °C)
+        is_fahrenheit = zone_t > 50.0
+        upper_limit = 78.0 if is_fahrenheit else 25.5
+        lower_limit = 68.0 if is_fahrenheit else 20.0
+
+        if zone_t > upper_limit:
+            health -= min(25.0, (zone_t - upper_limit) * (4.5 if is_fahrenheit else 8.0))
+        elif zone_t < lower_limit:
+            health -= min(20.0, (lower_limit - zone_t) * (3.5 if is_fahrenheit else 6.0))
 
         sp = canonical.get("sa_sp", 1.5)
         if sp > 3.5:

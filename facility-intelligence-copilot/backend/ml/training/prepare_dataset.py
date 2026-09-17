@@ -3,22 +3,22 @@ from __future__ import annotations
 import os
 import glob
 import logging
+from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple, Any
 import numpy as np
+import pandas as pd
 
 from backend.ml.features.feature_schema import (
     FaultClass,
     FAULT_LABEL_TO_INT,
-    BASE_TELEMETRY_FEATURES,
+    FAULT_INT_TO_LABEL,
+    FILENAME_SCENARIO_MAP,
     ALL_FAULT_FEATURES,
-    CONTROLLABLE_ACTUATORS,
-)
-from backend.ml.features.feature_engineering import (
-    canonicalize_telemetry_dict,
-    compute_derived_features,
-    extract_features_dict,
+    STATE_REGRESSOR_INPUT_FEATURES,
+    STATE_REGRESSOR_TARGETS,
 )
 
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
 
 DEFAULT_LBNL_DATASET_DIR = os.getenv(
@@ -27,177 +27,304 @@ DEFAULT_LBNL_DATASET_DIR = os.getenv(
 )
 
 
-def generate_synthetic_physical_dataset(n_samples: int = 50000) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+@dataclass
+class DatasetSplit:
+    # Fault Classification matrices
+    X_train_fault: np.ndarray
+    y_train_fault: np.ndarray
+    X_val_fault: np.ndarray
+    y_val_fault: np.ndarray
+    X_test_fault: np.ndarray
+    y_test_fault: np.ndarray
+
+    # Counterfactual State Regression matrices
+    X_train_state: np.ndarray
+    y_train_state: np.ndarray
+    X_val_state: np.ndarray
+    y_val_state: np.ndarray
+    X_test_state: np.ndarray
+    y_test_state: np.ndarray
+
+    # Dataset Metadata
+    metadata: Dict[str, Any] = field(default_factory=dict)
+
+
+def get_scenario_for_filename(filename: str) -> str:
+    """Matches LBNL filename to ground truth scenario taxonomy."""
+    base = os.path.basename(filename).replace(".csv", "")
+    for key, label in FILENAME_SCENARIO_MAP.items():
+        if key in base:
+            return label
+    return FaultClass.NOMINAL.value
+
+
+def extract_features_dataframe_vectorized(df: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray]:
     """
-    Generates high-fidelity physics-based synthetic LBNL dataset if external CSVs are unavailable.
-    Outputs:
-    - X_fault: (N, num_features)
-    - y_fault: (N,)
-    - X_state_cf: (N, num_state_features + num_actions)
-    - y_state_cf: (N, 4) -> [zone_temp, sa_temp, sa_cfm, power]
+    High-speed vectorized extraction of ALL_FAULT_FEATURES and STATE_REGRESSOR_INPUT/OUTPUT matrices.
+    Returns:
+        X_fault_matrix: (N, 21) matching ALL_FAULT_FEATURES
+        X_state_matrix: (N, 12) matching STATE_REGRESSOR_INPUT_FEATURES
+        y_state_matrix: (N, 4)  matching STATE_REGRESSOR_TARGETS
     """
-    np.random.seed(42)
+    n = len(df)
     
-    # 1. Weather and boundary conditions
-    oa_temps = np.random.uniform(10.0, 38.0, n_samples)
-    ra_temps = np.random.uniform(21.0, 25.5, n_samples)
-    
-    # Control actuators
-    oa_dmprs = np.random.uniform(10.0, 90.0, n_samples)
-    ra_dmprs = 100.0 - oa_dmprs
-    chwc_vlvs = np.random.uniform(0.0, 100.0, n_samples)
-    hw_vlvs = np.zeros(n_samples)
-    # in cold weather, hw is active
-    cold_mask = oa_temps < 15.0
-    hw_vlvs[cold_mask] = np.random.uniform(10.0, 80.0, np.sum(cold_mask))
-    chwc_vlvs[cold_mask] = 0.0
-    
-    sf_spds = np.random.uniform(40.0, 100.0, n_samples)
-    
-    # Fault assignment (0: Nominal, 1: Damper Stuck, 2: Coil Fouling, 3: Fan Belt Slip, 4: Pressure Surge)
-    fault_labels = np.random.choice([0, 1, 2, 3, 4], size=n_samples, p=[0.40, 0.15, 0.15, 0.15, 0.15])
-    
-    # Physics simulation
-    # Mixed air temp
-    ma_temps = (oa_dmprs / 100.0) * oa_temps + (ra_dmprs / 100.0) * ra_temps
-    
-    # Supply Airflow CFM
-    nominal_cfm = sf_spds * 35.0 + np.random.normal(0, 20.0, n_samples)
-    sa_cfms = nominal_cfm.copy()
-    
-    # Supply Static Pressure
-    sa_sps = (sf_spds / 100.0) ** 2 * 2.2 + np.random.normal(0, 0.05, n_samples)
-    
-    # Supply Air Temp
-    # Cooling coil heat transfer: deltaT_cooling ~ chwc_vlvs * 0.12 * effectiveness
-    cooling_delta = (chwc_vlvs / 100.0) * 11.5
-    heating_delta = (hw_vlvs / 100.0) * 14.0
-    sa_temps = ma_temps - cooling_delta + heating_delta + np.random.normal(0, 0.2, n_samples)
-    
-    # Zone Temp
-    # Zone heat balance: dT_zone/dt ~ load - cfm*(T_zone - T_sa)
-    zone_temps = ra_temps + 0.3 * (oa_temps - 22.0) / 10.0 - (sa_cfms / 3000.0) * (23.0 - sa_temps) * 0.1 + np.random.normal(0, 0.15, n_samples)
-    
-    # Power kW: Fan power (cubic law) + chiller lift load
-    power = 0.8 + (sf_spds / 100.0) ** 2.8 * 6.5 + (chwc_vlvs / 100.0) * 5.0 + np.random.normal(0, 0.1, n_samples)
-    
-    # Ingest Fault Perturbations
-    # Fault 1: Damper Stuck (OA damper stuck wide open when hot outside)
-    f1_mask = (fault_labels == 1)
-    oa_dmprs[f1_mask] = np.random.uniform(75.0, 100.0, np.sum(f1_mask))
-    ma_temps[f1_mask] = 0.85 * oa_temps[f1_mask] + 0.15 * ra_temps[f1_mask]
-    sa_temps[f1_mask] += 3.5
-    zone_temps[f1_mask] += 2.8
-    power[f1_mask] += 3.2
-    
-    # Fault 2: Coil fouling / valve failure
-    f2_mask = (fault_labels == 2)
-    chwc_vlvs[f2_mask] = 100.0  # hunting wide open
-    sa_temps[f2_mask] = ma_temps[f2_mask] - 2.0  # minimal cooling
-    zone_temps[f2_mask] += 3.2
-    power[f2_mask] += 4.5
-    
-    # Fault 3: Fan belt slippage / restriction
-    f3_mask = (fault_labels == 3)
-    sa_cfms[f3_mask] *= 0.55  # 45% airflow loss
-    sa_sps[f3_mask] *= 0.65
-    zone_temps[f3_mask] += 2.0
-    power[f3_mask] *= 0.85
-    
-    # Fault 4: Static Pressure Surge / stuck terminal dampers
-    f4_mask = (fault_labels == 4)
-    sa_sps[f4_mask] = np.random.uniform(3.8, 4.8, np.sum(f4_mask))
-    sa_cfms[f4_mask] *= 0.70
-    power[f4_mask] += 2.5
-    
-    # Build feature matrices
-    X_fault_list: List[List[float]] = []
-    X_state_cf_list: List[List[float]] = []
-    y_state_cf_list: List[List[float]] = []
-    
-    for i in range(n_samples):
-        row = {
-            "oa_temp": oa_temps[i],
-            "ra_temp": ra_temps[i],
-            "ma_temp": ma_temps[i],
-            "sa_temp": sa_temps[i],
-            "zone_temp": zone_temps[i],
-            "oa_dmpr": oa_dmprs[i],
-            "ra_dmpr": ra_dmprs[i],
-            "chwc_vlv": chwc_vlvs[i],
-            "hw_vlv": hw_vlvs[i],
-            "sf_spd": sf_spds[i],
-            "sa_cfm": sa_cfms[i],
-            "sa_sp": sa_sps[i],
-            "power": power[i],
-        }
-        fdict = extract_features_dict(row)
-        feat_vec = [fdict.get(k, 0.0) for k in ALL_FAULT_FEATURES]
-        X_fault_list.append(feat_vec)
-        
-        # State Transition pairs for Counterfactual model:
-        # Input: current state [oa_temp, ra_temp, ma_temp, sa_temp, zone_temp, sa_cfm, sa_sp, power] + [oa_dmpr, chwc_vlv, hw_vlv, sf_spd]
-        state_cf_input = [
-            fdict["oa_temp"],
-            fdict["ra_temp"],
-            fdict["ma_temp"],
-            fdict["sa_temp"],
-            fdict["zone_temp"],
-            fdict["sa_cfm"],
-            fdict["sa_sp"],
-            fdict["power"],
-            fdict["oa_dmpr"],
-            fdict["chwc_vlv"],
-            fdict["hw_vlv"],
-            fdict["sf_spd"],
-        ]
-        X_state_cf_list.append(state_cf_input)
-        
-        # Next equilibrium targets calculated from the applied actuators:
-        next_oad = fdict["oa_dmpr"]
-        next_chwc = fdict["chwc_vlv"]
-        next_hw = fdict["hw_vlv"]
-        next_sf = fdict["sf_spd"]
-        oat = fdict["oa_temp"]
-        rat = fdict["ra_temp"]
-        
-        next_mat = (next_oad / 100.0) * oat + ((100.0 - next_oad) / 100.0) * rat
-        next_sat = next_mat - (next_chwc / 100.0) * 11.5 + (next_hw / 100.0) * 14.0
-        next_cfm = next_sf * 35.0
-        next_pwr = 0.8 + (next_sf / 100.0) ** 2.8 * 6.5 + (next_chwc / 100.0) * 5.0
-        next_zt = rat + 0.3 * (oat - 22.0) / 10.0 - (next_cfm / 3000.0) * (23.0 - next_sat) * 0.15
-        
-        y_state_cf_list.append([
-            float(next_zt),
-            float(next_sat),
-            float(next_cfm),
-            float(next_pwr),
-        ])
-        
-    return (
-        np.array(X_fault_list, dtype=np.float32),
-        fault_labels.astype(np.int32),
-        np.array(X_state_cf_list, dtype=np.float32),
-        np.array(y_state_cf_list, dtype=np.float32),
+    # 1. Base telemetry extraction
+    oa_temp = df["OA_TEMP"].values.astype(np.float32)
+    ra_temp = df["RA_TEMP"].values.astype(np.float32)
+    ma_temp = df["MA_TEMP"].values.astype(np.float32)
+    sa_temp = df["SA_TEMP"].values.astype(np.float32)
+
+    # Multi-zone average
+    zone_cols = [f"ZONE_TEMP_{i}" for i in range(1, 6) if f"ZONE_TEMP_{i}" in df.columns]
+    if zone_cols:
+        zone_temp = df[zone_cols].mean(axis=1).values.astype(np.float32)
+    else:
+        zone_temp = ra_temp.copy()
+
+    # Normalize actuator scales (fractions 0-1 to 0-100%)
+    oa_dmpr_raw = df["OA_DMPR"].values.astype(np.float32)
+    oa_dmpr = np.where(oa_dmpr_raw <= 1.0, oa_dmpr_raw * 100.0, oa_dmpr_raw)
+
+    ra_dmpr_raw = df["RA_DMPR"].values.astype(np.float32)
+    ra_dmpr = np.where(ra_dmpr_raw <= 1.0, ra_dmpr_raw * 100.0, ra_dmpr_raw)
+
+    chwc_vlv_raw = df["CHWC_VLV"].values.astype(np.float32)
+    chwc_vlv = np.where(chwc_vlv_raw <= 1.0, chwc_vlv_raw * 100.0, chwc_vlv_raw)
+
+    hw_vlv = np.zeros(n, dtype=np.float32)
+
+    sf_spd_raw = df["SF_SPD"].values.astype(np.float32)
+    sf_spd = np.where(sf_spd_raw <= 1.0, sf_spd_raw * 100.0, sf_spd_raw)
+
+    sa_cfm = df["SA_CFM"].values.astype(np.float32)
+    sa_sp = df["SA_SP"].values.astype(np.float32)
+
+    # Fan power (Watts -> kW)
+    sf_wat = np.maximum(0.0, df["SF_WAT"].values.astype(np.float32))
+    rf_wat = np.maximum(0.0, df["RF_WAT"].values.astype(np.float32)) if "RF_WAT" in df.columns else np.zeros(n, dtype=np.float32)
+    power = (sf_wat + rf_wat) / 1000.0
+
+    # 2. Derived thermodynamic & aerodynamic features
+    delta_t_coil = ma_temp - sa_temp
+    delta_t_mixed = oa_temp - ra_temp
+    denom_mixed = np.where(np.abs(delta_t_mixed) > 0.1, delta_t_mixed, 0.1)
+    mixed_air_ratio = np.clip((ma_temp - ra_temp) / denom_mixed, -2.0, 3.0)
+    thermal_load_proxy = sa_cfm * np.abs(ra_temp - sa_temp) * 0.000316
+    airflow_per_speed = sa_cfm / (sf_spd + 1e-3)
+    sp_per_speed = sa_sp / (sf_spd + 1e-3)
+    power_per_airflow = power / np.maximum(sa_cfm, 1.0)
+    damper_cooling_fight = np.where((oa_dmpr > 30.0) & (chwc_vlv > 30.0) & (oa_temp > ra_temp), 1.0, 0.0)
+
+    # Clean NaNs/Infs
+    def clean_arr(arr: np.ndarray) -> np.ndarray:
+        return np.nan_to_num(arr, nan=0.0, posinf=1000.0, neginf=-1000.0)
+
+    feature_dict = {
+        "oa_temp": clean_arr(oa_temp),
+        "ra_temp": clean_arr(ra_temp),
+        "ma_temp": clean_arr(ma_temp),
+        "sa_temp": clean_arr(sa_temp),
+        "zone_temp": clean_arr(zone_temp),
+        "oa_dmpr": clean_arr(oa_dmpr),
+        "ra_dmpr": clean_arr(ra_dmpr),
+        "chwc_vlv": clean_arr(chwc_vlv),
+        "hw_vlv": clean_arr(hw_vlv),
+        "sf_spd": clean_arr(sf_spd),
+        "sa_cfm": clean_arr(sa_cfm),
+        "sa_sp": clean_arr(sa_sp),
+        "power": clean_arr(power),
+        "delta_t_coil": clean_arr(delta_t_coil),
+        "delta_t_mixed": clean_arr(delta_t_mixed),
+        "mixed_air_ratio": clean_arr(mixed_air_ratio),
+        "thermal_load_proxy": clean_arr(thermal_load_proxy),
+        "airflow_per_speed": clean_arr(airflow_per_speed),
+        "sp_per_speed": clean_arr(sp_per_speed),
+        "power_per_airflow": clean_arr(power_per_airflow),
+        "damper_cooling_fight": clean_arr(damper_cooling_fight),
+    }
+
+    # Assemble strictly ordered matrices
+    X_fault = np.column_stack([feature_dict[feat] for feat in ALL_FAULT_FEATURES]).astype(np.float32)
+    X_state = np.column_stack([feature_dict[feat] for feat in STATE_REGRESSOR_INPUT_FEATURES]).astype(np.float32)
+    y_state = np.column_stack([feature_dict[tgt] for tgt in STATE_REGRESSOR_TARGETS]).astype(np.float32)
+
+    return X_fault, X_state, y_state
+
+
+def load_and_prepare_lbnl_dataset(
+    dataset_dir: str = DEFAULT_LBNL_DATASET_DIR,
+    sample_step: int = 5,  # 5-minute sampling
+    train_ratio: float = 0.70,
+    val_ratio: float = 0.15,
+) -> DatasetSplit:
+    """
+    High-speed vectorized ingestion of real LBNL SDAHU CSV files with chronological 70/15/15 split.
+    """
+    if not os.path.exists(dataset_dir):
+        raise FileNotFoundError(f"LBNL dataset directory not found at: {dataset_dir}")
+
+    csv_files = sorted(glob.glob(os.path.join(dataset_dir, "*.csv")))
+    if not csv_files:
+        raise FileNotFoundError(f"No CSV files found in: {dataset_dir}")
+
+    logger.info(f"Discovered {len(csv_files)} LBNL dataset CSV files in {dataset_dir}")
+
+    train_X_fault_list, train_y_fault_list = [], []
+    val_X_fault_list, val_y_fault_list = [], []
+    test_X_fault_list, test_y_fault_list = [], []
+
+    train_X_state_list, train_y_state_list = [], []
+    val_X_state_list, val_y_state_list = [], []
+    test_X_state_list, test_y_state_list = [], []
+
+    file_summaries: List[Dict[str, Any]] = []
+    date_ranges = {"train": [], "val": [], "test": []}
+
+    for fpath in csv_files:
+        fname = os.path.basename(fpath)
+        scenario = get_scenario_for_filename(fname)
+        label_int = FAULT_LABEL_TO_INT[scenario]
+
+        logger.info(f"Ingesting file '{fname}' (Scenario: {scenario}, Label: {label_int})...")
+
+        # Fast chunked downsampled read
+        chunks = []
+        for chunk in pd.read_csv(fpath, chunksize=50000):
+            chunks.append(chunk.iloc[::sample_step])
+        df_sampled = pd.concat(chunks, ignore_index=True)
+
+        df_sampled["Datetime"] = pd.to_datetime(df_sampled["Datetime"])
+        df_sampled = df_sampled.sort_values("Datetime").reset_index(drop=True)
+
+        n_rows = len(df_sampled)
+        n_train = int(n_rows * train_ratio)
+        n_val = int(n_rows * val_ratio)
+        n_test = n_rows - n_train - n_val
+
+        df_train = df_sampled.iloc[:n_train]
+        df_val = df_sampled.iloc[n_train:n_train + n_val]
+        df_test = df_sampled.iloc[n_train + n_val:]
+
+        file_summaries.append({
+            "filename": fname,
+            "scenario": scenario,
+            "total_sampled_rows": n_rows,
+            "train_rows": len(df_train),
+            "val_rows": len(df_val),
+            "test_rows": len(df_test),
+            "start_time": str(df_sampled["Datetime"].iloc[0]),
+            "end_time": str(df_sampled["Datetime"].iloc[-1]),
+        })
+
+        if len(df_train) > 0:
+            date_ranges["train"].append((str(df_train["Datetime"].iloc[0]), str(df_train["Datetime"].iloc[-1])))
+        if len(df_val) > 0:
+            date_ranges["val"].append((str(df_val["Datetime"].iloc[0]), str(df_val["Datetime"].iloc[-1])))
+        if len(df_test) > 0:
+            date_ranges["test"].append((str(df_test["Datetime"].iloc[0]), str(df_test["Datetime"].iloc[-1])))
+
+        # Vectorized feature computation per split
+        train_xf, train_xs, train_ys = extract_features_dataframe_vectorized(df_train)
+        val_xf, val_xs, val_ys = extract_features_dataframe_vectorized(df_val)
+        test_xf, test_xs, test_ys = extract_features_dataframe_vectorized(df_test)
+
+        train_X_fault_list.append(train_xf)
+        train_y_fault_list.append(np.full(len(train_xf), label_int, dtype=np.int32))
+        train_X_state_list.append(train_xs)
+        train_y_state_list.append(train_ys)
+
+        val_X_fault_list.append(val_xf)
+        val_y_fault_list.append(np.full(len(val_xf), label_int, dtype=np.int32))
+        val_X_state_list.append(val_xs)
+        val_y_state_list.append(val_ys)
+
+        test_X_fault_list.append(test_xf)
+        test_y_fault_list.append(np.full(len(test_xf), label_int, dtype=np.int32))
+        test_X_state_list.append(test_xs)
+        test_y_state_list.append(test_ys)
+
+    # Stack all files
+    X_train_fault = np.vstack(train_X_fault_list)
+    y_train_fault = np.concatenate(train_y_fault_list)
+    X_val_fault = np.vstack(val_X_fault_list)
+    y_val_fault = np.concatenate(val_y_fault_list)
+    X_test_fault = np.vstack(test_X_fault_list)
+    y_test_fault = np.concatenate(test_y_fault_list)
+
+    X_train_state = np.vstack(train_X_state_list)
+    y_train_state = np.vstack(train_y_state_list)
+    X_val_state = np.vstack(val_X_state_list)
+    y_val_state = np.vstack(val_y_state_list)
+    X_test_state = np.vstack(test_X_state_list)
+    y_test_state = np.vstack(test_y_state_list)
+
+    total_rows = len(X_train_fault) + len(X_val_fault) + len(X_test_fault)
+
+    def get_class_dist(arr: np.ndarray) -> Dict[str, int]:
+        unique, counts = np.unique(arr, return_counts=True)
+        return {FAULT_INT_TO_LABEL[int(u)]: int(c) for u, c in zip(unique, counts)}
+
+    metadata = {
+        "dataset_files": [f["filename"] for f in file_summaries],
+        "file_summaries": file_summaries,
+        "sample_step_minutes": sample_step,
+        "total_rows": total_rows,
+        "feature_count": len(ALL_FAULT_FEATURES),
+        "feature_names": ALL_FAULT_FEATURES,
+        "state_features": STATE_REGRESSOR_INPUT_FEATURES,
+        "state_targets": STATE_REGRESSOR_TARGETS,
+        "split_strategy": "chronological_70_15_15",
+        "train_rows": len(X_train_fault),
+        "validation_rows": len(X_val_fault),
+        "test_rows": len(X_test_fault),
+        "class_distribution": {
+            "train": get_class_dist(y_train_fault),
+            "val": get_class_dist(y_val_fault),
+            "test": get_class_dist(y_test_fault),
+        },
+        "date_ranges": {
+            "train": [date_ranges["train"][0][0], date_ranges["train"][0][1]] if date_ranges["train"] else [],
+            "val": [date_ranges["val"][0][0], date_ranges["val"][0][1]] if date_ranges["val"] else [],
+            "test": [date_ranges["test"][0][0], date_ranges["test"][0][1]] if date_ranges["test"] else [],
+        },
+    }
+
+    logger.info("=" * 60)
+    logger.info("LBNL DATASET PREPARATION COMPLETE (CHRONOLOGICAL SPLIT)")
+    logger.info(f"Total Sampled Rows: {total_rows}")
+    logger.info(f"Training Rows:      {len(X_train_fault)} ({len(X_train_fault)/total_rows*100:.1f}%)")
+    logger.info(f"Validation Rows:    {len(X_val_fault)} ({len(X_val_fault)/total_rows*100:.1f}%)")
+    logger.info(f"Test Rows:          {len(X_test_fault)} ({len(X_test_fault)/total_rows*100:.1f}%)")
+    logger.info(f"Feature Count:      {len(ALL_FAULT_FEATURES)}")
+    logger.info(f"Class Dist (Train): {metadata['class_distribution']['train']}")
+    logger.info(f"Class Dist (Test):  {metadata['class_distribution']['test']}")
+    logger.info(f"Train Dates:        {metadata['date_ranges']['train']}")
+    logger.info(f"Val Dates:          {metadata['date_ranges']['val']}")
+    logger.info(f"Test Dates:         {metadata['date_ranges']['test']}")
+    logger.info("=" * 60)
+
+    return DatasetSplit(
+        X_train_fault=X_train_fault,
+        y_train_fault=y_train_fault,
+        X_val_fault=X_val_fault,
+        y_val_fault=y_val_fault,
+        X_test_fault=X_test_fault,
+        y_test_fault=y_test_fault,
+        X_train_state=X_train_state,
+        y_train_state=y_train_state,
+        X_val_state=X_val_state,
+        y_val_state=y_val_state,
+        X_test_state=X_test_state,
+        y_test_state=y_test_state,
+        metadata=metadata,
     )
 
 
 def load_and_prepare_dataset(dataset_dir: Optional[str] = None) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-    """
-    Attempts to read all CSVs from LBNL dataset directory. If unavailable, falls back to physics generator.
-    """
-    data_dir = dataset_dir or DEFAULT_LBNL_DATASET_DIR
-    logger.info(f"Checking for LBNL dataset at: {data_dir}")
-    
-    if not os.path.exists(data_dir):
-        logger.warning(f"LBNL dataset directory '{data_dir}' not accessible. Using physics-grounded synthetic generator.")
-        return generate_synthetic_physical_dataset()
-
-    csv_files = glob.glob(os.path.join(data_dir, "*.csv"))
-    if not csv_files:
-        logger.warning(f"No CSV files found in '{data_dir}'. Using physics generator.")
-        return generate_synthetic_physical_dataset()
-
-    logger.info(f"Found {len(csv_files)} LBNL CSV files. Ingesting...")
-    # For speed and balance across scenarios, we combine LBNL files with physics grounding
-    return generate_synthetic_physical_dataset()
+    """Compatibility helper returning (X_fault, y_fault, X_state, y_state)."""
+    data = load_and_prepare_lbnl_dataset(dataset_dir or DEFAULTLBNL_DATASET_DIR if 'DEFAULTLBNL_DATASET_DIR' in locals() else DEFAULT_LBNL_DATASET_DIR)
+    X_f = np.vstack([data.X_train_fault, data.X_val_fault, data.X_test_fault])
+    y_f = np.concatenate([data.y_train_fault, data.y_val_fault, data.y_test_fault])
+    X_s = np.vstack([data.X_train_state, data.X_val_state, data.X_test_state])
+    y_s = np.vstack([data.y_train_state, data.y_val_state, data.y_test_state])
+    return X_f, y_f, X_s, y_s
