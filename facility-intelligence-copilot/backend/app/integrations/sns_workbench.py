@@ -327,6 +327,9 @@ class SNSWorkbenchClient:
                 self._action("SNS-CS-06", "oa_dmpr", cur_oad, 15.0,
                     "Lock OA damper to minimum 15% to reduce thermal load on stuck coil.",
                     "Reduce cooling demand on stuck coil to maintain zone temp."),
+                self._action("SNS-CS-07", "chwc_vlv", cur_chwc, 100.0,
+                    "Full chilled water valve override (100%) with OA minimum lock (15%) and fan boost.",
+                    "Maximum chilled water heat flux with minimum outdoor air load to restore zone comfort."),
             ]
 
         # ---------------------------------------------------------------

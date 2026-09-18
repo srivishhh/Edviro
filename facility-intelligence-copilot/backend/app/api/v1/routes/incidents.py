@@ -27,17 +27,15 @@ def get_active_incident() -> Dict[str, Any]:
     state = twin_service.get_state("AHU-007")
 
     if not state:
-        # Generate initial state
-        raw = {
-            "oa_temp": 32.5, "ra_temp": 24.2, "ma_temp": 29.8, "sa_temp": 21.0,
-            "zone_temp": 25.8, "oa_dmpr": 85.0, "chwc_vlv": 95.0, "sf_spd": 80.0,
-            "sa_cfm": 2450.0, "sa_sp": 1.6, "power": 14.2
-        }
-        state = twin_service.process_telemetry_frame("AHU-007", raw)
+        from backend.app.api.v1.routes.replay import REPLAY_STATE, _sync_reading_to_digital_twin
+        from backend.app.services.lbnl_adapter import LBNLAdapter
+        lbnl = LBNLAdapter()
+        reading = lbnl.get_reading(REPLAY_STATE.get("current_row", 1))
+        _sync_reading_to_digital_twin(reading)
+        state = twin_service.get_state("AHU-007")
 
     is_anomalous = state.fault_diagnosis != "nominal" or state.health_score < 75.0
-
-    incident_id = "INC-3001" if is_anomalous else None
+    incident_id = f"INC-{state.fault_diagnosis.upper().replace('_', '-')}-001" if is_anomalous else None
     
     # Run counterfactual analysis
     cf_res = twin_service.evaluate_counterfactual(

@@ -272,6 +272,14 @@ class CandidateGenerator:
                     interventions={"chwc_vlv": 45.0, "sf_spd": 65.0, "oa_dmpr": 12.0},
                     expected_rationale="Reduced system load may allow partial valve movement.",
                 ),
+                CandidatePlan(
+                    candidate_id="cand_coi_max_cool_07",
+                    title="Full Chilled Water Valve 100% + OA Lock 15%",
+                    description="Maximum chilled water flow with outdoor air lock to pull down zone temperature.",
+                    proposed_by="GSENSE_ANALYTICAL_ENGINE",
+                    interventions={"chwc_vlv": 100.0, "oa_dmpr": 15.0, "sf_spd": 85.0},
+                    expected_rationale="Maximum cooling heat flux to restore zone thermal comfort.",
+                ),
             ]
 
         elif fault_class in [FaultClass.COI_LEAKAGE.value, FaultClass.COIL_FOULING_OR_LEAKAGE.value]:
