@@ -51,9 +51,21 @@ class ResolutionEvaluator:
         cur_power = baseline_state.get("power", 15.0)
         pred_power = predicted_state.get("power", cur_power)
 
-        # Detect unit system (°F vs °C)
+        # Detect unit system (°F vs °C) from baseline zone/supply temp
         is_f = cur_zone_temp > 45.0 or cur_sa_temp > 45.0
         temp_unit = "°F" if is_f else "°C"
+
+        # Normalize predicted temperatures to match baseline unit system
+        if is_f:
+            if pred_sa_temp <= 45.0:
+                pred_sa_temp = round(pred_sa_temp * 9.0 / 5.0 + 32.0, 2)
+            if pred_zone_temp <= 45.0:
+                pred_zone_temp = round(pred_zone_temp * 9.0 / 5.0 + 32.0, 2)
+        else:
+            if pred_sa_temp > 45.0:
+                pred_sa_temp = round((pred_sa_temp - 32.0) * 5.0 / 9.0, 2)
+            if pred_zone_temp > 45.0:
+                pred_zone_temp = round((pred_zone_temp - 32.0) * 5.0 / 9.0, 2)
 
         # Target setpoint envelopes (ASHRAE 55 standard comfort envelope)
         target_sa_min, target_sa_max = (50.0, 68.0) if is_f else (10.0, 20.0)

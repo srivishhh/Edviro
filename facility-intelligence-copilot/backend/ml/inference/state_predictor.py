@@ -78,8 +78,16 @@ class StatePredictor:
             if act_clean in simulated_state:
                 simulated_state[act_clean] = float(val)
 
-        # Check if incoming telemetry temperatures are in Celsius (e.g., zone_temp or oa_temp <= 45.0)
-        is_celsius = canonical.get("zone_temp", 72.0) <= 45.0 or canonical.get("oa_temp", 70.0) <= 45.0
+        # Check if incoming telemetry temperatures are in Celsius (infer strictly from indoor zone/return/supply channels)
+        is_celsius = False
+        for t_key in ["zone_temp", "ra_temp", "sa_temp"]:
+            if t_key in canonical:
+                try:
+                    if float(canonical[t_key]) <= 45.0:
+                        is_celsius = True
+                        break
+                except (ValueError, TypeError):
+                    pass
 
         working_state = dict(simulated_state)
         temp_keys = ["oa_temp", "ra_temp", "ma_temp", "sa_temp", "zone_temp"]
@@ -104,10 +112,10 @@ class StatePredictor:
                     predicted_targets[target_name] = round(val, 2)
                 except Exception as e:
                     logger.error(f"Error predicting target {target_name}: {e}")
-                    predicted_targets[target_name] = self._physics_approx(canonical, simulated_state, target_name)
+                    predicted_targets[target_name] = self._physics_approx(canonical, simulated_state, target_name, is_celsius)
         else:
             for target_name in STATE_REGRESSOR_TARGETS:
-                predicted_targets[target_name] = self._physics_approx(canonical, simulated_state, target_name)
+                predicted_targets[target_name] = self._physics_approx(canonical, simulated_state, target_name, is_celsius)
 
         # Calculate differential impacts
         cur_temp = canonical.get("zone_temp", 22.0 if is_celsius else 72.0)
@@ -138,22 +146,24 @@ class StatePredictor:
             "applied_interventions": interventions,
         }
 
-    def _physics_approx(self, orig: Dict[str, float], sim: Dict[str, float], target: str) -> float:
-        oa = sim.get("oa_temp", 65.0)
-        ra = sim.get("ra_temp", 72.0)
+    def _physics_approx(self, orig: Dict[str, float], sim: Dict[str, float], target: str, is_celsius: bool = False) -> float:
+        oa = sim.get("oa_temp", 20.0 if is_celsius else 65.0)
+        ra = sim.get("ra_temp", 22.0 if is_celsius else 72.0)
         oad = sim.get("oa_dmpr", 20.0)
         chwc = sim.get("chwc_vlv", 35.0)
         spd = sim.get("sf_spd", 70.0)
+        cool_drop = 8.3 if is_celsius else 15.0
+        target_ref = 22.0 if is_celsius else 72.0
 
         if target == "sa_temp":
             mat = (oad / 100.0) * oa + ((100.0 - oad) / 100.0) * ra
-            return round(mat - (chwc / 100.0) * 15.0, 2)
+            return round(mat - (chwc / 100.0) * cool_drop, 2)
         elif target == "sa_cfm":
             return round(spd * 35.0, 1)
         elif target == "power":
             return round(0.8 + (spd / 100.0) ** 2.8 * 6.5 + (chwc / 100.0) * 5.0, 2)
         elif target == "zone_temp":
             mat = (oad / 100.0) * oa + ((100.0 - oad) / 100.0) * ra
-            sat = mat - (chwc / 100.0) * 15.0
-            return round(ra + 0.3 * (oa - 70.0) / 10.0 - (spd / 100.0) * (72.0 - sat) * 0.1, 2)
+            sat = mat - (chwc / 100.0) * cool_drop
+            return round(ra + 0.3 * (oa - target_ref) / 10.0 - (spd / 100.0) * (target_ref - sat) * 0.1, 2)
         return 0.0

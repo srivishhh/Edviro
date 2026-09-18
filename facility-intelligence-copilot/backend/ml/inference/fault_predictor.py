@@ -70,13 +70,20 @@ class FaultPredictor:
         """
         validate_telemetry_dict(telemetry)
         
-        # Check if telemetry is in Celsius (e.g., zone_temp or oa_temp <= 45.0)
-        zt = telemetry.get("zone_temp", telemetry.get("ZONE_TEMP", telemetry.get("zt", 72.0)))
-        oat = telemetry.get("oa_temp", telemetry.get("OA_TEMP", telemetry.get("oat", 70.0)))
-        try:
-            is_celsius = float(zt) <= 45.0 or float(oat) <= 45.0
-        except (ValueError, TypeError):
-            is_celsius = False
+        # Check if telemetry is in Celsius (infer strictly from indoor zone/return/supply temp)
+        zt = telemetry.get("zone_temp", telemetry.get("ZONE_TEMP", telemetry.get("zt")))
+        rt = telemetry.get("ra_temp", telemetry.get("RA_TEMP", telemetry.get("rat")))
+        st = telemetry.get("sa_temp", telemetry.get("SA_TEMP", telemetry.get("sat")))
+        
+        is_celsius = False
+        for t_val in [zt, rt, st]:
+            if t_val is not None:
+                try:
+                    if float(t_val) <= 45.0:
+                        is_celsius = True
+                        break
+                except (ValueError, TypeError):
+                    pass
 
         working_telemetry = dict(telemetry)
         if is_celsius:

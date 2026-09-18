@@ -42,9 +42,15 @@ class ConstraintChecker:
                 )
 
         # 2. Zone Comfort Band Check (ASHRAE 55)
-        pred_zone_temp = predicted_state.get("zone_temp", 22.8)
-        cur_zone_temp = current_state.get("zone_temp", pred_zone_temp)
-        is_f = pred_zone_temp > 45.0
+        cur_zone_temp = current_state.get("zone_temp", 22.8)
+        pred_zone_temp = predicted_state.get("zone_temp", cur_zone_temp)
+        is_f = cur_zone_temp > 45.0 or pred_zone_temp > 45.0
+
+        if is_f and pred_zone_temp <= 45.0:
+            pred_zone_temp = round(pred_zone_temp * 9.0 / 5.0 + 32.0, 2)
+        elif not is_f and pred_zone_temp > 45.0:
+            pred_zone_temp = round((pred_zone_temp - 32.0) * 5.0 / 9.0, 2)
+
         min_temp, max_temp = (66.0, 80.6) if is_f else (19.0, 27.0)
         unit = "°F" if is_f else "°C"
 
