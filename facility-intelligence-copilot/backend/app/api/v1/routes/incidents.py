@@ -27,15 +27,16 @@ def get_active_incident() -> Dict[str, Any]:
     state = twin_service.get_state("AHU-007")
 
     if not state:
-        from backend.app.api.v1.routes.replay import REPLAY_STATE, _sync_reading_to_digital_twin
+        from backend.app.api.v1.routes.replay import REPLAY_STATE
         from backend.app.services.lbnl_adapter import LBNLAdapter
         lbnl = LBNLAdapter()
         reading = lbnl.get_reading(REPLAY_STATE.get("current_row", 1))
-        _sync_reading_to_digital_twin(reading)
-        state = twin_service.get_state("AHU-007")
+        state = twin_service.process_telemetry_frame("AHU-007", reading)
 
-    is_anomalous = state.fault_diagnosis != "nominal" or state.health_score < 75.0
-    incident_id = f"INC-{state.fault_diagnosis.upper().replace('_', '-')}-001" if is_anomalous else None
+    fault_diagnosis = getattr(state, "fault_diagnosis", "nominal") or "nominal"
+    health_score = float(getattr(state, "health_score", 100.0) or 100.0)
+    is_anomalous = fault_diagnosis != "nominal" or health_score < 75.0
+    incident_id = f"INC-{fault_diagnosis.upper().replace('_', '-')}-001" if is_anomalous else None
     
     # Run counterfactual analysis
     cf_res = twin_service.evaluate_counterfactual(
@@ -172,9 +173,6 @@ def investigate_incident(
     )
 
     # 3. Simulate EACH candidate independently in the Digital Twin
-    #    SNS Candidate 1 -> Twin Simulation 1
-    #    SNS Candidate 2 -> Twin Simulation 2
-    #    ...each branch starts from SAME baseline telemetry copy
     cf_engine = CounterfactualEngine.get_instance()
     evaluation_res = cf_engine.evaluate_with_sns_candidates(
         asset_id=asset_id,
@@ -184,14 +182,62 @@ def investigate_incident(
         incident_id=incident_id,
     )
 
+    # 4. Round 2 Fallback Protocol (max 2 rounds) if 0 candidates are validated
+    round_number = 1
+    if not evaluation_res.winning_candidate and evaluation_res.all_candidates:
+        round_number = 2
+        logger.info(f"[Investigate] Round 1 produced 0 validated interventions. Triggering Round 2 re-evaluation...")
+        failed_cands = [c.model_dump() for c in evaluation_res.all_candidates]
+        failure_reasons = [c.validation_summary for c in evaluation_res.all_candidates]
+
+        sns_result_r2 = sns_client.generate_fault_candidates(
+            incident_id=incident_id,
+            asset_id=asset_id,
+            detected_fault=detected_fault,
+            fault_confidence=fault_confidence,
+            anomaly_evidence=anomaly_evidence,
+            current_state=current_telemetry,
+            actuators={
+                "oa_dmpr": float(current_telemetry.get("oa_dmpr", 25.0)),
+                "chwc_vlv": float(current_telemetry.get("chwc_vlv", 35.0)),
+                "sf_spd": float(current_telemetry.get("sf_spd", 70.0)),
+                "hw_vlv": float(current_telemetry.get("hw_vlv", 0.0)),
+            },
+            available_controls=["oa_dmpr", "chwc_vlv", "sf_spd", "hw_vlv"],
+            round_number=2,
+            failed_candidates=failed_cands,
+            simulation_failure_reasons=failure_reasons,
+        )
+
+        r2_candidate_actions = sns_result_r2.get("candidate_actions", [])
+        if r2_candidate_actions:
+            sns_candidate_actions.extend(r2_candidate_actions)
+            evaluation_res = cf_engine.evaluate_with_sns_candidates(
+                asset_id=asset_id,
+                current_telemetry=current_telemetry,
+                fault_diagnosis=detected_fault,
+                sns_candidate_actions=r2_candidate_actions,
+                incident_id=incident_id,
+            )
+            sns_result = sns_result_r2
+
     n_safe = sum(1 for c in evaluation_res.all_candidates if not c.violations)
     n_resolves = sum(1 for c in evaluation_res.all_candidates if c.resolution.status.value == "RESOLVES_ISSUE")
     n_validated = sum(1 for c in evaluation_res.all_candidates if c.status.value == "VALIDATED")
+
+    provenance = {
+        "telemetry_source": "KAFKA_LBNL_STREAM",
+        "anomaly_detector": "fault_classifier.joblib (HistGradientBoostingClassifier)",
+        "candidate_generator": f"SNS Workbench 3.2 (OpenRouter LLM) - Round {round_number}",
+        "digital_twin_surrogate": "state_regressors.joblib (HistGradientBoostingRegressor)",
+        "resolution_evaluator": "Deterministic Physics & ASHRAE Constraint Engine",
+    }
 
     return {
         "incident_id": incident_id,
         "detected_fault": detected_fault,
         "fault_confidence": fault_confidence,
+        "round_number": round_number,
         "sns": {
             "workflow_name": sns_result.get("workflow_name", "3.0 GSense"),
             "workflow_id": sns_result.get("workflow_id"),
@@ -207,6 +253,7 @@ def investigate_incident(
             "resolves": n_resolves,
             "validated": n_validated,
         },
+        "provenance": provenance,
         "simulations": [c.model_dump() for c in evaluation_res.all_candidates],
         "validated_intervention": evaluation_res.winning_candidate.model_dump() if evaluation_res.winning_candidate else None,
         "status": evaluation_res.status,

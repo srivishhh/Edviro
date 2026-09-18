@@ -24,6 +24,7 @@ from app.api.v1.routes import (
     rag,
     counterfactual,
     incidents,
+    digital_twin_endpoints,
 )
 from app.core.config import settings
 from sqlalchemy.exc import SQLAlchemyError
@@ -55,6 +56,7 @@ app.include_router(realtime.router, prefix="/api/v1", tags=["realtime"])
 app.include_router(rag.router, prefix="/api/v1", tags=["rag"])
 app.include_router(counterfactual.router, prefix="/api/v1", tags=["counterfactual"])
 app.include_router(incidents.router, prefix="/api/v1", tags=["incidents"])
+app.include_router(digital_twin_endpoints.router)
 
 
 

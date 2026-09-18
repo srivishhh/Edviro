@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Shield, User, LogOut, FileEdit } from 'lucide-react';
+import { Shield, User, LogOut, FileEdit, Brain } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { ThemeToggle } from './ThemeToggle';
 import { QuickReportModal } from './QuickReportModal';
@@ -8,7 +8,11 @@ import { useRealtime } from '../hooks/useRealtime';
 import { useTheme } from '../app/ThemeProvider';
 import { useAuth } from '../app/AuthContext';
 
-export const Header: React.FC = () => {
+interface HeaderProps {
+  onOpenRag?: () => void;
+}
+
+export const Header: React.FC<HeaderProps> = ({ onOpenRag }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { facilityStatus } = useRealtime();
@@ -139,6 +143,18 @@ export const Header: React.FC = () => {
             </button>
 
             <ThemeToggle />
+
+            {/* Circular Facility Memory RAG Modal Button */}
+            {onOpenRag && (
+              <button
+                type="button"
+                onClick={onOpenRag}
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-purple-500/40 bg-purple-500/15 text-purple-300 transition-all hover:bg-purple-500/30 hover:scale-105 active:scale-95 cursor-pointer shadow-sm shadow-purple-500/20"
+                title="Open Facility Memory Modal"
+              >
+                <Brain size={16} />
+              </button>
+            )}
 
             {/* Profile / Role Identity Link */}
             {isTechnician ? (

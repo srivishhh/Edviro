@@ -36,9 +36,68 @@ export const CounterfactualSimulationTile: React.FC<Props> = () => {
   const [incidentData, setIncidentData] = useState<ActiveIncidentResponse | null>(null);
   const [investigateResult, setInvestigateResult] = useState<InvestigateResponse | null>(null);
   const [stage, setStage] = useState<SimulationStage>('idle');
+  const [stageLabel, setStageLabel] = useState('');
   const [isActuating, setIsActuating] = useState(false);
   const [actuationSuccess, setActuationSuccess] = useState(false);
-  const [stageLabel, setStageLabel] = useState('');
+  const [showApprovalModal, setShowApprovalModal] = useState(false);
+  const [selectedCandidate, setSelectedCandidate] = useState<CounterfactualCandidate | null>(null);
+  const [simulatingCandidateId, setSimulatingCandidateId] = useState<string | null>(null);
+
+  // Simulate an individual candidate action on demand
+  const handleSimulateCandidate = async (cand: CounterfactualCandidate) => {
+    setSimulatingCandidateId(cand.candidate_id);
+    try {
+      const res = await counterfactualService.evaluateCounterfactual({
+        asset_id: incidentData?.asset_id || 'AHU-007',
+        current_telemetry: incidentData?.current_telemetry,
+        sns_proposed_plan: {
+          interventions: cand.proposed_interventions,
+        },
+      });
+      // Update candidate in current view
+      if (res.winning_candidate) {
+        setInvestigateResult(prev => {
+          if (!prev) return prev;
+          const updated = prev.simulations.map(c =>
+            c.candidate_id === cand.candidate_id ? res.winning_candidate! : c
+          );
+          return { ...prev, simulations: updated };
+        });
+      }
+    } catch (e) {
+      console.error('Failed to simulate candidate:', e);
+    } finally {
+      setSimulatingCandidateId(null);
+    }
+  };
+
+  const openApprovalModal = (cand: CounterfactualCandidate) => {
+    setSelectedCandidate(cand);
+    setShowApprovalModal(true);
+  };
+
+  const confirmActuation = async () => {
+    if (!selectedCandidate) return;
+    setIsActuating(true);
+    try {
+      await counterfactualService.applyActuation({
+        candidate_id: selectedCandidate.candidate_id,
+        interventions: selectedCandidate.proposed_interventions,
+        asset_id: incidentData?.asset_id || 'AHU-007',
+        notes: `Technician human-in-the-loop approval: ${selectedCandidate.title}`,
+      });
+      setActuationSuccess(true);
+      setShowApprovalModal(false);
+      setTimeout(() => {
+        setActuationSuccess(false);
+        fetchIncidentData();
+      }, 3500);
+    } catch (e) {
+      console.error('Failed to actuate:', e);
+    } finally {
+      setIsActuating(false);
+    }
+  };
 
   // Auto-fetch incident data on mount and every 15s
   const fetchIncidentData = useCallback(async () => {
@@ -471,7 +530,7 @@ export const CounterfactualSimulationTile: React.FC<Props> = () => {
 
             {/* Actuation Button */}
             <button
-              onClick={() => handleActuate(displayWinner)}
+              onClick={() => openApprovalModal(displayWinner)}
               disabled={isActuating || actuationSuccess}
               className={`w-full py-3 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all ${
                 actuationSuccess
@@ -546,6 +605,61 @@ export const CounterfactualSimulationTile: React.FC<Props> = () => {
               </p>
             </div>
           )
+        )}
+
+        {/* ── 5. TECHNICIAN APPROVAL CONFIRMATION MODAL ── */}
+        {showApprovalModal && selectedCandidate && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+            <div className="w-full max-w-md p-6 rounded-2xl bg-zinc-900 border border-emerald-500/40 shadow-2xl space-y-4">
+              <div className="flex items-center gap-3 border-b border-white/10 pb-3">
+                <ShieldCheck className="h-6 w-6 text-emerald-400" />
+                <div>
+                  <h3 className="text-sm font-bold text-white">Technician Human-in-the-Loop Confirmation</h3>
+                  <p className="text-xs text-white/50">Verify intervention before actuating physical/twin loop</p>
+                </div>
+              </div>
+
+              <div className="p-3 rounded-xl bg-emerald-950/30 border border-emerald-500/30 text-xs font-mono space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-white/40">INTERVENTION:</span>
+                  <span className="text-emerald-300 font-bold">{selectedCandidate.title}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-white/40">ASSET:</span>
+                  <span className="text-white font-bold">{incidentData?.asset_name || 'AHU-007'}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-white/40">ACTUATOR OVERRIDES:</span>
+                  <span className="text-white font-bold">
+                    {Object.entries(selectedCandidate.proposed_interventions)
+                      .map(([k, v]) => `${k.toUpperCase()}=${v}%`)
+                      .join(', ')}
+                  </span>
+                </div>
+              </div>
+
+              <p className="text-xs text-white/70">
+                Are you sure you want to execute this validated intervention? This action will apply actuator settings and write an audit record to data provenance logs.
+              </p>
+
+              <div className="flex items-center gap-3 pt-2">
+                <button
+                  onClick={() => setShowApprovalModal(false)}
+                  className="flex-1 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white/80 text-xs font-semibold transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmActuation}
+                  disabled={isActuating}
+                  className="flex-1 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-bold transition-colors flex items-center justify-center gap-1.5"
+                >
+                  {isActuating ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
+                  <span>Confirm & Actuate</span>
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </GlassCard>
     </div>

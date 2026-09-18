@@ -1,0 +1,3908 @@
+[
+  {
+    "file": "backend/app/api/v1/routes/counterfactual.py",
+    "line": 20,
+    "pattern": "AHU-007",
+    "content": "\"asset_id\": \"AHU-007\",",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/counterfactual.py",
+    "line": 31,
+    "pattern": "AHU-007",
+    "content": "asset_id = payload.get(\"asset_id\", \"AHU-007\")",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/digital_twin_endpoints.py",
+    "line": 46,
+    "pattern": "AHU-007",
+    "content": "cur_state = twin_service.get_state(\"AHU-007\")",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/digital_twin_endpoints.py",
+    "line": 69,
+    "pattern": "predicted_state",
+    "content": "predicted_state = sim_res[\"predicted_state\"]",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/digital_twin_endpoints.py",
+    "line": 75,
+    "pattern": "predicted_state",
+    "content": "predicted_state=predicted_state,",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/digital_twin_endpoints.py",
+    "line": 84,
+    "pattern": "predicted_state",
+    "content": "predicted_state=predicted_state,",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/digital_twin_endpoints.py",
+    "line": 90,
+    "pattern": "predicted_state",
+    "content": "pred_power = float(predicted_state.get(\"power\", cur_power))",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/digital_twin_endpoints.py",
+    "line": 95,
+    "pattern": "predicted_state",
+    "content": "pred_zone = float(predicted_state.get(\"zone_temp\", cur_zone))",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/digital_twin_endpoints.py",
+    "line": 99,
+    "pattern": "predicted_state",
+    "content": "pred_cfm = float(predicted_state.get(\"sa_cfm\", cur_cfm))",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/digital_twin_endpoints.py",
+    "line": 102,
+    "pattern": "efficiency",
+    "content": "efficiency_score = round(max(0.0, min(100.0, 70.0 + energy_change_pct * 0.5 - abs(comfort_change) * 5.0)), 1)",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/digital_twin_endpoints.py",
+    "line": 108,
+    "pattern": "predicted_state",
+    "content": "\"predicted_state\": \"DIGITAL_TWIN_STATE_MODEL\",",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/digital_twin_endpoints.py",
+    "line": 110,
+    "pattern": "efficiency",
+    "content": "\"efficiency\": \"DIGITAL_TWIN_METRICS\",",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/digital_twin_endpoints.py",
+    "line": 116,
+    "pattern": "predicted_state",
+    "content": "\"predicted_state\": predicted_state,",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/digital_twin_endpoints.py",
+    "line": 118,
+    "pattern": "resolved",
+    "content": "\"resolved\": res_status == ResolutionStatus.RESOLVES_ISSUE,",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/digital_twin_endpoints.py",
+    "line": 120,
+    "pattern": "efficiency",
+    "content": "\"resolution_margin\": round(efficiency_score / 100.0, 3),",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/digital_twin_endpoints.py",
+    "line": 126,
+    "pattern": "efficiency",
+    "content": "\"efficiency\": {",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/digital_twin_endpoints.py",
+    "line": 127,
+    "pattern": "efficiency",
+    "content": "\"score\": efficiency_score,",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/digital_twin_endpoints.py",
+    "line": 159,
+    "pattern": "resolved",
+    "content": "if res[\"constraints\"][\"safe\"] and res[\"resolution\"][\"resolved\"]:",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/digital_twin_endpoints.py",
+    "line": 166,
+    "pattern": "simulation",
+    "content": "\"simulations\": results,",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/digital_twin_endpoints.py",
+    "line": 173,
+    "pattern": "predicted_state",
+    "content": "\"predicted_state\": \"DIGITAL_TWIN_STATE_MODEL\",",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/digital_twin_endpoints.py",
+    "line": 189,
+    "pattern": "efficiency",
+    "content": "# Sort by efficiency score descending",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/digital_twin_endpoints.py",
+    "line": 190,
+    "pattern": "efficiency",
+    "content": "validated.sort(key=lambda x: x[\"efficiency\"][\"score\"], reverse=True)",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/digital_twin_endpoints.py",
+    "line": 199,
+    "pattern": "simulation",
+    "content": "\"total_evaluated\": len(sim_all_res[\"simulations\"]),",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/gamification.py",
+    "line": 33,
+    "pattern": "AHU-007",
+    "content": "\"reason\": \"Airflow Restriction AHU-007 Resolved & Verified On-Time\",",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/gamification.py",
+    "line": 119,
+    "pattern": "AHU-007",
+    "content": "\"title\": \"Airflow Restriction on AHU-007\",",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/gamification.py",
+    "line": 129,
+    "pattern": "AHU-007",
+    "content": "\"message\": \"Investigation dispatched for AHU-007 airflow fault.\",",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/gamification.py",
+    "line": 235,
+    "pattern": "AHU-007",
+    "content": "severity_bonus = 50 if \"AHU-007\" in payload.asset_id or \"HIGH\" in payload.resolution_status else 20",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/incidents.py",
+    "line": 27,
+    "pattern": "AHU-007",
+    "content": "state = twin_service.get_state(\"AHU-007\")",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/incidents.py",
+    "line": 34,
+    "pattern": "AHU-007",
+    "content": "state = twin_service.process_telemetry_frame(\"AHU-007\", reading)",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/incidents.py",
+    "line": 43,
+    "pattern": "AHU-007",
+    "content": "asset_id=\"AHU-007\",",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/incidents.py",
+    "line": 75,
+    "pattern": "AHU-007",
+    "content": "asset_id = payload.get(\"asset_id\", \"AHU-007\")",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/incidents.py",
+    "line": 127,
+    "pattern": "simulation",
+    "content": "No merging of candidate actions occurs before simulation.",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/incidents.py",
+    "line": 132,
+    "pattern": "AHU-007",
+    "content": "asset_id = payload.get(\"asset_id\", \"AHU-007\")",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/incidents.py",
+    "line": 139,
+    "pattern": "85.0",
+    "content": "\"zone_temp\": 25.8, \"oa_dmpr\": 85.0, \"chwc_vlv\": 95.0, \"sf_spd\": 80.0,",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/incidents.py",
+    "line": 167,
+    "pattern": "candidate_actions",
+    "content": "# 2. Collect SNS candidate_actions list \u2014 DO NOT MERGE into one dict",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/incidents.py",
+    "line": 168,
+    "pattern": "candidate_actions",
+    "content": "sns_candidate_actions = sns_result.get(\"candidate_actions\", [])",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/incidents.py",
+    "line": 172,
+    "pattern": "candidate_actions",
+    "content": "f\"sns_candidates={len(sns_candidate_actions)}\"",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/incidents.py",
+    "line": 181,
+    "pattern": "candidate_actions",
+    "content": "sns_candidate_actions=sns_candidate_actions,",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/incidents.py",
+    "line": 209,
+    "pattern": "simulation",
+    "content": "simulation_failure_reasons=failure_reasons,",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/incidents.py",
+    "line": 212,
+    "pattern": "candidate_actions",
+    "content": "r2_candidate_actions = sns_result_r2.get(\"candidate_actions\", [])",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/incidents.py",
+    "line": 213,
+    "pattern": "candidate_actions",
+    "content": "if r2_candidate_actions:",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/incidents.py",
+    "line": 214,
+    "pattern": "candidate_actions",
+    "content": "sns_candidate_actions.extend(r2_candidate_actions)",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/incidents.py",
+    "line": 219,
+    "pattern": "candidate_actions",
+    "content": "sns_candidate_actions=r2_candidate_actions,",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/incidents.py",
+    "line": 246,
+    "pattern": "candidate_actions",
+    "content": "\"candidates_generated\": len(sns_candidate_actions),",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/incidents.py",
+    "line": 247,
+    "pattern": "candidate_actions",
+    "content": "\"candidate_actions\": sns_candidate_actions,",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/incidents.py",
+    "line": 250,
+    "pattern": "simulation",
+    "content": "\"simulation_summary\": {",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/incidents.py",
+    "line": 257,
+    "pattern": "simulation",
+    "content": "\"simulations\": [c.model_dump() for c in evaluation_res.all_candidates],",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/realtime.py",
+    "line": 35,
+    "pattern": "AHU-007",
+    "content": "asset_id=reading.get(\"asset_id\", \"AHU-007\"),",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/realtime.py",
+    "line": 45,
+    "pattern": "AHU-007",
+    "content": "\"asset_id\": reading.get(\"asset_id\", \"AHU-007\"),",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/replay.py",
+    "line": 43,
+    "pattern": "85.0",
+    "content": "oad = float(reading.get(\"damper_oa_pct\", 85.0))",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/replay.py",
+    "line": 61,
+    "pattern": "AHU-007",
+    "content": "state = twin_service.process_telemetry_frame(\"AHU-007\", raw_telemetry)",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/replay.py",
+    "line": 67,
+    "pattern": "coi_stuck",
+    "content": "\"COOLING_COIL_FOULING\": \"coi_stuck\",",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/replay.py",
+    "line": 69,
+    "pattern": "damper_stuck",
+    "content": "\"ECONOMIZER_LEAKAGE\": \"damper_stuck\",",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/replay.py",
+    "line": 79,
+    "pattern": "0.92",
+    "content": "state.fault_probability = 0.92",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/sns_dispatch.py",
+    "line": 17,
+    "pattern": "AHU-007",
+    "content": "\"asset_id\": \"AHU-007\",",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/sns_dispatch.py",
+    "line": 22,
+    "pattern": "AHU-007",
+    "content": "\"summary\": \"Airflow reduced below operational baseline on AHU-007.\",",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/sns_dispatch.py",
+    "line": 38,
+    "pattern": "AHU-007",
+    "content": "\"overall_result\": \"Combined SNS Multi-Agent & Facility X-Ray analysis confirms primary mechanical belt slippage on AHU-0",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/sns_dispatch.py",
+    "line": 41,
+    "pattern": "AHU-007",
+    "content": "{\"agent\": \"Triager Agent\", \"status\": \"COMPLETED\", \"output\": \"Alert classified as HIGH severity AIRFLOW_RESTRICTION on AH",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/sns_dispatch.py",
+    "line": 62,
+    "pattern": "AHU-007",
+    "content": "asset_id: Optional[str] = \"AHU-007\"",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/sns_dispatch.py",
+    "line": 80,
+    "pattern": "AHU-007",
+    "content": "CURRENT_SNS_STATE[\"asset_id\"] = payload.asset_id or \"AHU-007\"",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/api/v1/routes/sns_dispatch.py",
+    "line": 86,
+    "pattern": "AHU-007",
+    "content": "\"asset\": {\"id\": payload.asset_id or \"AHU-007\", \"name\": payload.asset_id or \"AHU-007\"},",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/integrations/sns_workbench.py",
+    "line": 37,
+    "pattern": "simulation",
+    "content": "Candidate sanity layer \u2014 runs BEFORE simulation.",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/integrations/sns_workbench.py",
+    "line": 96,
+    "pattern": "simulation",
+    "content": "Candidates must NEVER be merged before Digital Twin simulation.",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/integrations/sns_workbench.py",
+    "line": 112,
+    "pattern": "hardcoded",
+    "content": "# API key loaded from env \u2014 never hardcoded",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/integrations/sns_workbench.py",
+    "line": 131,
+    "pattern": "simulation",
+    "content": "simulation_failure_reasons: Optional[List[str]] = None,",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/integrations/sns_workbench.py",
+    "line": 136,
+    "pattern": "candidate_actions",
+    "content": "Returns a structured response with 6\u20138 INDEPENDENT candidate_actions.",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/integrations/sns_workbench.py",
+    "line": 138,
+    "pattern": "simulation",
+    "content": "intervention for one Digital Twin simulation branch.",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/integrations/sns_workbench.py",
+    "line": 163,
+    "pattern": "simulation",
+    "content": "\"simulation_failure_reasons\": simulation_failure_reasons or [],",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/integrations/sns_workbench.py",
+    "line": 238,
+    "pattern": "candidate_actions",
+    "content": "\"candidate_actions\": validated_candidates,",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/integrations/sns_workbench.py",
+    "line": 271,
+    "pattern": "85.0",
+    "content": "self._action(\"SNS-CB-04\", \"chwc_vlv\", cur_chwc, 85.0,",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/integrations/sns_workbench.py",
+    "line": 316,
+    "pattern": "coi_stuck",
+    "content": "if \"coi_stuck\" in fault_lower or (\"coi\" in fault_lower and \"stuck\" in fault_lower):",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/integrations/sns_workbench.py",
+    "line": 354,
+    "pattern": "efficiency",
+    "content": "\"Provide adequate cooling despite fouling efficiency loss.\"),",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/integrations/sns_workbench.py",
+    "line": 369,
+    "pattern": "oa_bias",
+    "content": "if \"oa_bias\" in fault_lower or (\"oa\" in fault_lower and \"bias\" in fault_lower):",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/integrations/sns_workbench.py",
+    "line": 372,
+    "pattern": "hardcoded",
+    "content": "\"Fixed minimum damper: bypass drifted OA sensor with hardcoded min ventilation.\",",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/integrations/sns_workbench.py",
+    "line": 386,
+    "pattern": "85.0",
+    "content": "self._action(\"SNS-OA-06\", \"sf_spd\", cur_sf, min(85.0, cur_sf + 10.0),",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/integrations/sns_workbench.py",
+    "line": 452,
+    "pattern": "85.0",
+    "content": "self._action(\"SNS-AR-03\", \"sf_spd\", cur_sf, 85.0,",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/integrations/sns_workbench.py",
+    "line": 462,
+    "pattern": "efficiency",
+    "content": "\"Increase cooling call to compensate for reduced airflow efficiency.\",",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/integrations/sns_workbench.py",
+    "line": 515,
+    "pattern": "AHU-007",
+    "content": "asset_id = context.get(\"asset\", {}).get(\"id\", \"AHU-007\")",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/services/digital_twin.py",
+    "line": 113,
+    "pattern": "AHU-007",
+    "content": "def process_telemetry_frame(self, asset_id: str, raw_reading: Dict[str, Any], asset_name: str = \"AHU-007 Main Rooftop\") ",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/services/digital_twin.py",
+    "line": 184,
+    "pattern": "AHU-007",
+    "content": "def get_state(self, asset_id: str = \"AHU-007\") -> Optional[DigitalTwinState]:",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/services/digital_twin.py",
+    "line": 187,
+    "pattern": "AHU-007",
+    "content": "def get_history(self, asset_id: str = \"AHU-007\") -> List[Dict[str, Any]]:",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/services/digital_twin.py",
+    "line": 192,
+    "pattern": "AHU-007",
+    "content": "asset_id: str = \"AHU-007\",",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/services/digital_twin.py",
+    "line": 197,
+    "pattern": "simulation",
+    "content": "Runs counterfactual simulation across candidate interventions starting from current physical twin state.",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/services/lbnl_adapter.py",
+    "line": 72,
+    "pattern": "AHU-007",
+    "content": "\"diagnosis\": \"All AHU-007 parameters operate within optimal ASHRAE 90.1 energy baselines.\",",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/services/lbnl_adapter.py",
+    "line": 76,
+    "pattern": "efficiency",
+    "content": "\"assurance\": \"Facility running at 95%+ overall efficiency.\",",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/services/lbnl_adapter.py",
+    "line": 171,
+    "pattern": "AHU-007",
+    "content": "\"asset_id\": \"AHU-007\",",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/services/lbnl_adapter.py",
+    "line": 205,
+    "pattern": "AHU-007",
+    "content": "\"asset_id\": \"AHU-007\",",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/services/rag_service.py",
+    "line": 27,
+    "pattern": "AHU-007",
+    "content": "asset_id=\"AHU-007\",",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/services/rag_service.py",
+    "line": 32,
+    "pattern": "AHU-007",
+    "content": "title=\"AHU-007 Supply Airflow Restriction Diagnosis\",",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/services/rag_service.py",
+    "line": 39,
+    "pattern": "AHU-007",
+    "content": "asset_id=\"AHU-007\",",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/services/rag_service.py",
+    "line": 44,
+    "pattern": "AHU-007",
+    "content": "title=\"AHU-007 Verified Resolution Report by Alex Mercer\",",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/services/rag_service.py",
+    "line": 69,
+    "pattern": "efficiency",
+    "content": "content=\"Evaporator approach temperature reached 4.2\u00b0C (limit: 2.0\u00b0C), causing 15% efficiency penalty on chiller compres",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/services/rag_service.py",
+    "line": 159,
+    "pattern": "AHU-007",
+    "content": "\"answer\": \"NO MATCHING FACILITY RECORD FOUND in the historical intelligence knowledge base for your search terms. Try se",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/services/rag_service.py",
+    "line": 197,
+    "pattern": "resolved",
+    "content": "f\"High evaporator approach temperature (4.2\u00b0C) was resolved via mechanical tube brushing and descaling chemical flush.\"",
+    "is_production": true
+  },
+  {
+    "file": "backend/app/xray/evidence.py",
+    "line": 40,
+    "pattern": "efficiency",
+    "content": "interpretation=\"Energy draw is elevated and consistent with reduced airflow efficiency.\",",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/candidate_generator.py",
+    "line": 18,
+    "pattern": "simulation",
+    "content": "Candidates are NEVER merged before simulation.",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/candidate_generator.py",
+    "line": 29,
+    "pattern": "candidate_actions",
+    "content": "sns_candidate_actions: List[Dict[str, Any]],",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/candidate_generator.py",
+    "line": 33,
+    "pattern": "candidate_actions",
+    "content": "Convert a list of SNS candidate_actions directly into independent CandidatePlan objects.",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/candidate_generator.py",
+    "line": 36,
+    "pattern": "simulation",
+    "content": "This preserves the independence of each Digital Twin simulation branch.",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/candidate_generator.py",
+    "line": 40,
+    "pattern": "candidate_actions",
+    "content": "for i, action in enumerate(sns_candidate_actions):",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/candidate_generator.py",
+    "line": 109,
+    "pattern": "simulation",
+    "content": "The primary path is now from_sns_candidate_list() for independent branch simulation.",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/candidate_generator.py",
+    "line": 121,
+    "pattern": "candidate_actions",
+    "content": "sns_actions = cls._build_candidate_actions(",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/candidate_generator.py",
+    "line": 146,
+    "pattern": "candidate_actions",
+    "content": "cand.actions = cls._build_candidate_actions(",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/candidate_generator.py",
+    "line": 280,
+    "pattern": "85.0",
+    "content": "interventions={\"chwc_vlv\": 100.0, \"oa_dmpr\": 15.0, \"sf_spd\": 85.0},",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/candidate_generator.py",
+    "line": 309,
+    "pattern": "efficiency",
+    "content": "expected_rationale=\"Maintain adequate cooling despite fouling efficiency loss.\",",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/candidate_generator.py",
+    "line": 368,
+    "pattern": "85.0",
+    "content": "interventions={\"chwc_vlv\": 85.0, \"sf_spd\": 85.0, \"oa_dmpr\": 25.0},",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/candidate_generator.py",
+    "line": 400,
+    "pattern": "oa_bias",
+    "content": "candidate_id=\"cand_oa_bias_min_15_01\",",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/candidate_generator.py",
+    "line": 402,
+    "pattern": "hardcoded",
+    "content": "description=\"Bypass biased OA sensor with hardcoded 15% minimum ventilation.\",",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/candidate_generator.py",
+    "line": 408,
+    "pattern": "oa_bias",
+    "content": "candidate_id=\"cand_oa_bias_standard_20_02\",",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/candidate_generator.py",
+    "line": 416,
+    "pattern": "oa_bias",
+    "content": "candidate_id=\"cand_oa_bias_moderate_30_03\",",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/candidate_generator.py",
+    "line": 424,
+    "pattern": "oa_bias",
+    "content": "candidate_id=\"cand_oa_bias_comp_high_55_04\",",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/candidate_generator.py",
+    "line": 432,
+    "pattern": "oa_bias",
+    "content": "candidate_id=\"cand_oa_bias_fan_mix_05\",",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/candidate_generator.py",
+    "line": 440,
+    "pattern": "oa_bias",
+    "content": "candidate_id=\"cand_oa_bias_aggressive_06\",",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/candidate_generator.py",
+    "line": 540,
+    "pattern": "85.0",
+    "content": "interventions={\"oa_dmpr\": 18.0, \"sf_spd\": 85.0},",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/candidate_generator.py",
+    "line": 548,
+    "pattern": "85.0",
+    "content": "interventions={\"sf_spd\": 85.0, \"chwc_vlv\": 40.0},",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/candidate_generator.py",
+    "line": 611,
+    "pattern": "candidate_actions",
+    "content": "def _build_candidate_actions(",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/constraints.py",
+    "line": 18,
+    "pattern": "predicted_state",
+    "content": "predicted_state: Dict[str, float],",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/constraints.py",
+    "line": 46,
+    "pattern": "predicted_state",
+    "content": "pred_zone_temp = predicted_state.get(\"zone_temp\", cur_zone_temp)",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/constraints.py",
+    "line": 83,
+    "pattern": "predicted_state",
+    "content": "pred_sp = predicted_state.get(\"sa_sp\", 1.5)",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/constraints.py",
+    "line": 98,
+    "pattern": "predicted_state",
+    "content": "oa_t = predicted_state.get(\"oa_temp\", 24.0)",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/constraints.py",
+    "line": 99,
+    "pattern": "predicted_state",
+    "content": "oa_dmpr = interventions.get(\"oa_dmpr\", predicted_state.get(\"oa_dmpr\", 25.0))",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/constraints.py",
+    "line": 128,
+    "pattern": "efficiency",
+    "content": "# Score bonus for energy efficiency and comfort stabilization",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/constraints.py",
+    "line": 130,
+    "pattern": "predicted_state",
+    "content": "pred_power = predicted_state.get(\"power\", cur_power)",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/engine.py",
+    "line": 28,
+    "pattern": "simulation",
+    "content": "Candidates are NEVER merged before simulation.",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/engine.py",
+    "line": 42,
+    "pattern": "simulation",
+    "content": "# Primary API (new path): independent simulation of SNS candidates",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/engine.py",
+    "line": 50,
+    "pattern": "candidate_actions",
+    "content": "sns_candidate_actions: List[Dict[str, Any]],",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/engine.py",
+    "line": 56,
+    "pattern": "simulation",
+    "content": "Each SNS candidate_action \u2192 independent CandidatePlan \u2192 independent simulation.",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/engine.py",
+    "line": 57,
+    "pattern": "simulation",
+    "content": "Baseline telemetry is copied fresh for EVERY simulation branch.",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/engine.py",
+    "line": 58,
+    "pattern": "simulation",
+    "content": "No candidate affects any other candidate's simulation.",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/engine.py",
+    "line": 69,
+    "pattern": "candidate_actions",
+    "content": "sns_candidate_actions=sns_candidate_actions,",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/engine.py",
+    "line": 143,
+    "pattern": "simulation",
+    "content": "# Core simulation loop",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/engine.py",
+    "line": 154,
+    "pattern": "simulation",
+    "content": "Candidate simulations are completely independent \u2014 no shared state.",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/engine.py",
+    "line": 226,
+    "pattern": "simulation",
+    "content": "f\"RESOLVES '{fault_diagnosis}' via Digital Twin simulation.\"",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/evaluator.py",
+    "line": 31,
+    "pattern": "predicted_state",
+    "content": "predicted_state = sim_output.get(\"predicted_state\", current_state)",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/evaluator.py",
+    "line": 38,
+    "pattern": "predicted_state",
+    "content": "predicted_state=predicted_state,",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/evaluator.py",
+    "line": 46,
+    "pattern": "predicted_state",
+    "content": "predicted_state=predicted_state,",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/evaluator.py",
+    "line": 65,
+    "pattern": "predicted_state",
+    "content": "pred_power = predicted_state.get(\"power\", cur_power)",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/evaluator.py",
+    "line": 70,
+    "pattern": "predicted_state",
+    "content": "pred_zone_t = predicted_state.get(\"zone_temp\", cur_zone_t)",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/evaluator.py",
+    "line": 101,
+    "pattern": "predicted_state",
+    "content": "predicted_state=predicted_state,",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/resolution.py",
+    "line": 26,
+    "pattern": "predicted_state",
+    "content": "predicted_state: Dict[str, float],",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/resolution.py",
+    "line": 43,
+    "pattern": "predicted_state",
+    "content": "pred_sa_temp = predicted_state.get(\"sa_temp\", cur_sa_temp)",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/resolution.py",
+    "line": 46,
+    "pattern": "predicted_state",
+    "content": "pred_zone_temp = predicted_state.get(\"zone_temp\", cur_zone_temp)",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/resolution.py",
+    "line": 49,
+    "pattern": "predicted_state",
+    "content": "pred_sa_cfm = predicted_state.get(\"sa_cfm\", cur_sa_cfm)",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/resolution.py",
+    "line": 52,
+    "pattern": "predicted_state",
+    "content": "pred_power = predicted_state.get(\"power\", cur_power)",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/resolution.py",
+    "line": 96,
+    "pattern": "oa_bias",
+    "content": "elif \"damper\" in fault_lower or \"oa_bias\" in fault_lower or \"economizer\" in fault_lower:",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/schemas.py",
+    "line": 89,
+    "pattern": "predicted_state",
+    "content": "predicted_state: Dict[str, float]",
+    "is_production": true
+  },
+  {
+    "file": "backend/counterfactual/simulator.py",
+    "line": 42,
+    "pattern": "predicted_state",
+    "content": "\"predicted_state\": sim_result[\"predicted_state\"],",
+    "is_production": true
+  },
+  {
+    "file": "backend/ml/features/feature_schema.py",
+    "line": 9,
+    "pattern": "damper_stuck",
+    "content": "DAMPER_STUCK = \"damper_stuck\"",
+    "is_production": true
+  },
+  {
+    "file": "backend/ml/features/feature_schema.py",
+    "line": 10,
+    "pattern": "coi_stuck",
+    "content": "COI_STUCK = \"coi_stuck\"",
+    "is_production": true
+  },
+  {
+    "file": "backend/ml/features/feature_schema.py",
+    "line": 13,
+    "pattern": "oa_bias",
+    "content": "OA_BIAS = \"oa_bias\"",
+    "is_production": true
+  },
+  {
+    "file": "backend/ml/features/feature_schema.py",
+    "line": 35,
+    "pattern": "damper_stuck",
+    "content": "\"damper_stuck\": FaultClass.DAMPER_STUCK.value,",
+    "is_production": true
+  },
+  {
+    "file": "backend/ml/features/feature_schema.py",
+    "line": 36,
+    "pattern": "coi_stuck",
+    "content": "\"coi_stuck\": FaultClass.COI_STUCK.value,",
+    "is_production": true
+  },
+  {
+    "file": "backend/ml/features/feature_schema.py",
+    "line": 39,
+    "pattern": "oa_bias",
+    "content": "\"oa_bias\": FaultClass.OA_BIAS.value,",
+    "is_production": true
+  },
+  {
+    "file": "backend/ml/inference/state_predictor.py",
+    "line": 135,
+    "pattern": "predicted_state",
+    "content": "\"predicted_state\": {",
+    "is_production": true
+  },
+  {
+    "file": "backend/scripts/verify_sns_counterfactual_pipeline.py",
+    "line": 26,
+    "pattern": "AHU-007",
+    "content": "asset_id = \"AHU-007\"",
+    "is_production": false
+  },
+  {
+    "file": "backend/scripts/verify_sns_counterfactual_pipeline.py",
+    "line": 35,
+    "pattern": "85.0",
+    "content": "\"oa_dmpr\": 85.0,",
+    "is_production": false
+  },
+  {
+    "file": "backend/scripts/verify_sns_counterfactual_pipeline.py",
+    "line": 48,
+    "pattern": "damper_stuck",
+    "content": "detected_fault = state.fault_diagnosis if state.fault_diagnosis != \"nominal\" else \"damper_stuck\"",
+    "is_production": false
+  },
+  {
+    "file": "backend/scripts/verify_sns_counterfactual_pipeline.py",
+    "line": 85,
+    "pattern": "candidate_actions",
+    "content": "print(len(sns_result.get(\"candidate_actions\", [])))",
+    "is_production": false
+  },
+  {
+    "file": "backend/scripts/verify_sns_counterfactual_pipeline.py",
+    "line": 91,
+    "pattern": "candidate_actions",
+    "content": "candidate_actions_list = sns_result.get(\"candidate_actions\", [])",
+    "is_production": false
+  },
+  {
+    "file": "backend/scripts/verify_sns_counterfactual_pipeline.py",
+    "line": 92,
+    "pattern": "candidate_actions",
+    "content": "primary_candidate_action = candidate_actions_list[0] if candidate_actions_list else {}",
+    "is_production": false
+  },
+  {
+    "file": "backend/scripts/verify_sns_counterfactual_pipeline.py",
+    "line": 98,
+    "pattern": "candidate_actions",
+    "content": "for a in candidate_actions_list",
+    "is_production": false
+  },
+  {
+    "file": "backend/scripts/verify_sns_counterfactual_pipeline.py",
+    "line": 120,
+    "pattern": "predicted_state",
+    "content": "pred_st = cand.predicted_state",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_counterfactual_engine.py",
+    "line": 11,
+    "pattern": "predicted_state",
+    "content": "predicted_state = {\"oa_dmpr\": 125.0, \"zone_temp\": 23.0, \"sa_sp\": 1.5, \"power\": 8.5}",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_counterfactual_engine.py",
+    "line": 16,
+    "pattern": "predicted_state",
+    "content": "predicted_state=predicted_state,",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_counterfactual_engine.py",
+    "line": 25,
+    "pattern": "predicted_state",
+    "content": "hot_predicted_state = {\"oa_dmpr\": 20.0, \"zone_temp\": 28.5, \"sa_sp\": 1.5, \"power\": 8.5}",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_counterfactual_engine.py",
+    "line": 30,
+    "pattern": "predicted_state",
+    "content": "predicted_state=hot_predicted_state,",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_counterfactual_engine.py",
+    "line": 44,
+    "pattern": "85.0",
+    "content": "\"oa_dmpr\": 85.0,",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_counterfactual_engine.py",
+    "line": 53,
+    "pattern": "AHU-007",
+    "content": "asset_id=\"AHU-007\",",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_counterfactual_engine.py",
+    "line": 59,
+    "pattern": "AHU-007",
+    "content": "assert res.asset_id == \"AHU-007\"",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_incident_counterfactual_pipeline.py",
+    "line": 37,
+    "pattern": "AHU-007",
+    "content": "\"asset_id\": \"AHU-007\",",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_incident_counterfactual_pipeline.py",
+    "line": 44,
+    "pattern": "85.0",
+    "content": "\"oa_dmpr\": 85.0,",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_incident_counterfactual_pipeline.py",
+    "line": 56,
+    "pattern": "AHU-007",
+    "content": "assert data[\"asset_id\"] == \"AHU-007\"",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_incident_counterfactual_pipeline.py",
+    "line": 73,
+    "pattern": "AHU-007",
+    "content": "\"asset_id\": \"AHU-007\",",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_incident_counterfactual_pipeline.py",
+    "line": 96,
+    "pattern": "AHU-007",
+    "content": "response = client.post(\"/api/v1/incidents/actuate\", json={\"asset_id\": \"AHU-007\", \"interventions\": {}})",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_incident_counterfactual_pipeline.py",
+    "line": 100,
+    "pattern": "coi_stuck",
+    "content": "def test_lbnl_scenario_pipeline_coi_stuck():",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_incident_counterfactual_pipeline.py",
+    "line": 112,
+    "pattern": "85.0",
+    "content": "\"sf_spd\": 85.0,",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_incident_counterfactual_pipeline.py",
+    "line": 117,
+    "pattern": "AHU-007",
+    "content": "state = twin.process_telemetry_frame(\"AHU-007\", stuck_frame)",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_incident_counterfactual_pipeline.py",
+    "line": 118,
+    "pattern": "AHU-007",
+    "content": "assert state.asset_id == \"AHU-007\"",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_incident_counterfactual_pipeline.py",
+    "line": 120,
+    "pattern": "AHU-007",
+    "content": "cf_res = twin.evaluate_counterfactual(\"AHU-007\", incident_id=\"INC-3002\")",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_ml_inference.py",
+    "line": 24,
+    "pattern": "85.0",
+    "content": "\"zone_temp\": 26.5, \"oa_dmpr\": 90.0, \"chwc_vlv\": 100.0, \"sf_spd\": 85.0,",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_ml_inference.py",
+    "line": 43,
+    "pattern": "predicted_state",
+    "content": "assert \"predicted_state\" in cf_res",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_ml_pipeline_hardening.py",
+    "line": 133,
+    "pattern": "85.0",
+    "content": "\"oa_temp\": 85.0, \"ra_temp\": 74.0, \"ma_temp\": 80.0, \"sa_temp\": 65.0,",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_ml_pipeline_hardening.py",
+    "line": 140,
+    "pattern": "predicted_state",
+    "content": "assert \"predicted_state\" in res",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_counterfactual_workflow.py",
+    "line": 99,
+    "pattern": "candidate_actions",
+    "content": "assert \"candidate_actions\" in response",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_counterfactual_workflow.py",
+    "line": 100,
+    "pattern": "candidate_actions",
+    "content": "assert len(response[\"candidate_actions\"]) >= 2",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_counterfactual_workflow.py",
+    "line": 101,
+    "pattern": "candidate_actions",
+    "content": "for cand in response[\"candidate_actions\"]:",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_counterfactual_workflow.py",
+    "line": 128,
+    "pattern": "predicted_state",
+    "content": "predicted_state=stuck_damper_telemetry,",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_counterfactual_workflow.py",
+    "line": 148,
+    "pattern": "predicted_state",
+    "content": "predicted_state=baseline_telemetry,",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_counterfactual_workflow.py",
+    "line": 157,
+    "pattern": "predicted_state",
+    "content": "predicted_state=baseline_telemetry,",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_counterfactual_workflow.py",
+    "line": 208,
+    "pattern": "predicted_state",
+    "content": "assert \"predicted_state\" in sim_result",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_counterfactual_workflow.py",
+    "line": 211,
+    "pattern": "predicted_state",
+    "content": "pred_state = sim_result[\"predicted_state\"]",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_counterfactual_workflow.py",
+    "line": 220,
+    "pattern": "predicted_state",
+    "content": "def test_predicted_state_output_fields(baseline_telemetry):",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_counterfactual_workflow.py",
+    "line": 230,
+    "pattern": "predicted_state",
+    "content": "pred = candidate_res.predicted_state",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_counterfactual_workflow.py",
+    "line": 244,
+    "pattern": "predicted_state",
+    "content": "\"predicted_state\": {",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_counterfactual_workflow.py",
+    "line": 286,
+    "pattern": "predicted_state",
+    "content": "predicted_state=unsafe_state,",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_counterfactual_workflow.py",
+    "line": 306,
+    "pattern": "predicted_state",
+    "content": "predicted_state=ineffective_predicted,",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_counterfactual_workflow.py",
+    "line": 348,
+    "pattern": "resolved",
+    "content": "# Direct test of evaluation when all branches are unsafe/unresolved",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_counterfactual_workflow.py",
+    "line": 350,
+    "pattern": "predicted_state",
+    "content": "\"predicted_state\": {**stuck_damper_telemetry, \"sa_temp\": 1.0, \"zone_temp\": 32.0},",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 7,
+    "pattern": "simulation",
+    "content": "- Each SNS candidate becomes an independent simulation branch",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 8,
+    "pattern": "simulation",
+    "content": "- Candidates are never merged before simulation",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 34,
+    "pattern": "85.0",
+    "content": "\"oa_dmpr\": 85.0,",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 55,
+    "pattern": "damper_stuck",
+    "content": "\"damper_stuck\",",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 56,
+    "pattern": "coi_stuck",
+    "content": "\"coi_stuck\",",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 58,
+    "pattern": "oa_bias",
+    "content": "\"oa_bias\",",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 76,
+    "pattern": "AHU-007",
+    "content": "asset_id=\"AHU-007\",",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 86,
+    "pattern": "AHU-007",
+    "content": "anomaly_evidence=[f\"Detected {fault} on AHU-007\"],",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 88,
+    "pattern": "candidate_actions",
+    "content": "candidates = result[\"candidate_actions\"]",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 100,
+    "pattern": "AHU-007",
+    "content": "asset_id=\"AHU-007\",",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 103,
+    "pattern": "85.0",
+    "content": "actuators={\"oa_dmpr\": 85.0, \"chwc_vlv\": 95.0, \"sf_spd\": 80.0},",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 104,
+    "pattern": "0.92",
+    "content": "fault_confidence=0.92,",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 109,
+    "pattern": "candidate_actions",
+    "content": "\"status\", \"diagnosis\", \"candidate_actions\", \"provenance\",",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 117,
+    "pattern": "candidate_actions",
+    "content": "for cand in result[\"candidate_actions\"]:",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 129,
+    "pattern": "AHU-007",
+    "content": "asset_id=\"AHU-007\",",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 130,
+    "pattern": "oa_bias",
+    "content": "detected_fault=\"oa_bias\",",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 132,
+    "pattern": "85.0",
+    "content": "actuators={\"oa_dmpr\": 85.0, \"chwc_vlv\": 95.0, \"sf_spd\": 80.0},",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 146,
+    "pattern": "AHU-007",
+    "content": "asset_id=\"AHU-007\",",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 149,
+    "pattern": "85.0",
+    "content": "actuators={\"oa_dmpr\": 85.0, \"chwc_vlv\": 95.0, \"sf_spd\": 80.0},",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 151,
+    "pattern": "candidate_actions",
+    "content": "for cand in result[\"candidate_actions\"]:",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 167,
+    "pattern": "AHU-007",
+    "content": "asset_id=\"AHU-007\",",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 170,
+    "pattern": "85.0",
+    "content": "actuators={\"oa_dmpr\": 85.0, \"chwc_vlv\": 95.0, \"sf_spd\": 80.0},",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 172,
+    "pattern": "candidate_actions",
+    "content": "for cand in result[\"candidate_actions\"]:",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 188,
+    "pattern": "AHU-007",
+    "content": "asset_id=\"AHU-007\",",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 191,
+    "pattern": "85.0",
+    "content": "actuators={\"oa_dmpr\": 85.0, \"chwc_vlv\": 95.0, \"sf_spd\": 80.0},",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 194,
+    "pattern": "candidate_actions",
+    "content": "for cand in result[\"candidate_actions\"]:",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 236,
+    "pattern": "85.0",
+    "content": "{\"action_id\": \"D3\", \"target\": \"sf_spd\", \"current_value\": 70.0, \"proposed_value\": 85.0},",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 244,
+    "pattern": "85.0",
+    "content": "{\"action_id\": \"V2\", \"target\": \"sf_spd\", \"current_value\": 70.0, \"proposed_value\": 85.0},",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 258,
+    "pattern": "simulation",
+    "content": "\"\"\"N SNS candidates must produce N independent simulation branches.\"\"\"",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 266,
+    "pattern": "85.0",
+    "content": "{\"action_id\": \"T4\", \"target\": \"oa_dmpr\", \"current_value\": 85.0, \"proposed_value\": 20.0,",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 271,
+    "pattern": "AHU-007",
+    "content": "asset_id=\"AHU-007\",",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 274,
+    "pattern": "candidate_actions",
+    "content": "sns_candidate_actions=sns_actions,",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 278,
+    "pattern": "simulation",
+    "content": "# Must produce at least 4 simulation results (may have more from domain)",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 280,
+    "pattern": "simulation",
+    "content": "f\"Expected >= 4 simulations, got {len(result.all_candidates)}\"",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 286,
+    "pattern": "simulation",
+    "content": "\"\"\"Verify no candidate simulation mutates the baseline for another.\"\"\"",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 297,
+    "pattern": "AHU-007",
+    "content": "asset_id=\"AHU-007\",",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 300,
+    "pattern": "candidate_actions",
+    "content": "sns_candidate_actions=sns_actions,",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 316,
+    "pattern": "simulation",
+    "content": "\"\"\"Verify each simulation branch only applies its own intervention.\"\"\"",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 318,
+    "pattern": "85.0",
+    "content": "{\"action_id\": \"IND1\", \"target\": \"oa_dmpr\", \"current_value\": 85.0, \"proposed_value\": 15.0,",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 325,
+    "pattern": "AHU-007",
+    "content": "asset_id=\"AHU-007\",",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 327,
+    "pattern": "damper_stuck",
+    "content": "fault_diagnosis=\"damper_stuck\",",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 328,
+    "pattern": "candidate_actions",
+    "content": "sns_candidate_actions=sns_actions,",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 355,
+    "pattern": "AHU-007",
+    "content": "asset_id=\"AHU-007\",",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 358,
+    "pattern": "85.0",
+    "content": "actuators={\"oa_dmpr\": 85.0, \"chwc_vlv\": 95.0, \"sf_spd\": 80.0},",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 362,
+    "pattern": "candidate_actions",
+    "content": "sns_actions = sns_result[\"candidate_actions\"]",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 366,
+    "pattern": "AHU-007",
+    "content": "asset_id=\"AHU-007\",",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 369,
+    "pattern": "candidate_actions",
+    "content": "sns_candidate_actions=sns_actions,",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 394,
+    "pattern": "simulation",
+    "content": "independent Twin simulations \u2192 safety/resolution evaluation \u2192",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 399,
+    "pattern": "AHU-007",
+    "content": "asset_id = \"AHU-007\"",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 419,
+    "pattern": "candidate_actions",
+    "content": "sns_candidates = sns_result[\"candidate_actions\"]",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 424,
+    "pattern": "simulation",
+    "content": "# Step 4: Independent Twin simulations",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 429,
+    "pattern": "candidate_actions",
+    "content": "sns_candidate_actions=sns_candidates,",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 433,
+    "pattern": "simulation",
+    "content": "# Step 5: Verify simulation count",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 451,
+    "pattern": "simulation",
+    "content": "# Step 8: All simulations must have been evaluated independently",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 453,
+    "pattern": "predicted_state",
+    "content": "assert cand.predicted_state, f\"[{fault}] {cand.candidate_id} has no predicted state\"",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 457,
+    "pattern": "simulation",
+    "content": "def test_simulation_matrix_shows_all_statuses(",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 465,
+    "pattern": "AHU-007",
+    "content": "asset_id=\"AHU-007\",",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 468,
+    "pattern": "85.0",
+    "content": "actuators={\"oa_dmpr\": 85.0, \"chwc_vlv\": 95.0, \"sf_spd\": 80.0},",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 472,
+    "pattern": "AHU-007",
+    "content": "asset_id=\"AHU-007\",",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 475,
+    "pattern": "candidate_actions",
+    "content": "sns_candidate_actions=sns_result[\"candidate_actions\"],",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 512,
+    "pattern": "candidate_actions",
+    "content": "sns_candidate_actions=sns_actions,",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/test_sns_pipeline_expanded.py",
+    "line": 529,
+    "pattern": "candidate_actions",
+    "content": "sns_candidate_actions=sns_actions,",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/verify_real_inferences.py",
+    "line": 23,
+    "pattern": "damper_stuck",
+    "content": "\"damper_stuck_025_annual.csv\",",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/verify_real_inferences.py",
+    "line": 25,
+    "pattern": "coi_stuck",
+    "content": "\"coi_stuck_050_annual.csv\",",
+    "is_production": false
+  },
+  {
+    "file": "backend/tests/verify_real_inferences.py",
+    "line": 26,
+    "pattern": "oa_bias",
+    "content": "\"oa_bias_2_annual.csv\",",
+    "is_production": false
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 43,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@jridgewell/gen-mapping/-/gen-mapping-0.3.13.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 54,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@jridgewell/remapping/-/remapping-2.3.5.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 65,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@jridgewell/resolve-uri/-/resolve-uri-3.1.2.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 75,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.6.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 82,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@jridgewell/trace-mapping/-/trace-mapping-0.3.31.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 93,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@oxc-project/types/-/types-0.147.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 103,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@oxlint/binding-android-arm-eabi/-/binding-android-arm-eabi-1.80.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 120,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@oxlint/binding-android-arm64/-/binding-android-arm64-1.80.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 137,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@oxlint/binding-darwin-arm64/-/binding-darwin-arm64-1.80.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 154,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@oxlint/binding-darwin-x64/-/binding-darwin-x64-1.80.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 171,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@oxlint/binding-freebsd-x64/-/binding-freebsd-x64-1.80.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 188,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@oxlint/binding-linux-arm-gnueabihf/-/binding-linux-arm-gnueabihf-1.80.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 205,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@oxlint/binding-linux-arm-musleabihf/-/binding-linux-arm-musleabihf-1.80.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 222,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@oxlint/binding-linux-arm64-gnu/-/binding-linux-arm64-gnu-1.80.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 239,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@oxlint/binding-linux-arm64-musl/-/binding-linux-arm64-musl-1.80.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 256,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@oxlint/binding-linux-ppc64-gnu/-/binding-linux-ppc64-gnu-1.80.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 273,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@oxlint/binding-linux-riscv64-gnu/-/binding-linux-riscv64-gnu-1.80.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 290,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@oxlint/binding-linux-riscv64-musl/-/binding-linux-riscv64-musl-1.80.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 307,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@oxlint/binding-linux-s390x-gnu/-/binding-linux-s390x-gnu-1.80.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 324,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@oxlint/binding-linux-x64-gnu/-/binding-linux-x64-gnu-1.80.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 341,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@oxlint/binding-linux-x64-musl/-/binding-linux-x64-musl-1.80.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 358,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@oxlint/binding-openharmony-arm64/-/binding-openharmony-arm64-1.80.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 375,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@oxlint/binding-win32-arm64-msvc/-/binding-win32-arm64-msvc-1.80.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 392,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@oxlint/binding-win32-ia32-msvc/-/binding-win32-ia32-msvc-1.80.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 409,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@oxlint/binding-win32-x64-msvc/-/binding-win32-x64-msvc-1.80.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 426,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@reduxjs/toolkit/-/toolkit-2.12.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 452,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.6.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 469,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@rolldown/binding-android-arm64/-/binding-android-arm64-1.2.6.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 486,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@rolldown/binding-darwin-arm64/-/binding-darwin-arm64-1.2.6.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 503,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@rolldown/binding-darwin-x64/-/binding-darwin-x64-1.2.6.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 520,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@rolldown/binding-freebsd-x64/-/binding-freebsd-x64-1.2.6.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 537,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@rolldown/binding-linux-arm-gnueabihf/-/binding-linux-arm-gnueabihf-1.2.6.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 554,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@rolldown/binding-linux-arm64-gnu/-/binding-linux-arm64-gnu-1.2.6.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 571,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@rolldown/binding-linux-arm64-musl/-/binding-linux-arm64-musl-1.2.6.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 588,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@rolldown/binding-linux-ppc64-gnu/-/binding-linux-ppc64-gnu-1.2.6.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 605,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@rolldown/binding-linux-s390x-gnu/-/binding-linux-s390x-gnu-1.2.6.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 622,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@rolldown/binding-linux-x64-gnu/-/binding-linux-x64-gnu-1.2.6.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 639,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@rolldown/binding-linux-x64-musl/-/binding-linux-x64-musl-1.2.6.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 656,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@rolldown/binding-openharmony-arm64/-/binding-openharmony-arm64-1.2.6.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 673,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@rolldown/binding-win32-arm64-msvc/-/binding-win32-arm64-msvc-1.2.6.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 690,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@rolldown/binding-win32-x64-msvc/-/binding-win32-x64-msvc-1.2.6.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 707,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@rolldown/pluginutils/-/pluginutils-1.0.1.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 714,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@standard-schema/spec/-/spec-1.1.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 720,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@standard-schema/utils/-/utils-0.3.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 726,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@tailwindcss/node/-/node-4.3.3.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 742,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/lightningcss/-/lightningcss-1.32.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 772,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/lightningcss-android-arm64/-/lightningcss-android-arm64-1.32.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 793,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/lightningcss-darwin-arm64/-/lightningcss-darwin-arm64-1.32.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 814,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/lightningcss-darwin-x64/-/lightningcss-darwin-x64-1.32.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 835,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/lightningcss-freebsd-x64/-/lightningcss-freebsd-x64-1.32.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 856,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/lightningcss-linux-arm-gnueabihf/-/lightningcss-linux-arm-gnueabihf-1.32.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 877,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/lightningcss-linux-arm64-gnu/-/lightningcss-linux-arm64-gnu-1.32.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 898,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/lightningcss-linux-arm64-musl/-/lightningcss-linux-arm64-musl-1.32.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 919,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/lightningcss-linux-x64-gnu/-/lightningcss-linux-x64-gnu-1.32.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 940,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/lightningcss-linux-x64-musl/-/lightningcss-linux-x64-musl-1.32.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 961,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/lightningcss-win32-arm64-msvc/-/lightningcss-win32-arm64-msvc-1.32.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 982,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/lightningcss-win32-x64-msvc/-/lightningcss-win32-x64-msvc-1.32.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1003,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@tailwindcss/oxide/-/oxide-4.3.3.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1027,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@tailwindcss/oxide-android-arm64/-/oxide-android-arm64-4.3.3.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1044,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@tailwindcss/oxide-darwin-arm64/-/oxide-darwin-arm64-4.3.3.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1061,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@tailwindcss/oxide-darwin-x64/-/oxide-darwin-x64-4.3.3.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1078,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@tailwindcss/oxide-freebsd-x64/-/oxide-freebsd-x64-4.3.3.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1095,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@tailwindcss/oxide-linux-arm-gnueabihf/-/oxide-linux-arm-gnueabihf-4.3.3.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1112,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@tailwindcss/oxide-linux-arm64-gnu/-/oxide-linux-arm64-gnu-4.3.3.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1129,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@tailwindcss/oxide-linux-arm64-musl/-/oxide-linux-arm64-musl-4.3.3.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1146,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@tailwindcss/oxide-linux-x64-gnu/-/oxide-linux-x64-gnu-4.3.3.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1163,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@tailwindcss/oxide-linux-x64-musl/-/oxide-linux-x64-musl-4.3.3.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1180,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@tailwindcss/oxide-wasm32-wasi/-/oxide-wasm32-wasi-4.3.3.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1210,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@tailwindcss/oxide-win32-arm64-msvc/-/oxide-win32-arm64-msvc-4.3.3.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1227,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@tailwindcss/oxide-win32-x64-msvc/-/oxide-win32-x64-msvc-4.3.3.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1244,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@tailwindcss/vite/-/vite-4.3.3.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1259,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@types/d3-array/-/d3-array-3.2.2.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1265,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@types/d3-color/-/d3-color-3.1.3.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1271,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@types/d3-delaunay/-/d3-delaunay-6.0.1.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1277,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@types/d3-ease/-/d3-ease-3.0.2.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1283,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@types/d3-format/-/d3-format-3.0.1.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1289,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@types/d3-geo/-/d3-geo-3.1.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1298,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@types/d3-interpolate/-/d3-interpolate-3.0.4.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1307,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@types/d3-path/-/d3-path-3.1.1.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1313,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@types/d3-scale/-/d3-scale-4.0.9.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1322,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@types/d3-shape/-/d3-shape-3.2.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1331,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@types/d3-time/-/d3-time-3.0.4.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1337,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@types/d3-time-format/-/d3-time-format-2.1.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1343,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@types/d3-timer/-/d3-timer-3.0.2.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1349,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@types/geojson/-/geojson-7946.0.16.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1355,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@types/node/-/node-24.13.3.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1365,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@types/react/-/react-19.2.18.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1375,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@types/react-dom/-/react-dom-19.2.5.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1385,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@types/use-sync-external-store/-/use-sync-external-store-0.0.6.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1391,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@visx/curve/-/curve-4.0.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1400,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@visx/event/-/event-4.0.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1418,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@visx/group/-/group-4.0.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1436,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@visx/point/-/point-4.0.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1442,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@visx/responsive/-/responsive-4.0.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1457,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@visx/scale/-/scale-4.0.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1466,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@visx/shape/-/shape-4.0.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1488,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@visx/vendor/-/vendor-4.0.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1519,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@types/d3-array/-/d3-array-3.0.3.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1525,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@types/d3-color/-/d3-color-3.1.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1531,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@types/d3-interpolate/-/d3-interpolate-3.0.1.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1540,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@types/d3-scale/-/d3-scale-4.0.2.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1549,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@types/d3-shape/-/d3-shape-3.1.7.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1558,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@types/d3-time/-/d3-time-3.0.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1564,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/d3-array/-/d3-array-3.2.1.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1576,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/d3-format/-/d3-format-3.1.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1585,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/@vitejs/plugin-react/-/plugin-react-6.1.1.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1615,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/classnames/-/classnames-2.5.1.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1621,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/clsx/-/clsx-2.1.1.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1630,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/cookie/-/cookie-1.1.1.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1643,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/csstype/-/csstype-3.2.3.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1650,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/d3-array/-/d3-array-3.2.4.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1662,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/d3-color/-/d3-color-3.1.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1671,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/d3-delaunay/-/d3-delaunay-6.0.2.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1683,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/d3-ease/-/d3-ease-3.0.1.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1692,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/d3-format/-/d3-format-3.1.2.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1701,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/d3-geo/-/d3-geo-3.1.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1713,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/d3-interpolate/-/d3-interpolate-3.0.1.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1725,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/d3-path/-/d3-path-3.1.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1734,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/d3-scale/-/d3-scale-4.0.2.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1750,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/d3-shape/-/d3-shape-3.2.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1762,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/d3-time/-/d3-time-3.1.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1774,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/d3-time-format/-/d3-time-format-4.1.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1786,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/d3-timer/-/d3-timer-3.0.1.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1795,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/decimal.js-light/-/decimal.js-light-2.5.1.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1801,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/delaunator/-/delaunator-5.1.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1810,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/detect-libc/-/detect-libc-2.1.2.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1820,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/enhanced-resolve/-/enhanced-resolve-5.24.5.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1834,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/es-toolkit/-/es-toolkit-1.52.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1846,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/eventemitter3/-/eventemitter3-5.0.4.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1852,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/fdir/-/fdir-6.5.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1870,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/framer-motion/-/framer-motion-13.3.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1893,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/fsevents/-/fsevents-2.3.3.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1908,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.2.11.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1915,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/immer/-/immer-11.1.18.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1925,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/internmap/-/internmap-2.0.3.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1934,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/jiti/-/jiti-2.7.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1944,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/lenis/-/lenis-1.3.26.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 1975,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/lightningcss/-/lightningcss-1.33.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2005,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/lightningcss-android-arm64/-/lightningcss-android-arm64-1.33.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2026,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/lightningcss-darwin-arm64/-/lightningcss-darwin-arm64-1.33.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2047,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/lightningcss-darwin-x64/-/lightningcss-darwin-x64-1.33.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2068,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/lightningcss-freebsd-x64/-/lightningcss-freebsd-x64-1.33.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2089,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/lightningcss-linux-arm-gnueabihf/-/lightningcss-linux-arm-gnueabihf-1.33.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2110,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/lightningcss-linux-arm64-gnu/-/lightningcss-linux-arm64-gnu-1.33.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2131,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/lightningcss-linux-arm64-musl/-/lightningcss-linux-arm64-musl-1.33.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2152,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/lightningcss-linux-x64-gnu/-/lightningcss-linux-x64-gnu-1.33.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2173,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/lightningcss-linux-x64-musl/-/lightningcss-linux-x64-musl-1.33.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2194,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/lightningcss-win32-arm64-msvc/-/lightningcss-win32-arm64-msvc-1.33.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2215,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/lightningcss-win32-x64-msvc/-/lightningcss-win32-x64-msvc-1.33.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2236,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/lucide-react/-/lucide-react-1.38.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2245,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/magic-string/-/magic-string-0.30.21.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2255,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/motion-dom/-/motion-dom-13.3.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2264,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/motion-utils/-/motion-utils-13.3.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2270,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/nanoid/-/nanoid-3.3.18.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2289,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/oxlint/-/oxlint-1.80.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2338,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/picocolors/-/picocolors-1.1.1.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2345,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/picomatch/-/picomatch-4.0.7.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2358,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/postcss/-/postcss-8.5.26.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2387,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/react/-/react-19.2.8.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2396,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/react-dom/-/react-dom-19.2.8.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2408,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/react-is/-/react-is-19.3.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2414,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/react-redux/-/react-redux-9.3.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2437,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/react-router/-/react-router-7.18.3.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2459,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/react-router-dom/-/react-router-dom-7.18.3.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2475,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/recharts/-/recharts-3.10.1.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2505,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/redux/-/redux-5.0.1.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2511,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/redux-thunk/-/redux-thunk-3.1.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2520,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/reselect/-/reselect-5.2.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2526,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/robust-predicates/-/robust-predicates-3.0.3.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2532,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/rolldown/-/rolldown-1.2.6.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2566,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/scheduler/-/scheduler-0.27.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2572,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/set-cookie-parser/-/set-cookie-parser-2.7.2.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2578,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.1.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2588,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/tailwind-merge/-/tailwind-merge-3.7.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2598,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/tailwindcss/-/tailwindcss-4.3.3.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2605,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/tapable/-/tapable-2.3.3.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2619,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/tiny-invariant/-/tiny-invariant-1.3.3.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2625,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/tinyglobby/-/tinyglobby-0.2.17.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2642,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/tslib/-/tslib-2.8.1.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2648,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/typescript/-/typescript-6.0.3.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2662,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/undici-types/-/undici-types-7.18.2.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2669,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/use-sync-external-store/-/use-sync-external-store-1.6.0.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2678,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/victory-vendor/-/victory-vendor-37.3.6.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/package-lock.json",
+    "line": 2700,
+    "pattern": "resolved",
+    "content": "\"resolved\": \"https://registry.npmjs.org/vite/-/vite-8.2.2.tgz\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/dist/assets/index-BmfatcxD.js",
+    "line": 8,
+    "pattern": "Math.random",
+    "content": "`+e.stack}}var be=Object.prototype.hasOwnProperty,xe=t.unstable_scheduleCallback,Se=t.unstable_cancelCallback,Ce=t.unsta",
+    "is_production": true
+  },
+  {
+    "file": "frontend/dist/assets/index-BmfatcxD.js",
+    "line": 9,
+    "pattern": "Math.random",
+    "content": "`).replace(Fd,``)}function Ld(e,t){return t=Id(t),Id(e)===t}function Rd(e,t,n,r,a,o){switch(n){case`children`:typeof r==",
+    "is_production": true
+  },
+  {
+    "file": "frontend/dist/assets/index-BmfatcxD.js",
+    "line": 11,
+    "pattern": "AHU-007",
+    "content": "Please change the parent <Route path=\"${e}\"> to <Route path=\"${e===`/`?`*`:`${e}/*`}\">.`)}let u=dt(),d;if(t){let e=typeo",
+    "is_production": true
+  },
+  {
+    "file": "frontend/dist/assets/index-BmfatcxD.js",
+    "line": 11,
+    "pattern": "resolved",
+    "content": "Please change the parent <Route path=\"${e}\"> to <Route path=\"${e===`/`?`*`:`${e}/*`}\">.`)}let u=dt(),d;if(t){let e=typeo",
+    "is_production": true
+  },
+  {
+    "file": "frontend/dist/assets/index-BmfatcxD.js",
+    "line": 23,
+    "pattern": "AHU-007",
+    "content": "`,title:`Switch to ${e===`dark`?`light`:`dark`} mode`,\"aria-label\":`Switch to ${e===`dark`?`light`:`dark`} mode`,childre",
+    "is_production": true
+  },
+  {
+    "file": "frontend/dist/assets/index-BmfatcxD.js",
+    "line": 32,
+    "pattern": "AHU-007",
+    "content": "`,children:[(0,z.jsx)(`div`,{className:`pointer-events-none absolute -inset-px rounded-2xl opacity-0 transition-opacity ",
+    "is_production": true
+  },
+  {
+    "file": "frontend/dist/assets/index-BmfatcxD.js",
+    "line": 32,
+    "pattern": "simulation",
+    "content": "`,children:[(0,z.jsx)(`div`,{className:`pointer-events-none absolute -inset-px rounded-2xl opacity-0 transition-opacity ",
+    "is_production": true
+  },
+  {
+    "file": "frontend/dist/assets/index-BmfatcxD.js",
+    "line": 32,
+    "pattern": "predicted_state",
+    "content": "`,children:[(0,z.jsx)(`div`,{className:`pointer-events-none absolute -inset-px rounded-2xl opacity-0 transition-opacity ",
+    "is_production": true
+  },
+  {
+    "file": "frontend/dist/assets/index-BmfatcxD.js",
+    "line": 32,
+    "pattern": "candidate_actions",
+    "content": "`,children:[(0,z.jsx)(`div`,{className:`pointer-events-none absolute -inset-px rounded-2xl opacity-0 transition-opacity ",
+    "is_production": true
+  },
+  {
+    "file": "frontend/dist/assets/index-BmfatcxD.js",
+    "line": 33,
+    "pattern": "Math.random",
+    "content": "In order to be iterable, non-array objects must have a [Symbol.iterator]() method.`)}function SA(e,t){if(e){if(typeof e=",
+    "is_production": true
+  },
+  {
+    "file": "frontend/dist/assets/index-BmfatcxD.js",
+    "line": 84,
+    "pattern": "AHU-007",
+    "content": "In order to be iterable, non-array objects must have a [Symbol.iterator]() method.`)}function m1(e,t){if(e){if(typeof e=",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/components/QuickReportModal.tsx",
+    "line": 29,
+    "pattern": "AHU-007",
+    "content": "initialAssetId = 'AHU-007',",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/components/QuickReportModal.tsx",
+    "line": 245,
+    "pattern": "AHU-007",
+    "content": "<option value=\"AHU-007\">AHU-007 (Primary Supply Fan)</option>",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/components/charts/chart-tooltip.tsx",
+    "line": 145,
+    "pattern": "resolved",
+    "content": "const resolvedDotSize = useMemo(() => {",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/components/charts/chart-tooltip.tsx",
+    "line": 302,
+    "pattern": "resolved",
+    "content": "size={resolvedDotSize}",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/components/charts/live-line.tsx",
+    "line": 157,
+    "pattern": "resolved",
+    "content": "// Find the line config for this dataKey to get the resolved stroke",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/components/charts/live-line.tsx",
+    "line": 160,
+    "pattern": "resolved",
+    "content": "const resolvedStroke = momentumColors ? momentumColors[momentum] : baseStroke;",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/components/charts/live-line.tsx",
+    "line": 166,
+    "pattern": "resolved",
+    "content": "<stop offset=\"0%\" stopColor={resolvedStroke} stopOpacity={1} />",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/components/charts/live-line.tsx",
+    "line": 167,
+    "pattern": "resolved",
+    "content": "<stop offset=\"100%\" stopColor={resolvedStroke} stopOpacity={0.6} />",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/components/charts/live-line.tsx",
+    "line": 170,
+    "pattern": "resolved",
+    "content": "<stop offset=\"0%\" stopColor={resolvedStroke} stopOpacity={0.1} />",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/components/charts/live-line.tsx",
+    "line": 171,
+    "pattern": "resolved",
+    "content": "<stop offset=\"100%\" stopColor={resolvedStroke} stopOpacity={0} />",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/components/charts/live-line.tsx",
+    "line": 234,
+    "pattern": "resolved",
+    "content": "stroke={resolvedStroke}",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/components/charts/y-axis-scales.ts",
+    "line": 49,
+    "pattern": "resolved",
+    "content": "/** Passed by callers; domain is resolved via `resolveDomain`. */",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/assets/AssetDetail.tsx",
+    "line": 23,
+    "pattern": "AHU-007",
+    "content": "const assetCode = id === '7' ? 'AHU-007' : `NODE-00${id}`;",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/assets/Assets.tsx",
+    "line": 11,
+    "pattern": "AHU-007",
+    "content": "{ id: '7', code: 'AHU-007', name: 'Air Handling Unit 007', type: 'HVAC', status: 'critical', health: 68, floor: 'Floor 2",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/SNSResultModal.tsx",
+    "line": 40,
+    "pattern": "AHU-007",
+    "content": "{ agent: 'Triager Agent', status: 'COMPLETED', output: 'Alert classified as HIGH severity AIRFLOW_RESTRICTION on AHU-007",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/SNSResultModal.tsx",
+    "line": 149,
+    "pattern": "AHU-007",
+    "content": "The 10 autonomous agents completed their workflow over the live webhook. Diagnostic findings were automatically synthesi",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/SNSResultModal.tsx",
+    "line": 190,
+    "pattern": "AHU-007",
+    "content": "Cross-referenced against real LBNL AHU-007 static pressure sensor (3.8 in.wg) and fan motor power load (11.4 kW).",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/SNSResultModal.tsx",
+    "line": 261,
+    "pattern": "AHU-007",
+    "content": "LBNL AHU-007 Physical Telemetry Correlation",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/ActiveAlertTile.tsx",
+    "line": 41,
+    "pattern": "AHU-007",
+    "content": "<p className=\"mt-1 text-xs text-[var(--text-muted)] font-mono\">ASSET: AHU-007 \u2022 LBNL DATASET</p>",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/ActiveAlertTile.tsx",
+    "line": 43,
+    "pattern": "AHU-007",
+    "content": "{snsState.diagnosis || 'All AHU-007 parameters operate within optimal ASHRAE 90.1 baselines.'}",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/AIInvestigationTile.tsx",
+    "line": 32,
+    "pattern": "AHU-007",
+    "content": "await dispatchSNS('AHU-007', '101');",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/CounterfactualSimulationTile.tsx",
+    "line": 51,
+    "pattern": "AHU-007",
+    "content": "asset_id: incidentData?.asset_id || 'AHU-007',",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/CounterfactualSimulationTile.tsx",
+    "line": 61,
+    "pattern": "simulation",
+    "content": "const updated = prev.simulations.map(c =>",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/CounterfactualSimulationTile.tsx",
+    "line": 64,
+    "pattern": "simulation",
+    "content": "return { ...prev, simulations: updated };",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/CounterfactualSimulationTile.tsx",
+    "line": 86,
+    "pattern": "AHU-007",
+    "content": "asset_id: incidentData?.asset_id || 'AHU-007',",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/CounterfactualSimulationTile.tsx",
+    "line": 133,
+    "pattern": "simulation",
+    "content": "setStageLabel('Running Digital Twin simulations...');",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/CounterfactualSimulationTile.tsx",
+    "line": 161,
+    "pattern": "AHU-007",
+    "content": "asset_id: incidentData?.asset_id || 'AHU-007',",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/CounterfactualSimulationTile.tsx",
+    "line": 178,
+    "pattern": "candidate_actions",
+    "content": "const snsCandidates: SNSCandidateAction[] = investigateResult?.sns?.candidate_actions || [];",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/CounterfactualSimulationTile.tsx",
+    "line": 179,
+    "pattern": "simulation",
+    "content": "const simulations: CounterfactualCandidate[] = investigateResult?.simulations || [];",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/CounterfactualSimulationTile.tsx",
+    "line": 182,
+    "pattern": "simulation",
+    "content": "const simSummary = investigateResult?.simulation_summary;",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/CounterfactualSimulationTile.tsx",
+    "line": 186,
+    "pattern": "simulation",
+    "content": "const displayCandidates = simulations.length > 0 ? simulations : (legacySolution?.all_candidates || []);",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/CounterfactualSimulationTile.tsx",
+    "line": 213,
+    "pattern": "AHU-007",
+    "content": "Deterministic validation & predictive state simulation for {incidentData?.asset_name || 'AHU-007'}",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/CounterfactualSimulationTile.tsx",
+    "line": 213,
+    "pattern": "simulation",
+    "content": "Deterministic validation & predictive state simulation for {incidentData?.asset_name || 'AHU-007'}",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/CounterfactualSimulationTile.tsx",
+    "line": 313,
+    "pattern": "simulation",
+    "content": "provenance: LLM_REASONING \u00b7 each candidate \u2192 independent Digital Twin simulation branch",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/CounterfactualSimulationTile.tsx",
+    "line": 319,
+    "pattern": "simulation",
+    "content": "{/* Pipeline flow arrow (shown during and after simulation) */}",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/CounterfactualSimulationTile.tsx",
+    "line": 430,
+    "pattern": "predicted_state",
+    "content": "{cand.predicted_state?.zone_temp && (",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/CounterfactualSimulationTile.tsx",
+    "line": 432,
+    "pattern": "predicted_state",
+    "content": "predicted zone: <strong className=\"text-white/80\">{cand.predicted_state.zone_temp.toFixed(1)}\u00b0C</strong>",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/CounterfactualSimulationTile.tsx",
+    "line": 435,
+    "pattern": "predicted_state",
+    "content": "{cand.predicted_state?.sa_temp && (",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/CounterfactualSimulationTile.tsx",
+    "line": 437,
+    "pattern": "predicted_state",
+    "content": "SAT: <strong className=\"text-white/80\">{cand.predicted_state.sa_temp.toFixed(1)}\u00b0C</strong>",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/CounterfactualSimulationTile.tsx",
+    "line": 478,
+    "pattern": "predicted_state",
+    "content": "{displayWinner.predicted_state?.sa_cfm",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/CounterfactualSimulationTile.tsx",
+    "line": 479,
+    "pattern": "predicted_state",
+    "content": "? `${displayWinner.predicted_state.sa_cfm.toFixed(0)} CFM`",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/CounterfactualSimulationTile.tsx",
+    "line": 489,
+    "pattern": "predicted_state",
+    "content": "{displayWinner.predicted_state?.zone_temp",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/CounterfactualSimulationTile.tsx",
+    "line": 490,
+    "pattern": "predicted_state",
+    "content": "? `${displayWinner.predicted_state.zone_temp.toFixed(1)}\u00b0C`",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/CounterfactualSimulationTile.tsx",
+    "line": 500,
+    "pattern": "predicted_state",
+    "content": "{displayWinner.predicted_state?.sa_sp",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/CounterfactualSimulationTile.tsx",
+    "line": 501,
+    "pattern": "predicted_state",
+    "content": "? `${displayWinner.predicted_state.sa_sp.toFixed(2)}\"`",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/CounterfactualSimulationTile.tsx",
+    "line": 566,
+    "pattern": "simulation",
+    "content": "NO VALIDATED INTERVENTION \u2014 ALL {simulations.length} CANDIDATES EVALUATED",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/CounterfactualSimulationTile.tsx",
+    "line": 573,
+    "pattern": "simulation",
+    "content": "{simulations.length > 0 && (",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/CounterfactualSimulationTile.tsx",
+    "line": 576,
+    "pattern": "simulation",
+    "content": "{simulations.slice(0, 4).map(c => (",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/CounterfactualSimulationTile.tsx",
+    "line": 585,
+    "pattern": "simulation",
+    "content": "/* Initial state \u2014 no simulation run yet */",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/CounterfactualSimulationTile.tsx",
+    "line": 629,
+    "pattern": "AHU-007",
+    "content": "<span className=\"text-white font-bold\">{incidentData?.asset_name || 'AHU-007'}</span>",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/LiveFacilityTile.tsx",
+    "line": 22,
+    "pattern": "AHU-007",
+    "content": "<span className=\"text-xs text-[var(--text-muted)] font-mono font-medium\">AHU-007</span>",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/command-center/tiles/LiveTelemetryTile.tsx",
+    "line": 94,
+    "pattern": "AHU-007",
+    "content": "AHU-007 \u2022 LBNL",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/investigations/InvestigationDetail.tsx",
+    "line": 51,
+    "pattern": "AHU-007",
+    "content": "asset_id: 'AHU-007',",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/investigations/InvestigationDetail.tsx",
+    "line": 96,
+    "pattern": "AHU-007",
+    "content": "AHU-007",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/investigations/Investigations.tsx",
+    "line": 10,
+    "pattern": "AHU-007",
+    "content": "assetId: 'AHU-007',",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/rag/RagAssistant.tsx",
+    "line": 42,
+    "pattern": "AHU-007",
+    "content": "\"What happened to AHU-007?\",",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/features/rag/RagAssistant.tsx",
+    "line": 214,
+    "pattern": "AHU-007",
+    "content": "placeholder=\"Ask Facility Memory (e.g. What happened to AHU-007?)...\"",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/hooks/useRealtime.tsx",
+    "line": 92,
+    "pattern": "AHU-007",
+    "content": "asset_id: 'AHU-007',",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/hooks/useRealtime.tsx",
+    "line": 96,
+    "pattern": "AHU-007",
+    "content": "summary: 'Airflow reduced below operational baseline on AHU-007.',",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/hooks/useRealtime.tsx",
+    "line": 106,
+    "pattern": "AHU-007",
+    "content": "{ agent: 'Triager Agent', status: 'COMPLETED', output: 'Alert classified as HIGH severity AIRFLOW_RESTRICTION on AHU-007",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/hooks/useRealtime.tsx",
+    "line": 124,
+    "pattern": "AHU-007",
+    "content": "overall_result: 'Combined SNS Multi-Agent & Facility X-Ray analysis confirms primary mechanical belt slippage on AHU-007",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/hooks/useRealtime.tsx",
+    "line": 273,
+    "pattern": "AHU-007",
+    "content": "const dispatchSNS = async (assetId: string = 'AHU-007', alertId: string = '101') => {",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/services/counterfactualService.ts",
+    "line": 24,
+    "pattern": "simulation",
+    "content": "/** A single SNS candidate action (pre-simulation) */",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/services/counterfactualService.ts",
+    "line": 35,
+    "pattern": "simulation",
+    "content": "/** One Digital Twin simulation result per candidate */",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/services/counterfactualService.ts",
+    "line": 42,
+    "pattern": "predicted_state",
+    "content": "predicted_state: Record<string, number>;",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/services/counterfactualService.ts",
+    "line": 90,
+    "pattern": "simulation",
+    "content": "/** Full /investigate response \u2014 3.0 GSense workflow with independent simulation branches */",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/services/counterfactualService.ts",
+    "line": 101,
+    "pattern": "candidate_actions",
+    "content": "candidate_actions: SNSCandidateAction[];",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/services/counterfactualService.ts",
+    "line": 108,
+    "pattern": "simulation",
+    "content": "simulation_summary: {",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/services/counterfactualService.ts",
+    "line": 114,
+    "pattern": "simulation",
+    "content": "simulations: CounterfactualCandidate[];",
+    "is_production": true
+  },
+  {
+    "file": "frontend/src/services/counterfactualService.ts",
+    "line": 133,
+    "pattern": "simulation",
+    "content": "* SNS 3.0 GSense \u2192 6-8 independent candidates \u2192 Digital Twin simulations \u2192 validated result",
+    "is_production": true
+  },
+  {
+    "file": "scripts/audit_hardcode.py",
+    "line": 8,
+    "pattern": "Math.random",
+    "content": "\"Math.random\", \"random.\", \"hardcoded\", \"damper_stuck\", \"coi_stuck\", \"oa_bias\",",
+    "is_production": false
+  },
+  {
+    "file": "scripts/audit_hardcode.py",
+    "line": 8,
+    "pattern": "random.",
+    "content": "\"Math.random\", \"random.\", \"hardcoded\", \"damper_stuck\", \"coi_stuck\", \"oa_bias\",",
+    "is_production": false
+  },
+  {
+    "file": "scripts/audit_hardcode.py",
+    "line": 8,
+    "pattern": "hardcoded",
+    "content": "\"Math.random\", \"random.\", \"hardcoded\", \"damper_stuck\", \"coi_stuck\", \"oa_bias\",",
+    "is_production": false
+  },
+  {
+    "file": "scripts/audit_hardcode.py",
+    "line": 8,
+    "pattern": "damper_stuck",
+    "content": "\"Math.random\", \"random.\", \"hardcoded\", \"damper_stuck\", \"coi_stuck\", \"oa_bias\",",
+    "is_production": false
+  },
+  {
+    "file": "scripts/audit_hardcode.py",
+    "line": 8,
+    "pattern": "coi_stuck",
+    "content": "\"Math.random\", \"random.\", \"hardcoded\", \"damper_stuck\", \"coi_stuck\", \"oa_bias\",",
+    "is_production": false
+  },
+  {
+    "file": "scripts/audit_hardcode.py",
+    "line": 8,
+    "pattern": "oa_bias",
+    "content": "\"Math.random\", \"random.\", \"hardcoded\", \"damper_stuck\", \"coi_stuck\", \"oa_bias\",",
+    "is_production": false
+  },
+  {
+    "file": "scripts/audit_hardcode.py",
+    "line": 9,
+    "pattern": "0.92",
+    "content": "\"0.92\", \"85.0\", \"AHU-007\", \"efficiency\", \"resolved\", \"simulation\",",
+    "is_production": false
+  },
+  {
+    "file": "scripts/audit_hardcode.py",
+    "line": 9,
+    "pattern": "85.0",
+    "content": "\"0.92\", \"85.0\", \"AHU-007\", \"efficiency\", \"resolved\", \"simulation\",",
+    "is_production": false
+  },
+  {
+    "file": "scripts/audit_hardcode.py",
+    "line": 9,
+    "pattern": "AHU-007",
+    "content": "\"0.92\", \"85.0\", \"AHU-007\", \"efficiency\", \"resolved\", \"simulation\",",
+    "is_production": false
+  },
+  {
+    "file": "scripts/audit_hardcode.py",
+    "line": 9,
+    "pattern": "efficiency",
+    "content": "\"0.92\", \"85.0\", \"AHU-007\", \"efficiency\", \"resolved\", \"simulation\",",
+    "is_production": false
+  },
+  {
+    "file": "scripts/audit_hardcode.py",
+    "line": 9,
+    "pattern": "resolved",
+    "content": "\"0.92\", \"85.0\", \"AHU-007\", \"efficiency\", \"resolved\", \"simulation\",",
+    "is_production": false
+  },
+  {
+    "file": "scripts/audit_hardcode.py",
+    "line": 9,
+    "pattern": "simulation",
+    "content": "\"0.92\", \"85.0\", \"AHU-007\", \"efficiency\", \"resolved\", \"simulation\",",
+    "is_production": false
+  },
+  {
+    "file": "scripts/audit_hardcode.py",
+    "line": 10,
+    "pattern": "predicted_state",
+    "content": "\"predicted_state\", \"candidate_actions\"",
+    "is_production": false
+  },
+  {
+    "file": "scripts/audit_hardcode.py",
+    "line": 10,
+    "pattern": "candidate_actions",
+    "content": "\"predicted_state\", \"candidate_actions\"",
+    "is_production": false
+  },
+  {
+    "file": "scripts/test_closed_loop_pipeline.py",
+    "line": 28,
+    "pattern": "damper_stuck",
+    "content": "\"detected_fault\": \"damper_stuck\",",
+    "is_production": false
+  },
+  {
+    "file": "scripts/test_closed_loop_pipeline.py",
+    "line": 38,
+    "pattern": "85.0",
+    "content": "\"zone_temp\": 25.5, \"oa_dmpr\": 100.0, \"chwc_vlv\": 85.0, \"sf_spd\": 75.0,",
+    "is_production": false
+  },
+  {
+    "file": "scripts/test_closed_loop_pipeline.py",
+    "line": 49,
+    "pattern": "resolved",
+    "content": "print(\"  Resolved:\", safe_str(sim_res.get(\"resolution\", {}).get(\"resolved\")))",
+    "is_production": false
+  },
+  {
+    "file": "scripts/test_closed_loop_pipeline.py",
+    "line": 50,
+    "pattern": "efficiency",
+    "content": "print(\"  Efficiency Score:\", safe_str(sim_res.get(\"efficiency\", {}).get(\"score\")))",
+    "is_production": false
+  },
+  {
+    "file": "scripts/test_closed_loop_pipeline.py",
+    "line": 56,
+    "pattern": "damper_stuck",
+    "content": "\"detected_fault\": \"damper_stuck\",",
+    "is_production": false
+  },
+  {
+    "file": "scripts/test_closed_loop_pipeline.py",
+    "line": 64,
+    "pattern": "85.0",
+    "content": "\"zone_temp\": 25.5, \"oa_dmpr\": 100.0, \"chwc_vlv\": 85.0, \"sf_spd\": 75.0,",
+    "is_production": false
+  },
+  {
+    "file": "scripts/test_closed_loop_pipeline.py",
+    "line": 73,
+    "pattern": "simulation",
+    "content": "print(\"  Total Simulated:\", len(sim_all_res.get(\"simulations\", [])))",
+    "is_production": false
+  },
+  {
+    "file": "scripts/test_closed_loop_pipeline.py",
+    "line": 85,
+    "pattern": "AHU-007",
+    "content": "\"asset_id\": \"AHU-007\",",
+    "is_production": false
+  },
+  {
+    "file": "scripts/test_closed_loop_pipeline.py",
+    "line": 86,
+    "pattern": "damper_stuck",
+    "content": "\"detected_fault\": \"damper_stuck\",",
+    "is_production": false
+  },
+  {
+    "file": "scripts/test_closed_loop_pipeline.py",
+    "line": 90,
+    "pattern": "85.0",
+    "content": "\"zone_temp\": 25.5, \"oa_dmpr\": 100.0, \"chwc_vlv\": 85.0, \"sf_spd\": 75.0,",
+    "is_production": false
+  },
+  {
+    "file": "scripts/test_closed_loop_pipeline.py",
+    "line": 107,
+    "pattern": "AHU-007",
+    "content": "\"asset_id\": \"AHU-007\",",
+    "is_production": false
+  },
+  {
+    "file": "simulator/scenarios.py",
+    "line": 19,
+    "pattern": "85.0",
+    "content": "\"high_energy\": ScenarioConfig(\"high_energy\", (24.0, 29.0), (10.0, 14.0), (3.6, 4.4), (85.0, 96.0)),",
+    "is_production": true
+  },
+  {
+    "file": "simulator/scenarios.py",
+    "line": 33,
+    "pattern": "random.",
+    "content": "temperature = round(random.uniform(cfg.temperature[0], cfg.temperature[1]) + (sequence % 3) * 0.35, 2)",
+    "is_production": true
+  },
+  {
+    "file": "simulator/scenarios.py",
+    "line": 34,
+    "pattern": "random.",
+    "content": "energy = round(random.uniform(cfg.energy[0], cfg.energy[1]) * base, 2)",
+    "is_production": true
+  },
+  {
+    "file": "simulator/scenarios.py",
+    "line": 35,
+    "pattern": "random.",
+    "content": "pressure = round(random.uniform(cfg.pressure[0], cfg.pressure[1]) + (sequence % 5) * 0.15, 2)",
+    "is_production": true
+  },
+  {
+    "file": "simulator/scenarios.py",
+    "line": 36,
+    "pattern": "random.",
+    "content": "airflow = round(random.uniform(cfg.airflow[0], cfg.airflow[1]) - (sequence % 4) * 1.2, 2)",
+    "is_production": true
+  }
+]

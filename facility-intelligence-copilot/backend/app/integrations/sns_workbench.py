@@ -20,8 +20,8 @@ _ACTUATOR_BOUNDS: Dict[str, Tuple[float, float]] = {
     "sa_sp": (0.5, 3.0),
 }
 
-WORKFLOW_NAME = "3.0 GSense"
-WORKFLOW_ID_DEFAULT = "wf-3.0-gsense-intervention"
+WORKFLOW_NAME = "GSENSE 3.0"
+WORKFLOW_ID_DEFAULT = "b31d3188-6ed8-4dec-bfa4-2e7fbcfd9c5f"
 
 
 class InvestigationProvider(Protocol):
@@ -126,6 +126,9 @@ class SNSWorkbenchClient:
         fault_confidence: float = 0.0,
         anomaly_evidence: Optional[List[str]] = None,
         available_controls: Optional[List[str]] = None,
+        round_number: int = 1,
+        failed_candidates: Optional[List[Dict[str, Any]]] = None,
+        simulation_failure_reasons: Optional[List[str]] = None,
     ) -> Dict[str, Any]:
         """
         Executes the '3.0 GSense' workflow for the detected incident.
@@ -155,6 +158,9 @@ class SNSWorkbenchClient:
             "timestamp": now_str,
             "detected_fault": detected_fault,
             "fault_confidence": fault_confidence,
+            "round_number": round_number,
+            "failed_candidates": failed_candidates or [],
+            "simulation_failure_reasons": simulation_failure_reasons or [],
             "anomaly_evidence": anomaly_evidence,
             "ml_prediction": {
                 "fault": detected_fault,
@@ -169,7 +175,7 @@ class SNSWorkbenchClient:
             },
             "available_controls": available_controls,
             "instruction": (
-                "Generate 6-8 DISTINCT, fault-specific HVAC intervention candidates. "
+                f"Generate 6-8 DISTINCT, fault-specific HVAC intervention candidates for Round {round_number}. "
                 "Each candidate must target a real available actuator within physical bounds. "
                 "Include conservative, moderate, and aggressive alternatives. "
                 "Do NOT select a winner — the Digital Twin will validate each independently."
