@@ -59,7 +59,7 @@ export const RagAssistant: React.FC<RagAssistantProps> = ({ isOpen, onClose }) =
     setLoading(true);
 
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/v1/rag/query', {
+      const res = await fetch('/api/v1/rag/query', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: q }),
