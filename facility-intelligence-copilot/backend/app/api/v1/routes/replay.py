@@ -29,6 +29,61 @@ class ReplayControlRequest(BaseModel):
     speed: Optional[float] = None
 
 
+def _sync_reading_to_digital_twin(reading: Dict) -> None:
+    """Syncs live LBNL replay slider position and anomaly profile directly to DigitalTwinService."""
+    from backend.app.services.digital_twin import DigitalTwinService
+
+    sat = float(reading.get("temperature", 21.0))
+    mat = float(reading.get("mixed_air_temp", 29.8))
+    oat = float(reading.get("outdoor_air_temp", 32.5))
+    rat = float(reading.get("return_air_temp", 24.2))
+    cfm = float(reading.get("airflow_cfm", 2450.0))
+    sp = float(reading.get("pressure", 1.6))
+    pwr = float(reading.get("power", 14.2))
+    oad = float(reading.get("damper_oa_pct", 85.0))
+    chwc = float(reading.get("cooling_valve_pct", 95.0))
+
+    raw_telemetry = {
+        "oa_temp": oat,
+        "ra_temp": rat,
+        "ma_temp": mat,
+        "sa_temp": sat,
+        "zone_temp": round(rat + 1.0, 1),
+        "oa_dmpr": oad,
+        "chwc_vlv": chwc,
+        "sf_spd": round(max(20.0, min(100.0, cfm / 35.0)), 1),
+        "sa_cfm": cfm,
+        "sa_sp": sp,
+        "power": pwr,
+    }
+
+    twin_service = DigitalTwinService.get_instance()
+    state = twin_service.process_telemetry_frame("AHU-007", raw_telemetry)
+
+    # Align fault diagnosis with active LBNL anomaly profile
+    alert_type = reading.get("alert_type", "NOMINAL_OPERATION")
+    alert_map = {
+        "AIRFLOW_RESTRICTION": "fan_belt_slip",
+        "COOLING_COIL_FOULING": "coi_stuck",
+        "STATIC_PRESSURE_SURGE": "static_pressure_surge",
+        "ECONOMIZER_LEAKAGE": "damper_stuck",
+        "NOMINAL_OPERATION": "nominal",
+    }
+    mapped_fault = alert_map.get(alert_type, "nominal")
+
+    state.fault_diagnosis = mapped_fault
+    if mapped_fault != "nominal":
+        state.status = reading.get("facility_status", "DEGRADED")
+        state.health_score = float(reading.get("health_score", 60.0))
+        state.anomalies = [reading.get("diagnosis", f"LBNL anomaly: {alert_type}")]
+        state.fault_probability = 0.92
+    else:
+        state.status = "NOMINAL"
+        state.health_score = 95.0
+        state.anomalies = []
+        state.fault_probability = 0.0
+
+
 @router.get("/replay/state")
 def get_replay_state():
     if REPLAY_STATE["status"] == "PLAYING":
@@ -38,6 +93,10 @@ def get_replay_state():
             REPLAY_STATE["current_row"] = 1
     REPLAY_STATE["total_rows"] = lbnl.total_rows
     reading = lbnl.get_reading(REPLAY_STATE["current_row"])
+
+    # Sync live reading to Digital Twin
+    _sync_reading_to_digital_twin(reading)
+
     REPLAY_STATE["source_time"] = reading.get("dataset_timestamp", "2018-01-01 09:41:32")
     REPLAY_STATE["active_anomaly"] = {
         "alert_id": reading.get("alert_id"),
@@ -85,6 +144,10 @@ def control_replay(payload: ReplayControlRequest):
         )
 
     reading = lbnl.get_reading(REPLAY_STATE["current_row"])
+
+    # Sync live reading to Digital Twin
+    _sync_reading_to_digital_twin(reading)
+
     REPLAY_STATE["source_time"] = reading.get("dataset_timestamp", "2018-01-01 09:41:32")
     REPLAY_STATE["active_anomaly"] = {
         "alert_id": reading.get("alert_id"),

@@ -16,18 +16,25 @@ lbnl = LBNLAdapter()
 async def event_generator():
     """Generates real-time Server-Sent Events (SSE) from the real LBNL dataset."""
     while True:
-        await asyncio.sleep(1.5)  # Stream event every 1.5s
-        
         is_playing = REPLAY_STATE.get("status") == "PLAYING"
 
         # Advance replay cursor ONLY if in PLAYING state
         if is_playing:
-            REPLAY_STATE["current_row"] = (REPLAY_STATE.get("current_row", 1) + 1) % REPLAY_STATE.get("total_rows", 525541)
+            step = max(1, int(REPLAY_STATE.get("speed_multiplier", 1.0)))
+            REPLAY_STATE["current_row"] = (REPLAY_STATE.get("current_row", 1) + step) % REPLAY_STATE.get("total_rows", 525541)
             if REPLAY_STATE["current_row"] <= 0:
                 REPLAY_STATE["current_row"] = 1
 
         curr_row = REPLAY_STATE.get("current_row", 421)
         reading = lbnl.get_reading(curr_row)
+
+        # Synchronize live Digital Twin state with incoming telemetry frame
+        from backend.app.services.digital_twin import DigitalTwinService
+        twin_service = DigitalTwinService.get_instance()
+        twin_state = twin_service.process_telemetry_frame(
+            asset_id=reading.get("asset_id", "AHU-007"),
+            raw_reading=reading,
+        )
 
         data = {
             "type": "TELEMETRY_UPDATE",
@@ -44,8 +51,12 @@ async def event_generator():
             "power": reading.get("power", 11.2),
             "damper_oa_pct": reading.get("damper_oa_pct", 30.0),
             "cooling_valve_pct": reading.get("cooling_valve_pct", 45.0),
-            "facility_status": reading.get("facility_status", "NORMAL"),
-            "health_score": reading.get("health_score", 92),
+            "facility_status": twin_state.status,
+            "health_score": twin_state.health_score,
+            "fault_diagnosis": twin_state.fault_diagnosis,
+            "fault_probability": twin_state.fault_probability,
+            "confidence": twin_state.confidence,
+            "anomalies": twin_state.anomalies,
             "alert_id": reading.get("alert_id"),
             "alert_type": reading.get("alert_type"),
             "alert_title": reading.get("alert_title"),
@@ -56,6 +67,7 @@ async def event_generator():
             "replay_status": REPLAY_STATE.get("status", "PLAYING"),
         }
         yield f"data: {json.dumps(data)}\n\n"
+        await asyncio.sleep(1.5)  # Stream event every 1.5s
 
 
 @router.get("/realtime/stream")

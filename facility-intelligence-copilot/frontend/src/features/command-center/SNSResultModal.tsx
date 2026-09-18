@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, 
@@ -321,6 +321,19 @@ export const SNSResultModal: React.FC<SNSResultModalProps> = ({
                 className="rounded-xl border border-slate-200 dark:border-white/10 px-4 py-2 text-xs font-semibold text-[var(--text-main)] hover:bg-slate-100 dark:hover:bg-white/5 transition-colors"
               >
                 Close
+              </button>
+              <button
+                onClick={() => {
+                  onClose();
+                  const cfEl = document.getElementById('counterfactual-tile');
+                  if (cfEl) {
+                    cfEl.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
+                className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 px-4 py-2 text-xs font-bold text-white shadow-md transition-all active:scale-95"
+              >
+                <Activity size={14} />
+                <span>Simulate Actions with Digital Twin</span>
               </button>
               <button
                 onClick={() => {

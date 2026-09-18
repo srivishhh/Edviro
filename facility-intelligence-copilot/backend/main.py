@@ -1,11 +1,36 @@
+import sys
+from pathlib import Path
+
+# Ensure both backend dir and project root dir are on sys.path
+backend_dir = Path(__file__).resolve().parent
+project_root = backend_dir.parent
+for p in [str(backend_dir), str(project_root)]:
+    if p not in sys.path:
+        sys.path.insert(0, p)
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.v1.routes import alerts, assets, sensors, telemetry, xray, gamification, replay, sns_dispatch, realtime, rag
+
+from app.api.v1.routes import (
+    alerts,
+    assets,
+    sensors,
+    telemetry,
+    xray,
+    gamification,
+    replay,
+    sns_dispatch,
+    realtime,
+    rag,
+    counterfactual,
+    incidents,
+    digital_twin_endpoints,
+)
 from app.core.config import settings
 from sqlalchemy.exc import SQLAlchemyError
 from app.db.database import SessionLocal
 
-app = FastAPI(title="Facility Intelligence Copilot", version="0.1.0")
+app = FastAPI(title="Facility Intelligence Copilot - GSENSE 3.0", version="3.0.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -29,6 +54,9 @@ app.include_router(replay.router, prefix="/api/v1", tags=["replay"])
 app.include_router(sns_dispatch.router, prefix="/api/v1", tags=["sns"])
 app.include_router(realtime.router, prefix="/api/v1", tags=["realtime"])
 app.include_router(rag.router, prefix="/api/v1", tags=["rag"])
+app.include_router(counterfactual.router, prefix="/api/v1", tags=["counterfactual"])
+app.include_router(incidents.router, prefix="/api/v1", tags=["incidents"])
+app.include_router(digital_twin_endpoints.router)
 
 
 
